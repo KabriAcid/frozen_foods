@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peace Logistix - Dashboard</title>
+    <title>Frozen Foods - Dashboard</title>
     <link rel="shortcut icon" href="../favicon.png" type="image/x-icon">
 
     <!-- Bootstrap 5 JS Bundle with Popper -->
