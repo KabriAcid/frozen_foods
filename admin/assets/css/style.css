@@ -1,7 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 :root {
     --accent-color: #F97316;
     --gray: #f6f7fc;
     --dark: #201f20;
-
     --secondary-color: #ff7272;
+    --font-family: 'DM Sans', sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--gray);
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard {
+    padding: 20px;
+}
+
+.search-section {
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.input-field {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    padding: 5px;
+}
+
+.search-btn {
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 50%;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-btn svg {
+    fill: #fff;
+}
+
+.category-nav {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.category-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 20px;
+    color: var(--dark);
+    transition: background-color 0.3s ease;
+}
+
+.category-btn.active {
+    background-color: var(--accent-color);
+    color: #fff;
+}
+
+.products {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.product-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+}
+
+.product-image {
+    width: 100%;
+    height: auto;
+}
+
+.product-info {
+    padding: 15px;
+    text-align: center;
+}
+
+.product-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 10px 0;
+    color: var(--dark);
+}
+
+.product-description {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.product-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.favorite-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.favorite-btn svg {
+    fill: var(--secondary-color);
+    transition: fill 0.3s ease;
+}
+
+.favorite-btn:hover svg {
+    fill: var(--accent-color);
 }
