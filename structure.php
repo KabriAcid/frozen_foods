@@ -6,6 +6,7 @@ require __DIR__ . '/../../components/header.php';
 
 <body>
     <main class="dashboard">
+        
     </main>
 </body>
 
