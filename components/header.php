@@ -24,4 +24,10 @@
 
     <!-- Custom stylesheets -->
     <link rel="stylesheet" href="../assets/css/style.css">
+
+    <style>
+        body {
+            font-family: 'DM Sans';
+        }
+    </style>
 </head>
