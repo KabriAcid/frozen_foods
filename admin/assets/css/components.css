@@ -80,6 +80,11 @@
 
 /* INPUT FIELDS */
 
+.input-field {
+  border-radius: 15px;
+  background-color: #fff;
+}
+
 .input-wrapper {
   position: relative;
   padding: 10px;
