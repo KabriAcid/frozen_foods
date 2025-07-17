@@ -260,19 +260,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Sign out functionality
-function handleSignOut() {
-    if (confirm('Are you sure you want to sign out?')) {
-        // Show loading state
-        const signOutBtn = event.target.closest('button');
-        const originalContent = signOutBtn.innerHTML;
-        signOutBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-3 animate-spin"></i>Signing out...';
-        signOutBtn.disabled = true;
-        
-        // Simulate sign out process
-        setTimeout(() => {
-            // Redirect to login page
-            window.location.href = 'login.php';
-        }, 1500);
+// Sign out modal functionality
+document.addEventListener("DOMContentLoaded", function () {
+    const signOutModal = document.getElementById("signOutModal");
+    const cancelSignOut = document.getElementById("cancelSignOut");
+    const confirmSignOut = document.getElementById("confirmSignOut");
+
+    function handleSignOut() {
+        // Show modal
+        signOutModal.classList.remove("hidden");
     }
-}
+
+    cancelSignOut.addEventListener("click", function () {
+        // Hide modal
+        signOutModal.classList.add("hidden");
+    });
+
+    confirmSignOut.addEventListener("click", function () {
+        // Redirect to login page
+        signOutModal.classList.add("hidden");
+        window.location.href = "logout.php";
+    });
+
+    // Export the function for use in other files
+    window.handleSignOut = handleSignOut;
+});

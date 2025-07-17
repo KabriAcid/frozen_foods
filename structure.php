@@ -1,13 +1,21 @@
-<?php
-require __DIR__ . '/../../config/database.php';
-require __DIR__ . '/../../config/auth.php';
-require __DIR__ . '/../../components/backend-header.php';
-?>
+<?php require __DIR__ . '/partials/headers.php'; ?>
 
-<body>
-    <main class="dashboard">
+<body class="bg-gray-50 font-sans">
+    <?php require __DIR__ . '/partials/sidebar.php'; ?>
+    <!-- Main Content -->
+    <div class="main-content lg:ml-64">
+        <!-- Top Navigation -->
+        <?php require __DIR__ . '/partials/top-navbar.php'; ?>
+        <!-- Dashboard Content -->
+        <main class="p-6">
 
-    </main>
+        </main>
+    </div>
+
+    <!-- Overlay for mobile sidebar -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
+
+    <script src="script.js"></script>
 </body>
 
 </html>
