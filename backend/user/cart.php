@@ -9,25 +9,18 @@ require __DIR__ . '/../../components/backend-header.php';
         <div id="root">
             <div class="min-h-screen bg-gray-50">
                 <div class="transition-all duration-300 ">
-                    <header class="flex items-center justify-between p-4 bg-white"><button class="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu w-6 h-6 text-gray-700">
-                                <line x1="4" x2="20" y1="12" y2="12"></line>
-                                <line x1="4" x2="20" y1="6" y2="6"></line>
-                                <line x1="4" x2="20" y1="18" y2="18"></line>
-                            </svg></button>
-                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center overflow-hidden border-2 border-orange-400 hover:border-orange-500 transition-colors duration-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user w-6 h-6 text-white">
-                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg></div>
-                    </header>
                     <div class="min-h-screen bg-gray-50">
-                        <div class="bg-white px-4 py-6 shadow-sm">
-                            <div class="flex items-center space-x-4"><button class="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left w-6 h-6 text-gray-700">
+                        <!-- Header -->
+                        <div class="px-4 py-6">
+                            <div class="flex justify-between items-center space-x-4"><button class="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left w-6 h-6 text-gray-700">
                                         <path d="m12 19-7-7 7-7"></path>
                                         <path d="M19 12H5"></path>
                                     </svg></button>
                                 <h1 class="text-2xl font-bold text-gray-900">Your Cart</h1>
+                                <span></span>
                             </div>
                         </div>
+                        <!-- Body -->
                         <div class="px-4 py-6">
                             <div class="space-y-4 mb-8">
                                 <div class="bg-white rounded-2xl p-4 shadow-sm">

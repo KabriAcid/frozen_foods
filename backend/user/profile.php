@@ -9,25 +9,17 @@ require __DIR__ . '/../../components/backend-header.php';
         <div id="root">
             <div class="min-h-screen bg-gray-50">
                 <div class="transition-all duration-300 ">
-                    <header class="flex items-center justify-between p-4 bg-white"><button class="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu w-6 h-6 text-gray-700">
-                                <line x1="4" x2="20" y1="12" y2="12"></line>
-                                <line x1="4" x2="20" y1="6" y2="6"></line>
-                                <line x1="4" x2="20" y1="18" y2="18"></line>
-                            </svg></button>
-                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center overflow-hidden border-2 border-orange-400 hover:border-orange-500 transition-colors duration-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user w-6 h-6 text-white">
-                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg></div>
-                    </header>
-                    <div class="min-h-screen bg-gray-50">
-                        <div class="bg-white px-4 py-6 shadow-sm">
-                            <div class="flex items-center space-x-4"><button class="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left w-6 h-6 text-gray-700">
-                                        <path d="m12 19-7-7 7-7"></path>
-                                        <path d="M19 12H5"></path>
-                                    </svg></button>
-                                <h1 class="text-2xl font-bold text-gray-900">Profile</h1>
-                            </div>
+                    <!-- Header -->
+                    <div class="px-4 py-6">
+                        <div class="flex justify-between items-center space-x-4"><button class="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left w-6 h-6 text-gray-700">
+                                    <path d="m12 19-7-7 7-7"></path>
+                                    <path d="M19 12H5"></path>
+                                </svg></button>
+                            <h1 class="text-2xl font-bold text-gray-900">Profile</h1>
+                            <span></span>
                         </div>
+                    </div>
+                    <div class="min-h-screen bg-gray-50 mb-8">
                         <div class="px-4 py-6">
                             <div class="bg-white rounded-2xl p-6 shadow-sm mb-6">
                                 <div class="flex items-center space-x-4">
@@ -114,7 +106,8 @@ require __DIR__ . '/../../components/backend-header.php';
                                     <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"><svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                         </svg></div>
-                                </button><button class="w-full flex items-center space-x-4 p-6 hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 last:border-b-0 first:rounded-t-2xl last:rounded-b-2xl">
+                                </button>
+                                <button class="w-full flex items-center space-x-4 p-6 hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 last:border-b-0 first:rounded-t-2xl last:rounded-b-2xl">
                                     <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card w-5 h-5 text-gray-600">
                                             <rect width="20" height="14" x="2" y="5" rx="2"></rect>
                                             <line x1="2" x2="22" y1="10" y2="10"></line>
@@ -126,7 +119,8 @@ require __DIR__ . '/../../components/backend-header.php';
                                     <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"><svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                         </svg></div>
-                                </button><button class="w-full flex items-center space-x-4 p-6 hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 last:border-b-0 first:rounded-t-2xl last:rounded-b-2xl">
+                                </button>
+                                <button class="w-full flex items-center space-x-4 p-6 hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 last:border-b-0 first:rounded-t-2xl last:rounded-b-2xl">
                                     <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell w-5 h-5 text-gray-600">
                                             <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
                                             <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
@@ -138,7 +132,8 @@ require __DIR__ . '/../../components/backend-header.php';
                                     <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"><svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                         </svg></div>
-                                </button><button class="w-full flex items-center space-x-4 p-6 hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 last:border-b-0 first:rounded-t-2xl last:rounded-b-2xl">
+                                </button>
+                                <button class="w-full flex items-center space-x-4 p-6 hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 last:border-b-0 first:rounded-t-2xl last:rounded-b-2xl">
                                     <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-help-circle w-5 h-5 text-gray-600">
                                             <circle cx="12" cy="12" r="10"></circle>
                                             <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
@@ -148,14 +143,21 @@ require __DIR__ . '/../../components/backend-header.php';
                                         <h3 class="font-semibold text-gray-900">Help &amp; Support</h3>
                                         <p class="text-sm text-gray-500">FAQ, Contact us</p>
                                     </div>
-                                    <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"><svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
+                                        <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                        </svg></div>
-                                </button></div><button class="w-full flex items-center justify-center space-x-3 bg-red-50 text-red-600 py-4 rounded-2xl font-semibold hover:bg-red-100 transition-colors duration-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out w-5 h-5">
-                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                    <polyline points="16 17 21 12 16 7"></polyline>
-                                    <line x1="21" x2="9" y1="12" y2="12"></line>
-                                </svg><span>Sign Out</span></button>
+                                        </svg>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="mb-9 mt-4">
+                                <a href="../../auth/logout.php" class="w-full flex items-center justify-center space-x-3 bg-red-50 text-red-600 py-4 rounded-2xl font-semibold hover:bg-red-100 transition-colors duration-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out w-5 h-5">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                        <polyline points="16 17 21 12 16 7"></polyline>
+                                        <line x1="21" x2="9" y1="12" y2="12"></line>
+                                    </svg><span>Sign Out</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
