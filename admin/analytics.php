@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="bg-gray-50 font-sans">
     <!-- Sidebar -->
     <div id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0">
@@ -24,7 +26,7 @@
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
         </div>
-        
+
         <nav class="mt-8">
             <div class="px-6 mb-6">
                 <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Main</h3>
@@ -49,7 +51,7 @@
                 <i data-lucide="users" class="w-5 h-5 mr-3"></i>
                 <span>Users</span>
             </a>
-            
+
             <div class="px-6 mt-8 mb-6">
                 <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">System</h3>
             </div>
@@ -76,22 +78,22 @@
                     </button>
                     <h1 class="text-xl font-semibold text-gray-800">Analytics</h1>
                 </div>
-                
+
                 <div class="flex items-center space-x-4">
                     <div class="relative hidden md:block">
                         <input type="text" placeholder="Search analytics..." class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                         <i data-lucide="search" class="absolute left-3 top-2.5 w-5 h-5 text-gray-400"></i>
                     </div>
-                    
+
                     <button class="relative p-2 text-gray-600 hover:text-gray-900">
                         <i data-lucide="bell" class="w-6 h-6"></i>
                         <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
                     </button>
-                    
+
                     <div class="relative">
                         <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50">
                             <img src="https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400" alt="User" class="w-8 h-8 rounded-full">
-                            <span class="hidden md:block text-sm font-medium text-gray-700">John Doe</span>
+                            <span class="hidden md:block text-sm font-medium text-gray-700">Kabri Acid</span>
                             <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500"></i>
                         </button>
                     </div>
@@ -150,7 +152,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <div class="flex items-center justify-between">
                         <div>
@@ -166,7 +168,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <div class="flex items-center justify-between">
                         <div>
@@ -182,7 +184,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <div class="flex items-center justify-between">
                         <div>
@@ -273,7 +275,7 @@
                                     <p class="text-sm text-green-600">+15%</p>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                 <div class="flex items-center space-x-3">
                                     <img src="https://images.pexels.com/photos/1516415/pexels-photo-1516415.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Product" class="w-10 h-10 rounded-lg object-cover">
@@ -287,7 +289,7 @@
                                     <p class="text-sm text-green-600">+22%</p>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                 <div class="flex items-center space-x-3">
                                     <img src="https://images.pexels.com/photos/1539684/pexels-photo-1539684.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Product" class="w-10 h-10 rounded-lg object-cover">
@@ -301,7 +303,7 @@
                                     <p class="text-sm text-red-600">-5%</p>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                 <div class="flex items-center space-x-3">
                                     <img src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Product" class="w-10 h-10 rounded-lg object-cover">
@@ -343,7 +345,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -361,7 +363,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
@@ -379,7 +381,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -410,4 +412,5 @@
     <script src="script.js"></script>
     <script src="analytics.js"></script>
 </body>
+
 </html>

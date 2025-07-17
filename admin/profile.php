@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="bg-gray-50 font-sans">
     <?php include 'sidebar.php'; ?>
 
@@ -28,23 +30,23 @@
                             <i data-lucide="camera" class="w-5 h-5"></i>
                         </button>
                     </div>
-                    
+
                     <!-- Profile Info -->
                     <div class="relative px-6 pb-6">
                         <div class="flex flex-col sm:flex-row sm:items-end sm:space-x-6">
                             <!-- Avatar -->
                             <div class="relative -mt-16 mb-4 sm:mb-0">
-                                <img src="https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400" 
-                                     alt="Profile" 
-                                     class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
+                                <img src="https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400"
+                                    alt="Profile"
+                                    class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
                                 <button class="absolute bottom-2 right-2 bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-full shadow-lg transition-colors">
                                     <i data-lucide="camera" class="w-4 h-4"></i>
                                 </button>
                             </div>
-                            
+
                             <!-- User Info -->
                             <div class="flex-1">
-                                <h1 class="text-2xl font-bold text-gray-900">John Doe</h1>
+                                <h1 class="text-2xl font-bold text-gray-900">Kabri Acid</h1>
                                 <p class="text-gray-600 mb-2">Administrator</p>
                                 <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
                                     <div class="flex items-center">
@@ -65,7 +67,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Action Buttons -->
                             <div class="flex items-center space-x-3 mt-4 sm:mt-0">
                                 <button id="editProfileBtn" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center">
@@ -418,19 +420,19 @@
             // Handle form submission
             editProfileForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
+
                 // Show loading state
                 const submitBtn = e.target.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin inline"></i>Saving...';
                 submitBtn.disabled = true;
-                
+
                 // Simulate API call
                 setTimeout(() => {
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                     closeModal();
-                    
+
                     // Show success notification
                     showNotification('Profile updated successfully!', 'success');
                 }, 2000);
@@ -441,25 +443,25 @@
         function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
             notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
-            
+
             const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
             notification.className += ` ${bgColor} text-white`;
-            
+
             notification.innerHTML = `
                 <div class="flex items-center space-x-2">
                     <i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info'}" class="w-5 h-5"></i>
                     <span>${message}</span>
                 </div>
             `;
-            
+
             document.body.appendChild(notification);
             lucide.createIcons();
-            
+
             // Animate in
             setTimeout(() => {
                 notification.classList.remove('translate-x-full');
             }, 100);
-            
+
             // Animate out and remove
             setTimeout(() => {
                 notification.classList.add('translate-x-full');
@@ -470,4 +472,5 @@
         }
     </script>
 </body>
+
 </html>

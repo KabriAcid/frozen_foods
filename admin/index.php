@@ -106,26 +106,29 @@ require __DIR__ . '/../components/header.php';
                     const password = form.querySelector('input[type="password"]').value;
 
                     fetch("admin-auth.php", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ email, password }),
-                    })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.success) {
-                            showToasted(data.message, 'success');
-                            setTimeout(() => {
-                                window.location.href = "dashboard.php";
-                            }, 2000);
-                        } else {
-                            showToasted(data.message, 'error');
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Error:", error);
-                    });
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                email,
+                                password
+                            }),
+                        })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            if (data.success) {
+                                showToasted(data.message, 'success');
+                                setTimeout(() => {
+                                    window.location.href = "dashboard.php";
+                                }, 2000);
+                            } else {
+                                showToasted(data.message, 'error');
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error:", error);
+                        });
                 });
 
                 // Eye Toggle
@@ -149,4 +152,5 @@ require __DIR__ . '/../components/header.php';
         </script>
     </main>
 </body>
+
 </html>

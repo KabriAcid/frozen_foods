@@ -60,7 +60,7 @@ require __DIR__ . '/../../components/backend-header.php';
                                     </svg>
                                 </div>
                                 <div class="space-y-4">
-                                    <div><label class="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label><input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" placeholder="John Doe" value=""></div>
+                                    <div><label class="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label><input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" placeholder="Kabri Acid" value=""></div>
                                     <div><label class="block text-sm font-medium text-gray-700 mb-2">Card Number</label><input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" placeholder="1234 5678 9012 3456" value=""></div>
                                     <div class="grid grid-cols-2 gap-4">
                                         <div><label class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label><input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" placeholder="MM/YY" value=""></div>

@@ -15,6 +15,7 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,6 +27,7 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="bg-gray-50 font-sans">
     <!-- Sidebar -->
     <div id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0">
@@ -40,7 +42,7 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
         </div>
-        
+
         <nav class="mt-8">
             <div class="px-6 mb-6">
                 <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Main</h3>
@@ -65,7 +67,7 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
                 <i data-lucide="users" class="w-5 h-5 mr-3"></i>
                 <span>Users</span>
             </a>
-            
+
             <div class="px-6 mt-8 mb-6">
                 <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">System</h3>
             </div>
@@ -85,86 +87,86 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
     <div class="lg:ml-64">
         <!-- Top Navigation -->
         <!-- Top Navigation -->
-<header class="bg-white shadow-sm border-b border-gray-200">
-    <div class="flex items-center justify-between h-16 px-6">
-        <div class="flex items-center">
-            <button id="menuToggle" class="lg:hidden mr-4 text-gray-600 hover:text-gray-900">
-                <i data-lucide="menu" class="w-6 h-6"></i>
-            </button>
-            <h1 class="text-xl font-semibold text-gray-800"><?php echo $page_title; ?></h1>
-        </div>
-        
-        <div class="flex items-center space-x-4">
-            <div class="relative hidden md:block">
-                <input type="text" placeholder="Search <?php echo strtolower($page_title); ?>..." class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                <i data-lucide="search" class="absolute left-3 top-2.5 w-5 h-5 text-gray-400"></i>
-            </div>
-            
-            <button class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors">
-                <i data-lucide="bell" class="w-6 h-6"></i>
-                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
-            </button>
-            
-            <!-- User Dropdown -->
-            <div class="relative">
-                <button id="userDropdown" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                    <img src="https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400" alt="User" class="w-8 h-8 rounded-full">
-                    <span class="hidden md:block text-sm font-medium text-gray-700">John Doe</span>
-                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 transition-transform duration-200" id="dropdownIcon"></i>
-                </button>
-                
-                <!-- Dropdown Menu -->
-                <div id="userDropdownMenu" class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 opacity-0 invisible transform scale-95 transition-all duration-200 origin-top-right">
-                    <!-- User Info -->
-                    <div class="px-4 py-3 border-b border-gray-100">
-                        <div class="flex items-center space-x-3">
-                            <img src="https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400" alt="User" class="w-10 h-10 rounded-full">
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">John Doe</p>
-                                <p class="text-xs text-gray-500">Admin</p>
-                                <p class="text-xs text-gray-400">john.doe@frozenfood.com</p>
+        <header class="bg-white shadow-sm border-b border-gray-200">
+            <div class="flex items-center justify-between h-16 px-6">
+                <div class="flex items-center">
+                    <button id="menuToggle" class="lg:hidden mr-4 text-gray-600 hover:text-gray-900">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                    <h1 class="text-xl font-semibold text-gray-800"><?php echo $page_title; ?></h1>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative hidden md:block">
+                        <input type="text" placeholder="Search <?php echo strtolower($page_title); ?>..." class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        <i data-lucide="search" class="absolute left-3 top-2.5 w-5 h-5 text-gray-400"></i>
+                    </div>
+
+                    <button class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <i data-lucide="bell" class="w-6 h-6"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                    </button>
+
+                    <!-- User Dropdown -->
+                    <div class="relative">
+                        <button id="userDropdown" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                            <img src="https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400" alt="User" class="w-8 h-8 rounded-full">
+                            <span class="hidden md:block text-sm font-medium text-gray-700">Kabri Acid</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 transition-transform duration-200" id="dropdownIcon"></i>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div id="userDropdownMenu" class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 opacity-0 invisible transform scale-95 transition-all duration-200 origin-top-right">
+                            <!-- User Info -->
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <div class="flex items-center space-x-3">
+                                    <img src="https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400" alt="User" class="w-10 h-10 rounded-full">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900">Kabri Acid</p>
+                                        <p class="text-xs text-gray-500">Admin</p>
+                                        <p class="text-xs text-gray-400">john.doe@frozenfood.com</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Menu Items -->
+                            <div class="py-1">
+                                <a href="profile.php" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i data-lucide="user" class="w-4 h-4 mr-3 text-gray-400"></i>
+                                    My Profile
+                                </a>
+                                <a href="account-settings.php" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i data-lucide="settings" class="w-4 h-4 mr-3 text-gray-400"></i>
+                                    Account Settings
+                                </a>
+                                <a href="preferences.php" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i data-lucide="sliders" class="w-4 h-4 mr-3 text-gray-400"></i>
+                                    Preferences
+                                </a>
+                            </div>
+
+                            <div class="border-t border-gray-100 py-1">
+                                <a href="help.php" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i data-lucide="help-circle" class="w-4 h-4 mr-3 text-gray-400"></i>
+                                    Help & Support
+                                </a>
+                                <a href="activity-log.php" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i data-lucide="activity" class="w-4 h-4 mr-3 text-gray-400"></i>
+                                    Activity Log
+                                </a>
+                            </div>
+
+                            <div class="border-t border-gray-100 py-1">
+                                <button onclick="handleSignOut()" class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                    <i data-lucide="log-out" class="w-4 h-4 mr-3"></i>
+                                    Sign Out
+                                </button>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Menu Items -->
-                    <div class="py-1">
-                        <a href="profile.php" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                            <i data-lucide="user" class="w-4 h-4 mr-3 text-gray-400"></i>
-                            My Profile
-                        </a>
-                        <a href="account-settings.php" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                            <i data-lucide="settings" class="w-4 h-4 mr-3 text-gray-400"></i>
-                            Account Settings
-                        </a>
-                        <a href="preferences.php" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                            <i data-lucide="sliders" class="w-4 h-4 mr-3 text-gray-400"></i>
-                            Preferences
-                        </a>
-                    </div>
-                    
-                    <div class="border-t border-gray-100 py-1">
-                        <a href="help.php" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                            <i data-lucide="help-circle" class="w-4 h-4 mr-3 text-gray-400"></i>
-                            Help & Support
-                        </a>
-                        <a href="activity-log.php" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                            <i data-lucide="activity" class="w-4 h-4 mr-3 text-gray-400"></i>
-                            Activity Log
-                        </a>
-                    </div>
-                    
-                    <div class="border-t border-gray-100 py-1">
-                        <button onclick="handleSignOut()" class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
-                            <i data-lucide="log-out" class="w-4 h-4 mr-3"></i>
-                            Sign Out
-                        </button>
-                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</header>
+        </header>
 
         <!-- Dashboard Content -->
         <main class="p-6">
@@ -182,7 +184,7 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <div class="flex items-center justify-between">
                         <div>
@@ -195,7 +197,7 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <div class="flex items-center justify-between">
                         <div>
@@ -208,7 +210,7 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <div class="flex items-center justify-between">
                         <div>
@@ -232,7 +234,7 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
                         <canvas id="salesChart"></canvas>
                     </div>
                 </div>
-                
+
                 <!-- Orders Chart -->
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Orders by Category</h3>
@@ -268,7 +270,7 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
                                     </span>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -286,7 +288,7 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
                                     </span>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
@@ -333,7 +335,7 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <img src="https://images.pexels.com/photos/725997/pexels-photo-725997.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Salmon" class="w-12 h-12 rounded-lg object-cover">
@@ -349,7 +351,7 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <img src="https://images.pexels.com/photos/8447662/pexels-photo-8447662.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Turkey" class="w-12 h-12 rounded-lg object-cover">
@@ -380,4 +382,5 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
 
     <script src="script.js"></script>
 </body>
+
 </html>
