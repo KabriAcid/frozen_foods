@@ -3,6 +3,7 @@ session_start();
 require __DIR__ . '/../config/database.php';
 require __DIR__ . '/../components/header.php';
 ?>
+
 <body>
     <main class="dashboard">
         <div id="root">
@@ -302,8 +303,80 @@ require __DIR__ . '/../components/header.php';
                 </div>
             </div>
         </div>
-
     </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.querySelector("form");
+
+            form.addEventListener("submit", (e) => {
+                e.preventDefault(); // Prevent default form submission
+
+                const fullName = form.querySelector('input[type="text"]').value;
+                const email = form.querySelector('input[type="email"]').value;
+                const phone = form.querySelector('input[type="tel"]').value;
+                const password = form.querySelector('input[type="password"]').value;
+                const confirmPassword = form.querySelectorAll('input[type="password"]')[1].value;
+                const termsAccepted = form.querySelector('input[type="checkbox"]').checked;
+
+                if (!termsAccepted) {
+                    alert("You must accept the Terms of Service and Privacy Policy.");
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    alert("Passwords do not match.");
+                    return;
+                }
+
+                // AJAX request
+                fetch("../api/api_register.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            fullName,
+                            email,
+                            phone,
+                            password,
+                        }),
+                    })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            // Redirect to login page
+                            window.location.href = "login.php";
+                        } else {
+                            // Show error message
+                            alert(data.message);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
+            });
+
+            // Eye Toggle for Password Fields
+            const passwordInputs = form.querySelectorAll('input[type="password"]');
+            passwordInputs.forEach((input) => {
+                const eyeToggleBtn = input.nextElementSibling;
+
+                eyeToggleBtn.addEventListener("click", () => {
+                    const isPassword = input.type === "password";
+                    input.type = isPassword ? "text" : "password";
+                    eyeToggleBtn.innerHTML = isPassword ?
+                        `<svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-eye-off h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M17.94 17.94a10.94 10.94 0 0 1-5.94 1.94C5 19.88 2 12 2 12a21.05 21.05 0 0 1 4.29-6.29"/>
+                        <path d="M1 1l22 22"/>
+                    </svg>` :
+                        `<svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-eye h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12Z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>`;
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
