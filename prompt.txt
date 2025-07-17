@@ -1,0 +1,37 @@
+This project is a web-based platform called "Frozen Foods," designed to facilitate the ordering and delivery of frozen food products across Nigeria. It includes both customer-facing and admin-facing functionalities. The key aspects of the project are:
+
+### Frontend
+1. **Customer Interface**:
+   - A visually appealing homepage showcasing frozen food categories such as Premium Meats, Fresh Fish, Poultry, and Vegetables.
+   - Features include a hero section, product categories, regional delivery information, customer testimonials, and a call-to-action section.
+   - Responsive design using Tailwind CSS (via CDN) and Creative Tim Bootstrap for seamless user experience across devices.
+
+2. **Admin Dashboard**:
+   - Admins can manage orders, track deliveries, and oversee customer interactions.
+   - Includes features like search functionality, tabs for filtering products (e.g., Chicken, Fish, Turkey), and product cards with details like name, description, and price.
+
+### Backend
+1. **Authentication**:
+   - Secure login and registration system using PHP sessions.
+   - Admin and customer roles are managed via PHP PDO.
+
+2. **Database**:
+   - Stores user information, product details, orders, and delivery regions.
+   - Database connection is handled through `config/database.php`.
+
+3. **API**:
+   - APIs for login, registration, and order processing are implemented in the `api` directory.
+
+### Deployment
+- The project is structured for scalability and includes automated deployment workflows.
+
+### Technologies Used
+- **Frontend**: Tailwind CSS (via CDN), Creative Tim Bootstrap, Font Awesome.
+- **Backend**: PHP PDO for database interactions.
+- **Additional Libraries**: PHPMailer for email notifications, SweetAlert for alerts, and Lottie animations for enhanced UI.
+
+### Notes
+- React is not used in this project.
+- Tailwind CSS is included via CDN for simplicity.
+
+The goal of this project is to provide a seamless experience for customers to order frozen foods from various regions in Nigeria and ensure efficient delivery through advanced cold-chain logistics. Admins can manage the platform effectively using the dashboard.

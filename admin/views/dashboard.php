@@ -26,8 +26,13 @@ require __DIR__ . '/../../components/backend-header.php';
                                     <path d="m21 21-4.3-4.3"></path>
                                 </svg><input type="text" placeholder="Search..." class="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200" value=""></div>
                         </div>
-                        <div class="px-4 mb-6">
-                            <div class="flex space-x-2 overflow-x-auto scrollbar-hide"><button class="px-6 py-3 rounded-full whitespace-nowrap font-medium transition-all duration-200 bg-gray-100 text-gray-600 hover:bg-gray-200">All</button><button class="px-6 py-3 rounded-full whitespace-nowrap font-medium transition-all duration-200 bg-gray-100 text-gray-600 hover:bg-gray-200">Healthy food</button><button class="px-6 py-3 rounded-full whitespace-nowrap font-medium transition-all duration-200 bg-gray-100 text-gray-600 hover:bg-gray-200">Junk food</button><button class="px-6 py-3 rounded-full whitespace-nowrap font-medium transition-all duration-200 bg-gray-900 text-white shadow-lg">Dessert</button></div>
+                        <div class="px-4 mb-6 tabs">
+                            <div class="flex space-x-2 overflow-x-auto scrollbar-hide">
+                                <button class="px-6 py-3 rounded-full whitespace-nowrap font-medium transition-all duration-200 bg-gray-900 text-white hover:bg-gray-200 shadow">All</button>
+                                <button class="px-6 py-3 rounded-full whitespace-nowrap font-medium transition-all duration-200 bg-gray-100 text-gray-600 hover:bg-gray-200">Chicken</button>
+                                <button class="px-6 py-3 rounded-full whitespace-nowrap font-medium transition-all duration-200 bg-gray-100 text-gray-600 hover:bg-gray-200">Fish</button>
+                                <button class="px-6 py-3 rounded-full whitespace-nowrap font-medium transition-all duration-200 bg-gray-100 text-gray-600">Turkey</button>
+                            </div>
                         </div>
                         <div class="px-4 grid grid-cols-2 gap-4">
                             <div class="cursor-pointer">
