@@ -24,7 +24,7 @@ require __DIR__ . '/../../components/backend-header.php';
                             <div class="relative"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400">
                                     <circle cx="11" cy="11" r="8"></circle>
                                     <path d="m21 21-4.3-4.3"></path>
-                                </svg><input type="text" placeholder="Search..." class="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200" value=""></div>
+                                </svg><input type="text" placeholder="Search for chicken, fish, turkey..." class="search-input w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200" value=""></div>
                         </div>
                         <div class="px-4 mb-6 tabs">
                             <div class="flex space-x-2 overflow-x-auto scrollbar-hide">
@@ -35,37 +35,14 @@ require __DIR__ . '/../../components/backend-header.php';
                             </div>
                         </div>
                         <div class="px-4 grid grid-cols-2 gap-4">
-                            <div class="cursor-pointer">
-                                <div class="bg-white rounded-3xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
-                                    <div class="relative mb-4"><img src="https://images.pexels.com/photos/291528/pexels-photo-291528.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=400" alt="Chocolate Cake" class="w-full h-40 object-cover rounded-2xl"><button class="absolute top-3 right-3 p-2 rounded-full transition-all duration-200 bg-white text-gray-400 hover:text-red-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart w-5 h-5 ">
-                                                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                                            </svg></button></div>
-                                    <div class="space-y-2">
-                                        <h3 class="font-bold text-lg text-gray-900">Chocolate Cake</h3>
-                                        <p class="text-gray-500 text-sm">Rich chocolate layer cake</p>
-                                        <p class="font-bold text-xl text-gray-900">$8.99</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="cursor-pointer">
-                                <div class="bg-white rounded-3xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
-                                    <div class="relative mb-4"><img src="https://images.pexels.com/photos/1352278/pexels-photo-1352278.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=400" alt="Ice Cream Sundae" class="w-full h-40 object-cover rounded-2xl"><button class="absolute top-3 right-3 p-2 rounded-full transition-all duration-200 bg-white text-gray-400 hover:text-red-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart w-5 h-5 ">
-                                                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                                            </svg></button></div>
-                                    <div class="space-y-2">
-                                        <h3 class="font-bold text-lg text-gray-900">Ice Cream Sundae</h3>
-                                        <p class="text-gray-500 text-sm">Vanilla ice cream with toppings</p>
-                                        <p class="font-bold text-xl text-gray-900">$6.99</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <!-- Products will be dynamically inserted here -->
                         </div>
                     </div>
                 </div>
-                <!-- Bottom nav include -->
-                <?php include __DIR__ . '/../../components/backend-nav.php' ?>
             </div>
         </div>
+    </main>
+    <script src="../../assets/js/dashboard.js"></script>
 </body>
 
 </html>
