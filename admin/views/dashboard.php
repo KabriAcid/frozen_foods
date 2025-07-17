@@ -40,6 +40,7 @@ require __DIR__ . '/../../components/backend-header.php';
                     </div>
                 </div>
             </div>
+            <?php include __DIR__ . '/../../components/backend-nav.php' ?>
         </div>
     </main>
     <script src="../../assets/js/dashboard.js"></script>
