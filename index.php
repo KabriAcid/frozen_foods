@@ -39,10 +39,14 @@
                 </div>
                 <div class="hidden md:flex space-x-8">
                     <a href="#home" class="text-dark-custom hover:text-accent transition-colors">Home</a>
-                    <a href="#categories" class="text-dark-custom hover:text-accent transition-colors">Categories</a>
+                    <a href="pages/categories.php" class="text-dark-custom hover:text-accent transition-colors">Categories</a>
                     <a href="#delivery" class="text-dark-custom hover:text-accent transition-colors">Delivery</a>
                     <a href="#testimonials" class="text-dark-custom hover:text-accent transition-colors">Reviews</a>
                     <a href="#contact" class="text-dark-custom hover:text-accent transition-colors">Contact</a>
+                    <a href="pages/about.php" class="text-dark-custom hover:text-accent transition-colors">About</a>
+                    
+                    <a href="auth/login.php" class="text-accent font-semibold hover:underline">Login</a>
+                    <a href="auth/register.php" class="text-accent font-semibold hover:underline">Register</a>
                 </div>
                 <div class="md:hidden">
                     <button id="mobile-menu-btn" class="text-dark-custom">
@@ -54,10 +58,13 @@
             <div id="mobile-menu" class="hidden md:hidden pb-4">
                 <div class="flex flex-col space-y-2">
                     <a href="#home" class="text-dark-custom hover:text-accent transition-colors py-2">Home</a>
-                    <a href="#categories" class="text-dark-custom hover:text-accent transition-colors py-2">Categories</a>
+                    <a href="pages/categories.php" class="text-dark-custom hover:text-accent transition-colors py-2">Categories</a>
                     <a href="#delivery" class="text-dark-custom hover:text-accent transition-colors py-2">Delivery</a>
                     <a href="#testimonials" class="text-dark-custom hover:text-accent transition-colors py-2">Reviews</a>
                     <a href="#contact" class="text-dark-custom hover:text-accent transition-colors py-2">Contact</a>
+                    <a href="pages/about.php" class="text-accent font-semibold py-2">About</a>
+                    <a href="auth/login.php" class="text-accent font-semibold py-2">Login</a>
+                    <a href="auth/register.php" class="text-accent font-semibold py-2">Register</a>
                 </div>
             </div>
         </div>
@@ -75,7 +82,8 @@
                 From all regions of Nigeria, to your kitchen.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up-delay-2">
-                <button class="bg-white text-accent px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 btn-custom">
+                <button onclick="document.getElementById('categories').scrollIntoView({ behavior: 'smooth' });"
+                        class="bg-white text-accent px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 btn-custom">
                     Shop Now
                 </button>
                 <button class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-accent btn-custom">
@@ -107,9 +115,9 @@
                     <div class="p-6">
                         <h3 class="text-xl font-semibold text-dark-custom mb-2">Premium Meats</h3>
                         <p class="text-gray-600 mb-4">Quality beef, goat meat, and lamb from northern Nigeria</p>
-                        <button class="border-2 border-accent text-accent px-6 py-2 rounded-lg hover:bg-accent hover:text-white transition-all">
+                        <a href="pages/categories.php" class="border-2 border-accent text-accent px-6 py-2 rounded-lg hover:bg-accent hover:text-white transition-all inline-block text-center">
                             Explore
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -125,9 +133,9 @@
                     <div class="p-6">
                         <h3 class="text-xl font-semibold text-dark-custom mb-2">Fresh Fish</h3>
                         <p class="text-gray-600 mb-4">Ocean-fresh fish from coastal regions</p>
-                        <button class="border-2 border-accent text-accent px-6 py-2 rounded-lg hover:bg-accent hover:text-white transition-all">
+                        <a href="pages/categories.php" class="border-2 border-accent text-accent px-6 py-2 rounded-lg hover:bg-accent hover:text-white transition-all inline-block text-center">
                             Explore
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -143,9 +151,9 @@
                     <div class="p-6">
                         <h3 class="text-xl font-semibold text-dark-custom mb-2">Poultry</h3>
                         <p class="text-gray-600 mb-4">Farm-fresh chicken, turkey, and duck</p>
-                        <button class="border-2 border-accent text-accent px-6 py-2 rounded-lg hover:bg-accent hover:text-white transition-all">
+                        <a href="pages/categories.php" class="border-2 border-accent text-accent px-6 py-2 rounded-lg hover:bg-accent hover:text-white transition-all inline-block text-center">
                             Explore
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -161,9 +169,9 @@
                     <div class="p-6">
                         <h3 class="text-xl font-semibold text-dark-custom mb-2">Vegetables</h3>
                         <p class="text-gray-600 mb-4">Fresh vegetables and local produce</p>
-                        <button class="border-2 border-accent text-accent px-6 py-2 rounded-lg hover:bg-accent hover:text-white transition-all">
+                        <a href="pages/categories.php" class="border-2 border-accent text-accent px-6 py-2 rounded-lg hover:bg-accent hover:text-white transition-all inline-block text-center">
                             Explore
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -392,7 +400,13 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Customer Service</h4>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-300 hover:text-accent transition-colors">About Us</a></li>
+                        <li><a href="pages/about.php"
+                               class="<?php echo basename($_SERVER['PHP_SELF']) == 'about.php' ? 'text-accent font-semibold' : 'text-gray-300 hover:text-accent transition-colors'; ?>">
+                               About Us
+                            </a>
+                        </li>
+                        <li><a href="auth/login.php" class="text-gray-300 hover:text-accent transition-colors">Login</a></li>
+                        <li><a href="auth/register.php" class="text-gray-300 hover:text-accent transition-colors">Register</a></li>
                         <li><a href="#" class="text-gray-300 hover:text-accent transition-colors">Contact Support</a></li>
                         <li><a href="#" class="text-gray-300 hover:text-accent transition-colors">FAQ</a></li>
                         <li><a href="#" class="text-gray-300 hover:text-accent transition-colors">Delivery Policy</a></li>
