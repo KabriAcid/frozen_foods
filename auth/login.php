@@ -67,28 +67,61 @@ require __DIR__ . '/../components/header.php';
                 </div>
             </div>
         </div>
+        <!-- filepath: c:\xampp\htdocs\frozen_foods\auth\login.php -->
         <script>
             document.addEventListener("DOMContentLoaded", () => {
-                const emailInput = document.querySelector('input[type="email"]');
-                const passwordInput = document.querySelector('input[type="password"]');
-                const eyeToggleBtn = passwordInput.nextElementSibling;
                 const form = document.querySelector("form");
 
+                form.addEventListener("submit", (e) => {
+                    e.preventDefault(); // Prevent default form submission
+
+                    const email = form.querySelector('input[type="email"]').value;
+                    const password = form.querySelector('input[type="password"]').value;
+
+                    // AJAX request
+                    fetch("../api/api_login.php", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                email,
+                                password
+                            }),
+                        })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            if (data.success) {
+                                // Redirect to dashboard
+                                console.log(data.success);
+                                // window.location.href = "./admin/views/dashboard.php";
+                            } else {
+                                // Show error message
+                                alert(data.message);
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error:", error);
+                        });
+                });
+
                 // Eye Toggle
+                const passwordInput = form.querySelector('input[type="password"]');
+                const eyeToggleBtn = passwordInput.nextElementSibling;
+
                 eyeToggleBtn.addEventListener("click", () => {
                     const isPassword = passwordInput.type === "password";
                     passwordInput.type = isPassword ? "text" : "password";
                     eyeToggleBtn.innerHTML = isPassword ?
                         `<svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-eye-off h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path d="M17.94 17.94a10.94 10.94 0 0 1-5.94 1.94C5 19.88 2 12 2 12a21.05 21.05 0 0 1 4.29-6.29"/>
-                            <path d="M1 1l22 22"/>
-                            </svg>` :
+                    <path d="M17.94 17.94a10.94 10.94 0 0 1-5.94 1.94C5 19.88 2 12 2 12a21.05 21.05 0 0 1 4.29-6.29"/>
+                    <path d="M1 1l22 22"/>
+                </svg>` :
                         `<svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-eye h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12Z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>`;
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12Z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>`;
                 });
-
             });
         </script>
 </body>
