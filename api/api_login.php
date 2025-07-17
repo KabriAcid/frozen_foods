@@ -16,11 +16,11 @@ try {
     }
 
     // Validate user credentials
-    $stmt = $pdo->prepare("SELECT id, password FROM users WHERE email = ?");
+    $stmt = $pdo->prepare("SELECT id, password_hash FROM users WHERE email = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
-    if ($user && password_verify($password, $user['password'])) {
+    if ($user && password_verify($password, $user['password_hash'])) {
         $_SESSION['user_id'] = $user['id'];
         echo json_encode(['success' => true, 'message' => 'Login successful.']);
     } else {

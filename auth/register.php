@@ -229,7 +229,6 @@ require __DIR__ . '/../components/header.php';
                             </div>
                             <button
                                 type="submit"
-                                disabled=""
                                 class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 rounded-2xl font-bold text-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2">
                                 <span>Create Account</span><svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -303,7 +302,15 @@ require __DIR__ . '/../components/header.php';
                 </div>
             </div>
         </div>
+
+        <!-- Overlay -->
+        <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="text-white text-lg font-bold">Processing...</div>
+        </div>
+        <!-- End Overlay -->
     </main>
+    <script src="../assets/js/toasted.js"></script>
+    <script src="../assets/js/toggle-password.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const form = document.querySelector("form");
@@ -318,6 +325,9 @@ require __DIR__ . '/../components/header.php';
                 const confirmPassword = form.querySelectorAll('input[type="password"]')[1].value;
                 const termsAccepted = form.querySelector('input[type="checkbox"]').checked;
 
+                const overlay = document.getElementById("overlay");
+
+
                 if (!termsAccepted) {
                     alert("You must accept the Terms of Service and Privacy Policy.");
                     return;
@@ -327,6 +337,9 @@ require __DIR__ . '/../components/header.php';
                     alert("Passwords do not match.");
                     return;
                 }
+
+                // Show overlay
+                overlay.classList.remove("hidden");
 
                 // AJAX request
                 fetch("../api/api_register.php", {
@@ -343,16 +356,24 @@ require __DIR__ . '/../components/header.php';
                     })
                     .then((response) => response.json())
                     .then((data) => {
+                        overlay.classList.add("hidden"); // Hide overlay
+
                         if (data.success) {
                             // Redirect to login page
-                            window.location.href = "login.php";
+                            showToasted(data.message, 'success');
+                            setTimeout(() => {
+                                window.location.href = "login.php";
+                            }, timeout = 2000);
                         } else {
                             // Show error message
-                            alert(data.message);
+                            showToasted(data.message, 'error');
                         }
                     })
                     .catch((error) => {
+                        overlay.classList.add("hidden"); // Hide overlay
                         console.error("Error:", error);
+                        alert("An unexpected error occurred.");
+
                     });
             });
 

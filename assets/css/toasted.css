@@ -20,7 +20,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(26, 26, 26, 0.95);
+    background: rgba(249, 115, 22, 0.95);
     color: var(--toasted-cream);
     border-radius: 18px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);

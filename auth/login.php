@@ -26,7 +26,7 @@ require __DIR__ . '/../components/header.php';
                                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail h-5 w-5 text-gray-400">
                                                 <rect width="20" height="16" x="2" y="4" rx="2"></rect>
                                                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                                            </svg></div><input type="email" class="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200" placeholder="Enter your email" required="" value="">
+                                            </svg></div><input type="email" class="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200" placeholder="Enter your email" value="">
                                     </div>
                                 </div>
                                 <div class="space-y-2"><label class="text-sm font-medium text-gray-700 block">Password</label>
@@ -34,7 +34,7 @@ require __DIR__ . '/../components/header.php';
                                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock h-5 w-5 text-gray-400">
                                                 <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
                                                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                                            </svg></div><input type="password" class="w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200" placeholder="Enter your password" required="" value=""><button type="button" class="absolute inset-y-0 right-0 pr-4 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                                            </svg></div><input type="password" class="w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200" placeholder="Enter your password" value=""><button type="button" class="absolute inset-y-0 right-0 pr-4 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors duration-200">
                                                 <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
                                                 <circle cx="12" cy="12" r="3"></circle>
                                             </svg></button>
@@ -67,7 +67,8 @@ require __DIR__ . '/../components/header.php';
                 </div>
             </div>
         </div>
-        <!-- filepath: c:\xampp\htdocs\frozen_foods\auth\login.php -->
+        <script src="../assets/js/toasted.js"></script>
+        <script src="../assets/js/toggle-password.js"></script>
         <script>
             document.addEventListener("DOMContentLoaded", () => {
                 const form = document.querySelector("form");
@@ -93,11 +94,13 @@ require __DIR__ . '/../components/header.php';
                         .then((data) => {
                             if (data.success) {
                                 // Redirect to dashboard
-                                console.log(data.success);
-                                // window.location.href = "./admin/views/dashboard.php";
+                                showToasted(data.message, 'success');
+                                setTimeout(() => {
+                                    window.location.href = "../admin/views/dashboard.php";
+                                }, timeout = 2000);
                             } else {
                                 // Show error message
-                                alert(data.message);
+                                showToasted(data.message, 'error');
                             }
                         })
                         .catch((error) => {

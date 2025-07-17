@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../../config/database.php';
 require __DIR__ . '/../../config/auth.php';
-require __DIR__ . '/../../components/header.php';
+require __DIR__ . '/../../components/backend-header.php';
 ?>
 
 <body>

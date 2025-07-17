@@ -18,9 +18,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <!-- Toasted library -->
-    <link rel="stylesheet" href="../assets/css/toasted.css">
+    <link rel="stylesheet" href="../../assets/css/toasted.css">
     <!-- Custom stylesheets -->
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
 
     <style>
         body {
