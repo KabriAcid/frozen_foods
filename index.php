@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FreshFreeze Nigeria - Fresh Frozen Foods Delivered</title>
+    <title>Frozen Food - Fresh Frozen Foods Delivered</title>
+    <link rel="shortcut icon" href="assets/img/favicon.png" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="index.css">
     <script>
         tailwind.config = {
             theme: {
@@ -29,11 +30,12 @@
 
 <body class="font-dm-sans">
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full bg-white shadow-md z-50">
+    <nav class="fixed top-0 w-full bg-white shadow-lg z-50">
         <div class="max-w-6xl mx-auto px-4">
             <div class="flex justify-between items-center py-4">
                 <div class="text-2xl font-bold text-accent">
-                    FreshFreeze Nigeria
+                    <img src="assets/img/favicon.png" class="inline-block w-8 h-8 mr-2">
+                    <span>Frozen Food</span>
                 </div>
                 <div class="hidden md:flex space-x-8">
                     <a href="#home" class="text-dark-custom hover:text-accent transition-colors">Home</a>
@@ -359,7 +361,7 @@
         <div class="max-w-6xl mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
                 <div>
-                    <h3 class="text-2xl font-bold text-accent mb-4">FreshFreeze Nigeria</h3>
+                    <h3 class="text-2xl font-bold text-accent mb-4">Frozen Food</h3>
                     <p class="text-gray-300 mb-4 leading-relaxed">
                         Nigeria's leading frozen food delivery platform, bringing fresh quality from farm to your table.
                     </p>
@@ -415,7 +417,7 @@
                 </div>
             </div>
             <div class="border-t border-gray-700 pt-8 text-center">
-                <p class="text-gray-400">&copy; 2025 FreshFreeze Nigeria. All rights reserved.</p>
+                <p class="text-gray-400">&copy; 2025 Frozen Food. All rights reserved.</p>
             </div>
         </div>
     </footer>
