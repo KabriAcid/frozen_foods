@@ -48,8 +48,6 @@
                             <p class="text-sm font-medium text-gray-600">Total Revenue</p>
                             <p class="text-2xl font-bold text-gray-900">$45,231</p>
                             <p class="text-sm text-green-600 flex items-center mt-1">
-                                <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
-                                +12.5% from last month
                             </p>
                         </div>
                         <div class="bg-green-50 p-3 rounded-lg">
@@ -64,8 +62,6 @@
                             <p class="text-sm font-medium text-gray-600">Total Orders</p>
                             <p class="text-2xl font-bold text-gray-900">1,847</p>
                             <p class="text-sm text-green-600 flex items-center mt-1">
-                                <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
-                                +8.2% from last month
                             </p>
                         </div>
                         <div class="bg-blue-50 p-3 rounded-lg">
@@ -80,8 +76,6 @@
                             <p class="text-sm font-medium text-gray-600">Active Users</p>
                             <p class="text-2xl font-bold text-gray-900">892</p>
                             <p class="text-sm text-red-600 flex items-center mt-1">
-                                <i data-lucide="trending-down" class="w-4 h-4 mr-1"></i>
-                                -3.1% from last month
                             </p>
                         </div>
                         <div class="bg-purple-50 p-3 rounded-lg">
@@ -96,8 +90,6 @@
                             <p class="text-sm font-medium text-gray-600">Avg Order Value</p>
                             <p class="text-2xl font-bold text-gray-900">$24.50</p>
                             <p class="text-sm text-green-600 flex items-center mt-1">
-                                <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
-                                +5.7% from last month
                             </p>
                         </div>
                         <div class="bg-orange-50 p-3 rounded-lg">

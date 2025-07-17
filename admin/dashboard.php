@@ -14,7 +14,6 @@
                         <div>
                             <p class="text-sm font-medium text-gray-600">Total Orders</p>
                             <p class="text-3xl font-bold text-gray-900">1,234</p>
-                            <p class="text-sm text-green-600 mt-1">+12% from last month</p>
                         </div>
                         <div class="bg-blue-50 p-3 rounded-lg">
                             <i data-lucide="shopping-cart" class="w-6 h-6 text-blue-600"></i>
@@ -27,7 +26,6 @@
                         <div>
                             <p class="text-sm font-medium text-gray-600">Revenue</p>
                             <p class="text-3xl font-bold text-gray-900">$45,678</p>
-                            <p class="text-sm text-green-600 mt-1">+8% from last month</p>
                         </div>
                         <div class="bg-green-50 p-3 rounded-lg">
                             <i data-lucide="dollar-sign" class="w-6 h-6 text-green-600"></i>
@@ -40,7 +38,6 @@
                         <div>
                             <p class="text-sm font-medium text-gray-600">Active Users</p>
                             <p class="text-3xl font-bold text-gray-900">892</p>
-                            <p class="text-sm text-orange-600 mt-1">+5% from last month</p>
                         </div>
                         <div class="bg-orange-50 p-3 rounded-lg">
                             <i data-lucide="users" class="w-6 h-6 text-orange-600"></i>
@@ -53,7 +50,6 @@
                         <div>
                             <p class="text-sm font-medium text-gray-600">Reviews</p>
                             <p class="text-3xl font-bold text-gray-900">4.8</p>
-                            <p class="text-sm text-green-600 mt-1">+0.2 from last month</p>
                         </div>
                         <div class="bg-yellow-50 p-3 rounded-lg">
                             <i data-lucide="star" class="w-6 h-6 text-yellow-600"></i>

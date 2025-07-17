@@ -1,15 +1,15 @@
 <?php
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
-                                                                    $page_titles = [
-                                                                        'dashboard' => 'Dashboard',
-                                                                        'orders' => 'Orders',
-                                                                        'products' => 'Products',
-                                                                        'analytics' => 'Analytics',
-                                                                        'users' => 'Users',
-                                                                        'notifications' => 'Notifications',
-                                                                        'settings' => 'Settings'
-                                                                    ];
-                                                                    $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] : 'Admin';
+$page_titles = [
+    'dashboard' => 'Dashboard',
+    'orders' => 'Orders',
+    'products' => 'Products',
+    'analytics' => 'Analytics',
+    'users' => 'Users',
+    'notifications' => 'Notifications',
+    'settings' => 'Settings'
+];
+$page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] : 'Admin';
 ?>
 
 <!-- Sidebar -->
