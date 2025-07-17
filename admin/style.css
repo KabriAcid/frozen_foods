@@ -7,7 +7,7 @@
     --secondary-color: #ff7272;
 }
 * {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'DM Sans', sans-serif!important;
 }
 
 body {

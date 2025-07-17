@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-50 font-sans">
     <!-- Sidebar -->
@@ -57,7 +57,7 @@
                 <span class="font-medium">Notifications</span>
                 <span class="ml-auto bg-orange-500 text-white text-xs rounded-full px-2 py-1">3</span>
             </a>
-            <a href="settings.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-700">
+            <a href="settings.php" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-700">
                 <i data-lucide="settings" class="w-5 h-5 mr-3"></i>
                 <span>Settings</span>
             </a>

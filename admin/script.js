@@ -208,3 +208,71 @@ window.dashboardUtils = {
   showLoading,
   hideLoading,
 };
+
+
+// User dropdown functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const userDropdown = document.getElementById('userDropdown');
+    const userDropdownMenu = document.getElementById('userDropdownMenu');
+    const dropdownIcon = document.getElementById('dropdownIcon');
+    let isDropdownOpen = false;
+
+    // Toggle dropdown
+    userDropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleDropdown();
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!userDropdown.contains(e.target) && !userDropdownMenu.contains(e.target)) {
+            closeDropdown();
+        }
+    });
+
+    // Close dropdown on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isDropdownOpen) {
+            closeDropdown();
+        }
+    });
+
+    function toggleDropdown() {
+        if (isDropdownOpen) {
+            closeDropdown();
+        } else {
+            openDropdown();
+        }
+    }
+
+    function openDropdown() {
+        userDropdownMenu.classList.remove('opacity-0', 'invisible', 'scale-95');
+        userDropdownMenu.classList.add('opacity-100', 'visible', 'scale-100');
+        dropdownIcon.style.transform = 'rotate(180deg)';
+        isDropdownOpen = true;
+    }
+
+    function closeDropdown() {
+        userDropdownMenu.classList.remove('opacity-100', 'visible', 'scale-100');
+        userDropdownMenu.classList.add('opacity-0', 'invisible', 'scale-95');
+        dropdownIcon.style.transform = 'rotate(0deg)';
+        isDropdownOpen = false;
+    }
+});
+
+// Sign out functionality
+function handleSignOut() {
+    if (confirm('Are you sure you want to sign out?')) {
+        // Show loading state
+        const signOutBtn = event.target.closest('button');
+        const originalContent = signOutBtn.innerHTML;
+        signOutBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-3 animate-spin"></i>Signing out...';
+        signOutBtn.disabled = true;
+        
+        // Simulate sign out process
+        setTimeout(() => {
+            // Redirect to login page
+            window.location.href = 'login.php';
+        }, 1500);
+    }
+}
