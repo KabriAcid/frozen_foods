@@ -67,6 +67,30 @@ require __DIR__ . '/../components/header.php';
                 </div>
             </div>
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const emailInput = document.querySelector('input[type="email"]');
+                const passwordInput = document.querySelector('input[type="password"]');
+                const eyeToggleBtn = passwordInput.nextElementSibling;
+                const form = document.querySelector("form");
+
+                // Eye Toggle
+                eyeToggleBtn.addEventListener("click", () => {
+                    const isPassword = passwordInput.type === "password";
+                    passwordInput.type = isPassword ? "text" : "password";
+                    eyeToggleBtn.innerHTML = isPassword ?
+                        `<svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-eye-off h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M17.94 17.94a10.94 10.94 0 0 1-5.94 1.94C5 19.88 2 12 2 12a21.05 21.05 0 0 1 4.29-6.29"/>
+                            <path d="M1 1l22 22"/>
+                            </svg>` :
+                        `<svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-eye h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12Z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>`;
+                });
+
+            });
+        </script>
 </body>
 
 </html>
