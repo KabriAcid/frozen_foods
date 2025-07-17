@@ -1,15 +1,15 @@
 <?php
+session_start();
 require __DIR__ . '/../config/database.php';
-require __DIR__ . '/../config/auth.php';
 require __DIR__ . '/../components/header.php';
 ?>
 <body>
     <main class="dashboard">
         <div id="root">
             <div
-                class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center p-4">
+                class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
                 <div class="w-full max-w-md">
-                    <div class="text-center mb-8">
+                    <div class="text-center mb-6">
                         <div
                             class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-orange-400 to-orange-600 rounded-3xl shadow-lg flex items-center justify-center">
                             <div

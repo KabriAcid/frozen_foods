@@ -1,6 +1,6 @@
 <?php
+session_start();
 require __DIR__ . '/../config/database.php';
-require __DIR__ . '/../config/auth.php';
 require __DIR__ . '/../components/header.php';
 ?>
 
@@ -8,16 +8,16 @@ require __DIR__ . '/../components/header.php';
     <main class="dashboard">
         <div id="root">
             <div class="min-h-screen bg-gray-50">
-                <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center p-4">
+                <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
                     <div class="w-full max-w-md">
-                        <div class="text-center mb-12">
+                        <div class="text-center mb-6">
                             <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-orange-400 to-orange-600 rounded-3xl shadow-lg flex items-center justify-center">
                                 <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center">
                                     <div class="w-6 h-6 bg-gradient-to-br from-orange-400 to-orange-600 rounded-lg"></div>
                                 </div>
                             </div>
                             <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-                            <p class="text-gray-500 text-lg">Sign in to continue your culinary journey</p>
+                            <p class="text-gray-500 text-lg">Sign in to continue.</p>
                         </div>
                         <div class="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
                             <form class="space-y-6">
