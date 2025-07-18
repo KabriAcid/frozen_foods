@@ -21,7 +21,39 @@ require_once 'partials/headers.php';
                 </div>
                 <div class="relative">
                     <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl border border-white/30 flex items-center justify-center">
-                        <i class="fas fa-snowflake text-white text-xl"></i>
+                        <!-- <i class="fas fa-snowflake text-white text-xl"></i> -->
+                        <div class="w-10 h-10 flex items-center justify-center">
+                            <!-- Cart Icon SVG -->
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Cart body -->
+                                <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V16.5"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round" />
+
+                                <!-- Cart wheels -->
+                                <circle cx="9" cy="20" r="1"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round" />
+
+                                <circle cx="20" cy="20" r="1"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round" />
+
+                                <!-- Premium accent line (optional highlight) -->
+                                <path d="M8 9H19"
+                                    stroke="currentColor"
+                                    stroke-width="1.5"
+                                    stroke-linecap="round"
+                                    opacity="0.6" />
+                            </svg>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -112,47 +144,8 @@ require_once 'partials/headers.php';
         </div>
     </main>
 
-    <!-- Premium Mobile Bottom Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 glass-effect border-t border-gray-200/50 safe-area-bottom z-50 animate-slide-up" style="animation-delay: 0.5s;">
-        <div class="grid grid-cols-4 h-20 px-2">
-            <!-- Dashboard -->
-            <a href="dashboard.php" class="nav-item nav-item-active flex flex-col items-center justify-center space-y-1 relative group">
-                <div class="nav-indicator"></div>
-                <div class="nav-icon w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center transition-all duration-300 group-hover:bg-accent/20">
-                    <i class="fas fa-home text-lg transition-all duration-300"></i>
-                </div>
-                <span class="text-xs font-semibold transition-all duration-300">Dashboard</span>
-            </a>
-
-            <!-- Orders -->
-            <a href="orders.php" class="nav-item flex flex-col items-center justify-center space-y-1 text-gray-500 hover:text-accent transition-all duration-300 relative group">
-                <div class="nav-indicator"></div>
-                <div class="nav-icon w-12 h-12 rounded-2xl bg-transparent flex items-center justify-center transition-all duration-300 group-hover:bg-accent/10">
-                    <i class="fas fa-shopping-cart text-lg transition-all duration-300"></i>
-                </div>
-                <span class="text-xs font-semibold transition-all duration-300">Orders</span>
-            </a>
-
-            <!-- Notifications -->
-            <a href="notifications.php" class="nav-item flex flex-col items-center justify-center space-y-1 text-gray-500 hover:text-accent transition-all duration-300 relative group">
-                <div class="nav-indicator"></div>
-                <div class="nav-icon w-12 h-12 rounded-2xl bg-transparent flex items-center justify-center transition-all duration-300 group-hover:bg-accent/10 relative">
-                    <i class="fas fa-bell text-lg transition-all duration-300"></i>
-                    <div class="notification-badge"></div>
-                </div>
-                <span class="text-xs font-semibold transition-all duration-300">Notifications</span>
-            </a>
-
-            <!-- Profile -->
-            <a href="profile.php" class="nav-item flex flex-col items-center justify-center space-y-1 text-gray-500 hover:text-accent transition-all duration-300 relative group">
-                <div class="nav-indicator"></div>
-                <div class="nav-icon w-12 h-12 rounded-2xl bg-transparent flex items-center justify-center transition-all duration-300 group-hover:bg-accent/10">
-                    <i class="fas fa-user text-lg transition-all duration-300"></i>
-                </div>
-                <span class="text-xs font-semibold transition-all duration-300">Profile</span>
-            </a>
-        </div>
-    </nav>
+    <!-- Bottom navigation include -->
+    <?php include 'partials/bottom-nav.php'; ?>
 
     <script src="js/dashboard.js"></script>
     <script>

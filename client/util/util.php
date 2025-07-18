@@ -101,6 +101,23 @@ function changeUserPassword($pdo, $user_id, $current_password, $new_password)
     }
 }
 
+function getAllNotifications($pdo, $user_id = null)
+{
+    try {
+        if ($user_id) {
+            $stmt = $pdo->prepare("SELECT * FROM notifications WHERE user_id = :user_id ORDER BY created_at DESC");
+            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $stmt->execute();
+        } else {
+            $stmt = $pdo->query("SELECT * FROM notifications ORDER BY created_at DESC");
+        }
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching notifications: " . $e->getMessage());
+        return [];
+    }
+}
+
 /**
  * Update notification preferences
  * @param PDO $pdo

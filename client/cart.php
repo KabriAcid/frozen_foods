@@ -61,34 +61,6 @@ $total = $subtotal + $delivery_fee;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-gray font-dm">
-    <!-- Sidebar -->
-    <div id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0">
-        <div class="p-6">
-            <h2 class="text-xl font-bold text-dark">Frozen Foods</h2>
-        </div>
-        <nav class="mt-6">
-            <a href="dashboard.php" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50">
-                <i class="fas fa-home mr-3"></i>
-                Dashboard
-            </a>
-            <a href="orders.php" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50">
-                <i class="fas fa-shopping-cart mr-3"></i>
-                Orders
-            </a>
-            <a href="favorites.php" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50">
-                <i class="fas fa-heart mr-3"></i>
-                Favorites
-            </a>
-            <a href="profile.php" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50">
-                <i class="fas fa-user mr-3"></i>
-                Profile
-            </a>
-        </nav>
-    </div>
-
-    <!-- Sidebar Overlay -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
-
     <!-- Main Content -->
     <div class="lg:ml-64">
         <!-- Header -->

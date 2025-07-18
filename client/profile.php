@@ -12,6 +12,7 @@ $user = [
 ];
 require_once 'partials/headers.php';
 ?>
+
 <body class="bg-gray font-dm pb-24 overflow-x-hidden">
     <!-- Main Content -->
     <main class="px-4 pt-6 space-y-6 animate-fade-in">
@@ -221,51 +222,9 @@ require_once 'partials/headers.php';
             </button>
         </div>
     </main>
-
-    <!-- Premium Mobile Bottom Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 glass-effect border-t border-gray-200/50 safe-area-bottom z-50 animate-slide-up" style="animation-delay: 0.6s;">
-        <div class="grid grid-cols-4 h-20 px-2">
-            <!-- Dashboard -->
-            <a href="index.php" class="nav-item flex flex-col items-center justify-center space-y-1 text-gray-500 hover:text-accent transition-all duration-300 relative group">
-                <div class="nav-indicator"></div>
-                <div class="nav-icon w-12 h-12 rounded-2xl bg-transparent flex items-center justify-center transition-all duration-300 group-hover:bg-accent/10">
-                    <i class="fas fa-home text-lg transition-all duration-300"></i>
-                </div>
-                <span class="text-xs font-semibold transition-all duration-300">Dashboard</span>
-            </a>
-
-            <!-- Orders -->
-            <a href="orders.php" class="nav-item flex flex-col items-center justify-center space-y-1 text-gray-500 hover:text-accent transition-all duration-300 relative group">
-                <div class="nav-indicator"></div>
-                <div class="nav-icon w-12 h-12 rounded-2xl bg-transparent flex items-center justify-center transition-all duration-300 group-hover:bg-accent/10">
-                    <i class="fas fa-shopping-cart text-lg transition-all duration-300"></i>
-                </div>
-                <span class="text-xs font-semibold transition-all duration-300">Orders</span>
-            </a>
-
-            <!-- Notifications -->
-            <a href="notifications.php" class="nav-item flex flex-col items-center justify-center space-y-1 text-gray-500 hover:text-accent transition-all duration-300 relative group">
-                <div class="nav-indicator"></div>
-                <div class="nav-icon w-12 h-12 rounded-2xl bg-transparent flex items-center justify-center transition-all duration-300 group-hover:bg-accent/10 relative">
-                    <i class="fas fa-bell text-lg transition-all duration-300"></i>
-                    <div class="notification-badge"></div>
-                </div>
-                <span class="text-xs font-semibold transition-all duration-300">Notifications</span>
-            </a>
-
-            <!-- Profile -->
-            <a href="profile.php" class="nav-item nav-item-active flex flex-col items-center justify-center space-y-1 relative group">
-                <div class="nav-indicator"></div>
-                <div class="nav-icon w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center transition-all duration-300 group-hover:bg-accent/20">
-                    <i class="fas fa-user text-lg transition-all duration-300"></i>
-                </div>
-                <span class="text-xs font-semibold transition-all duration-300">Profile</span>
-            </a>
-        </div>
-    </nav>
-
+    <!-- Bottom navigation include -->
+    <?php include 'partials/bottom-nav.php'; ?>
     <!-- Modals -->
-
     <!-- Sign Out Modal -->
     <div id="signOutModal" class="fixed inset-0 modal-overlay z-50 hidden">
         <div class="flex items-center justify-center min-h-screen px-4">
