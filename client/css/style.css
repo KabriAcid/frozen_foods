@@ -461,3 +461,9 @@ input:checked+.slider:before {
 .bottom-nav-item.activating {
   animation: navActivate 0.3s ease-out;
 }
+
+/* Accent color on hover for non-active notification filter buttons */
+.notification-filter:not(.active):hover {
+    color: var(--accent-color, #ff6600);
+    transition: background 0.2s, color 0.2s;
+}

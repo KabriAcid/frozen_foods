@@ -5,5 +5,11 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: /frozen_foods/auth/login.php");
     exit();
 }
-
-$user_id = $_SESSION['user_id'];
+try {
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    error_log("Database error: " . $e->getMessage());
+    exit();
+}

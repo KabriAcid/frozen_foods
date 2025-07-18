@@ -64,16 +64,18 @@ require_once 'partials/headers.php';
     <!-- Main Content -->
     <main class="px-4 pt-6 space-y-6 animate-fade-in">
         <!-- Page Header -->
-        <div class="animate-slide-up">
-            <div class="flex items-center justify-between mb-2">
-                <div>
-                    <h1 class="text-2xl font-bold text-dark">My Orders</h1>
-                    <p class="text-gray-500 text-sm">Track your order history</p>
-                </div>
-                <button id="refresh-btn" class="w-12 h-12 bg-white rounded-2xl shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95">
-                    <i class="fas fa-sync-alt text-accent text-lg"></i>
-                </button>
-            </div>
+        <div class="flex justify-between items-center mb-8">
+            <button id="backBtn" class="p-3 hover:bg-white rounded-xl transition-all duration-300 floating-card">
+                <svg class="w-6 h-6 text-custom-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+
+            <h1 class="text-2xl font-bold text-custom-dark">Orders</h1>
+
+            <button class="text-custom-accent font-semibold hover:opacity-80 transition-opacity duration-200">
+                <i data-lucide="cart" class="fas fa-cart text-accent text-lg"></i>
+            </button>
         </div>
 
         <!-- Order Stats -->
