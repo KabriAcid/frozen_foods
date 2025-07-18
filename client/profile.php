@@ -878,7 +878,7 @@ $user = [
             // Simulate sign out process
             setTimeout(() => {
                 // Redirect to login page or handle sign out
-                window.location.href = 'login.php';
+                window.location.href = 'logout.php';
             }, 2000);
         }
 
