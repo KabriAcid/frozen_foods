@@ -288,6 +288,23 @@ function isProductFavorite($pdo, $user_id, $product_id)
     }
 }
 
+
+function getStatusInfo($status)
+{
+    switch ($status) {
+        case 'delivered':
+            return ['color' => 'text-green-600', 'bg' => 'bg-green-100', 'icon' => 'fas fa-check-circle'];
+        case 'processing':
+            return ['color' => 'text-blue-600', 'bg' => 'bg-blue-100', 'icon' => 'fas fa-clock'];
+        case 'pending':
+            return ['color' => 'text-yellow-600', 'bg' => 'bg-yellow-100', 'icon' => 'fas fa-hourglass-half'];
+        case 'cancelled':
+            return ['color' => 'text-red-600', 'bg' => 'bg-red-100', 'icon' => 'fas fa-times-circle'];
+        default:
+            return ['color' => 'text-gray-600', 'bg' => 'bg-gray-100', 'icon' => 'fas fa-question-circle'];
+    }
+}
+
 function getUserActivityLog($user_id)
 {
     // In real app, fetch from database
@@ -327,7 +344,7 @@ function addToCart($product_id, $quantity = 1)
     }
 
     // Validate product exists
-    $product = getProductById($product_id);
+    $product = getProductById($pdo = '', $product_id);
     if (!$product) {
         return false;
     }
@@ -447,7 +464,7 @@ function validateCart()
 
     foreach ($cart as $product_id => $item) {
         // Check if product still exists
-        $product = getProductById($product_id);
+        $product = getProductById($pdo = '', $product_id);
         if (!$product) {
             $errors[] = "Product '{$item['product']['name']}' is no longer available";
             continue;
@@ -826,7 +843,7 @@ function getAllProducts()
  * @param int $id
  * @return array|null
  */
-function getProductById($id)
+function getProductById($pdo, $id)
 {
     $products = getAllProducts();
 

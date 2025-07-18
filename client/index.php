@@ -152,7 +152,7 @@ require_once 'partials/headers.php';
         </div>
     </nav>
 
-    <script src="util/dashboard.js"></script>
+    <script src="js/dashboard.js"></script>
     <script>
         // Premium mobile interactions with enhanced animations
         document.addEventListener('DOMContentLoaded', function() {
