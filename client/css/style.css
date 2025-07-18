@@ -336,3 +336,44 @@ input:checked+.slider {
 input:checked+.slider:before {
     transform: translateX(24px);
 }
+
+.bg-custom-gray {
+        background-color: var(--gray);
+      }
+      
+      .text-custom-dark {
+        color: var(--dark);
+      }
+      
+      .text-custom-secondary {
+        color: var(--secondary-color);
+      }
+      
+      .bg-custom-accent {
+        background-color: var(--accent-color);
+      }
+      
+      .text-custom-accent {
+        color: var(--accent-color);
+      }
+      
+      .border-custom-accent {
+        border-color: var(--accent-color);
+      }
+      
+      .hover-accent:hover {
+        background-color: var(--accent-color);
+        color: white;
+      }
+      
+      .quantity-btn {
+        transition: all 0.2s ease;
+      }
+      
+      .quantity-btn:hover {
+        transform: scale(1.1);
+      }
+      
+      .star-rating {
+        color: var(--accent-color);
+      }

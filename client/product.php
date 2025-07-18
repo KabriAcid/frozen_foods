@@ -1,450 +1,245 @@
 <?php
-// Include utility functions
+require_once '../config/database.php';
 require_once 'util/util.php';
 
 // Get product ID from URL
 $product_id = isset($_GET['id']) ? (int)$_GET['id'] : 1;
-
-// Mock product data - replace with your actual database query
-$product = [
-    'id' => $product_id,
-    'name' => 'Premium Frozen Chicken Wings',
-    'price' => 8500,
-    'rating' => 4.8,
-    'reviews_count' => 124,
-    'image' => 'https://images.pexels.com/photos/60616/fried-chicken-chicken-fried-crunchy-60616.jpeg?auto=compress&cs=tinysrgb&w=800',
-    'description' => 'Premium quality frozen chicken wings, perfectly seasoned and ready to cook. These wings are sourced from free-range chickens and flash-frozen to preserve freshness and flavor. Perfect for grilling, baking, or frying. Each pack contains approximately 1kg of wings.',
-    'category' => 'Chicken',
-    'in_stock' => true,
-    'nutritional_info' => [
-        'calories' => '250 per 100g',
-        'protein' => '18g',
-        'fat' => '20g',
-        'carbs' => '0g'
-    ],
-    'features' => [
-        'Free-range chicken',
-        'Flash frozen for freshness',
-        'No artificial preservatives',
-        'Ready to cook'
-    ]
-];
+$product = getProductById($pdo, $product_id);
 require_once 'partials/headers.php';
 ?>
 
-<body class="bg-gray font-dm overflow-x-hidden">
-    <!-- Header with Back Button -->
-    <header class="fixed top-0 left-0 right-0 glass-effect border-b border-gray-200/50 z-50 safe-area-top animate-slide-down">
-        <div class="flex items-center justify-between px-4 py-4">
-            <button onclick="goBack()" class="w-12 h-12 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg flex items-center justify-center hover:bg-white hover:scale-105 transition-all duration-300 active:scale-95">
-                <i class="fas fa-arrow-left text-dark text-lg"></i>
-            </button>
-            <div class="flex items-center space-x-3">
-                <button id="share-btn" class="w-12 h-12 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg flex items-center justify-center hover:bg-white hover:scale-105 transition-all duration-300 active:scale-95">
-                    <i class="fas fa-share-alt text-dark text-lg"></i>
-                </button>
-                <button id="favorite-btn" class="w-12 h-12 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg flex items-center justify-center hover:bg-white hover:scale-105 transition-all duration-300 active:scale-95">
-                    <i class="far fa-heart text-dark text-lg"></i>
-                </button>
-            </div>
+<body class="bg-custom-gray min-h-screen">
+    <div class="container mx-auto px-4 py-6">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-8">
+        <button id="backBtn" class="p-2 hover:bg-white rounded-lg transition-colors duration-200">
+          <svg class="w-6 h-6 text-custom-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        
+        <div class="relative">
+          <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-custom-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+          </div>
+          <div class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+            <span class="text-white text-xs font-bold">1</span>
+          </div>
         </div>
-    </header>
+      </div>
 
-    <!-- Main Content -->
-    <main class="pt-24 pb-32">
-        <!-- Product Image Section -->
-        <div class="px-4 mb-8 animate-fade-in">
-            <div class="relative bg-white rounded-3xl overflow-hidden floating-card">
-                <img src="<?php echo $product['image']; ?>"
-                    alt="<?php echo $product['name']; ?>"
-                    class="product-image w-full h-80 object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                <?php if ($product['in_stock']): ?>
-                    <div class="absolute top-4 left-4">
-                        <span class="bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                            <i class="fas fa-check mr-1"></i>
-                            In Stock
-                        </span>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <!-- Product Info Section -->
-        <div class="px-4 space-y-6">
-            <!-- Title and Price -->
-            <div class="animate-slide-up" style="animation-delay: 0.1s;">
-                <h1 class="text-3xl font-bold text-dark mb-2"><?php echo $product['name']; ?></h1>
-                <div class="flex items-center justify-between mb-4">
-                    <div class="text-3xl font-bold text-accent">₦<?php echo number_format($product['price']); ?></div>
-                    <div class="flex items-center space-x-2">
-                        <div class="flex items-center">
-                            <i class="fas fa-star star-rating text-lg"></i>
-                            <span class="ml-1 font-semibold text-dark"><?php echo $product['rating']; ?></span>
-                        </div>
-                        <span class="text-gray-500 text-sm">(<?php echo $product['reviews_count']; ?> reviews)</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quantity Selector -->
-            <div class="animate-slide-up" style="animation-delay: 0.2s;">
-                <h3 class="text-lg font-semibold text-dark mb-4">Choose quantity</h3>
+      <!-- Product Content -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+          <!-- Product Info -->
+          <div class="space-y-6">
+            <div>
+              <h1 class="text-4xl font-bold text-custom-dark mb-4"><?php echo htmlspecialchars($product['name']); ?></h1>
+              
+              <div class="mb-6">
+                <p class="text-gray-500 text-sm mb-2">Price</p>
+                <p class="text-3xl font-bold text-custom-dark">₦<?php echo number_format($product['price'], 2); ?></p>
+              </div>
+              
+              <div>
+                <p class="text-gray-500 text-lg mb-4">Choice quantity</p>
                 <div class="flex items-center space-x-4">
-                    <button id="decrease-btn" class="quantity-btn w-14 h-14 bg-white rounded-2xl shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i class="fas fa-minus text-dark text-lg"></i>
-                    </button>
-                    <div class="flex-1 text-center">
-                        <span id="quantity-display" class="text-4xl font-bold text-dark">1</span>
-                    </div>
-                    <button id="increase-btn" class="quantity-btn w-14 h-14 bg-white rounded-2xl shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-300">
-                        <i class="fas fa-plus text-dark text-lg"></i>
-                    </button>
+                  <button id="decreaseBtn" class="quantity-btn w-12 h-12 rounded-full border-2 border-gray-200 flex items-center justify-center text-xl font-bold text-custom-dark hover:border-custom-accent hover-accent">
+                    -
+                  </button>
+                  <span id="quantity" class="text-2xl font-bold text-custom-dark min-w-[3rem] text-center">1</span>
+                  <button id="increaseBtn" class="quantity-btn w-12 h-12 rounded-full border-2 border-gray-200 flex items-center justify-center text-xl font-bold text-custom-dark hover:border-custom-accent hover-accent">
+                    +
+                  </button>
                 </div>
+              </div>
             </div>
+          </div>
 
-            <!-- Description Section -->
-            <div class="animate-slide-up" style="animation-delay: 0.3s;">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-semibold text-dark">Description</h3>
-                    <div class="flex items-center">
-                        <i class="fas fa-star star-rating text-lg"></i>
-                        <span class="ml-1 text-lg font-bold text-dark"><?php echo $product['rating']; ?></span>
-                    </div>
-                </div>
-                <p class="text-gray-600 leading-relaxed mb-6"><?php echo $product['description']; ?></p>
-
-                <!-- Features -->
-                <div class="space-y-3">
-                    <?php foreach ($product['features'] as $feature): ?>
-                        <div class="feature-item flex items-center">
-                            <div class="w-2 h-2 bg-accent rounded-full mr-3"></div>
-                            <span class="text-gray-700"><?php echo $feature; ?></span>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
+          <!-- Product Image -->
+          <div class="flex justify-center">
+            <div class="relative">
+              <img 
+                src="../assets/uploads/<?php echo htmlspecialchars($product['image']); ?>" 
+                alt="<?php echo htmlspecialchars($product['name']); ?>" 
+                class="w-80 h-80 object-cover rounded-full shadow-lg"
+              >
+              <?php if (!empty($product['in_stock'])): ?>
+                <span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center">
+                  <i class="fas fa-check mr-1"></i> In Stock
+                </span>
+              <?php else: ?>
+                <span class="absolute top-4 left-4 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center">
+                  <i class="fas fa-times mr-1"></i> Out of Stock
+                </span>
+              <?php endif; ?>
             </div>
-
-            <!-- Nutritional Info -->
-            <div class="animate-slide-up" style="animation-delay: 0.4s;">
-                <h3 class="text-lg font-semibold text-dark mb-4">Nutritional Information</h3>
-                <div class="bg-white rounded-2xl p-4 floating-card">
-                    <div class="grid grid-cols-2 gap-4">
-                        <?php foreach ($product['nutritional_info'] as $key => $value): ?>
-                            <div class="text-center">
-                                <p class="text-gray-500 text-sm capitalize"><?php echo str_replace('_', ' ', $key); ?></p>
-                                <p class="font-semibold text-dark"><?php echo $value; ?></p>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    </main>
 
-    <!-- Fixed Bottom Action Bar -->
-    <div class="fixed bottom-0 left-0 right-0 glass-effect border-t border-gray-200/50 safe-area-bottom z-50 animate-slide-up" style="animation-delay: 0.5s;">
-        <div class="px-4 py-4">
-            <div class="flex space-x-4">
-                <button id="add-to-cart-btn" class="action-btn ripple flex-1 bg-white border-2 border-accent text-accent py-4 rounded-2xl font-bold text-lg hover:bg-accent hover:text-white transition-all duration-300">
-                    <i class="fas fa-shopping-cart mr-2"></i>
-                    Add to Cart
-                </button>
-                <button id="order-now-btn" class="action-btn ripple flex-1 gradient-bg text-white py-4 rounded-2xl font-bold text-lg hover:shadow-xl transition-all duration-300">
-                    <i class="fas fa-bolt mr-2"></i>
-                    Order Now
-                </button>
+        <!-- Description Section -->
+        <div class="mt-12">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-custom-dark">Description</h2>
+            <div class="flex items-center space-x-2">
+              <div class="flex items-center">
+                <svg class="w-5 h-5 star-rating" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                </svg>
+              </div>
+              <span class="text-lg font-bold text-custom-accent"><?php echo isset($product['rating']) ? $product['rating'] : '4.9'; ?></span>
             </div>
-            <div class="mt-3 text-center">
-                <p class="text-gray-500 text-sm">
-                    Total: <span id="total-price" class="font-semibold text-accent">₦<?php echo number_format($product['price']); ?></span>
-                </p>
-            </div>
+          </div>
+          
+          <p class="text-gray-600 text-lg leading-relaxed mb-8">
+            <?php echo htmlspecialchars($product['description']); ?>
+          </p>
         </div>
-    </div>
 
-    <!-- Success Toast (Hidden by default) -->
-    <div id="success-toast" class="fixed top-20 left-4 right-4 bg-green-500 text-white px-6 py-4 rounded-2xl shadow-lg transform -translate-y-full opacity-0 transition-all duration-300 z-50">
-        <div class="flex items-center">
-            <i class="fas fa-check-circle text-xl mr-3"></i>
-            <span class="font-semibold">Added to cart successfully!</span>
+        <!-- Features Section -->
+        <?php if (!empty($product['features'])): 
+          $features = is_array($product['features']) ? $product['features'] : json_decode($product['features'], true);
+        ?>
+        <div class="mt-8">
+          <h3 class="text-lg font-semibold text-custom-dark mb-4">Features</h3>
+          <ul class="list-disc pl-6 text-gray-700 space-y-2">
+            <?php foreach ($features as $feature): ?>
+              <li><?php echo htmlspecialchars($feature); ?></li>
+            <?php endforeach; ?>
+          </ul>
         </div>
+        <?php endif; ?>
+
+        <!-- Nutritional Info Section -->
+        <?php if (!empty($product['nutritional_info'])): 
+          $nutritional = is_array($product['nutritional_info']) ? $product['nutritional_info'] : json_decode($product['nutritional_info'], true);
+        ?>
+        <div class="mt-8">
+          <h3 class="text-lg font-semibold text-custom-dark mb-4">Nutritional Information</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <?php foreach ($nutritional as $key => $value): ?>
+              <div class="text-center">
+                <p class="text-gray-500 text-sm capitalize"><?php echo str_replace('_', ' ', $key); ?></p>
+                <p class="font-semibold text-custom-dark"><?php echo htmlspecialchars($value); ?></p>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 mt-10">
+          <button id="orderBtn" class="flex-1 bg-custom-accent text-white py-4 px-8 rounded-2xl font-semibold text-lg hover:opacity-90 transition-opacity duration-200">
+            Order Now
+          </button>
+          <button id="addChartBtn" class="flex-1 border-2 border-gray-200 text-custom-dark py-4 px-8 rounded-2xl font-semibold text-lg hover:border-custom-accent hover-accent transition-all duration-200">
+            Add Chart
+          </button>
+        </div>
+      </div>
     </div>
 
     <script>
-        // Product data for JavaScript
-        const product = {
-            id: <?php echo $product['id']; ?>,
-            name: '<?php echo addslashes($product['name']); ?>',
-            price: <?php echo $product['price']; ?>,
-            image: '<?php echo $product['image']; ?>'
-        };
+      // Product data
+      const productData = {
+        name: <?php echo json_encode($product['name']); ?>,
+        price: <?php echo json_encode($product['price']); ?>,
+        rating: <?php echo json_encode(isset($product['rating']) ? $product['rating'] : 4.9); ?>,
+        description: <?php echo json_encode($product['description']); ?>
+      };
 
-        let quantity = 1;
-        const maxQuantity = 10;
+      let currentQuantity = 1;
 
-        // DOM elements
-        const quantityDisplay = document.getElementById('quantity-display');
-        const decreaseBtn = document.getElementById('decrease-btn');
-        const increaseBtn = document.getElementById('increase-btn');
-        const totalPriceElement = document.getElementById('total-price');
-        const addToCartBtn = document.getElementById('add-to-cart-btn');
-        const orderNowBtn = document.getElementById('order-now-btn');
-        const favoriteBtn = document.getElementById('favorite-btn');
-        const shareBtn = document.getElementById('share-btn');
-        const successToast = document.getElementById('success-toast');
+      // DOM elements
+      const quantityDisplay = document.getElementById('quantity');
+      const decreaseBtn = document.getElementById('decreaseBtn');
+      const increaseBtn = document.getElementById('increaseBtn');
+      const orderBtn = document.getElementById('orderBtn');
+      const addChartBtn = document.getElementById('addChartBtn');
+      const backBtn = document.getElementById('backBtn');
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            updateQuantityDisplay();
-            updateTotalPrice();
-
-            // Stagger animations for elements
-            const animatedElements = document.querySelectorAll('.animate-slide-up');
-            animatedElements.forEach((element, index) => {
-                element.style.animationDelay = `${index * 0.1}s`;
-            });
-        });
-
-        // Quantity controls
-        decreaseBtn.addEventListener('click', function() {
-            if (quantity > 1) {
-                quantity--;
-                updateQuantityDisplay();
-                updateTotalPrice();
-
-                // Add bounce animation
-                this.classList.add('animate-bounce-gentle');
-                setTimeout(() => {
-                    this.classList.remove('animate-bounce-gentle');
-                }, 600);
-            }
-        });
-
-        increaseBtn.addEventListener('click', function() {
-            if (quantity < maxQuantity) {
-                quantity++;
-                updateQuantityDisplay();
-                updateTotalPrice();
-
-                // Add bounce animation
-                this.classList.add('animate-bounce-gentle');
-                setTimeout(() => {
-                    this.classList.remove('animate-bounce-gentle');
-                }, 600);
-            }
-        });
-
-        // Update quantity display
-        function updateQuantityDisplay() {
-            quantityDisplay.textContent = quantity;
-            decreaseBtn.disabled = quantity <= 1;
-            increaseBtn.disabled = quantity >= maxQuantity;
-
-            // Add scale animation
-            quantityDisplay.style.transform = 'scale(1.1)';
-            setTimeout(() => {
-                quantityDisplay.style.transform = 'scale(1)';
-            }, 200);
+      // Quantity functions
+      function updateQuantity(newQuantity) {
+        if (newQuantity >= 1) {
+          currentQuantity = newQuantity;
+          quantityDisplay.textContent = currentQuantity;
+          quantityDisplay.style.transform = 'scale(1.2)';
+          setTimeout(() => {
+            quantityDisplay.style.transform = 'scale(1)';
+          }, 150);
         }
+      }
 
-        // Update total price
-        function updateTotalPrice() {
-            const total = product.price * quantity;
-            totalPriceElement.textContent = `₦${total.toLocaleString()}`;
+      function decreaseQuantity() {
+        if (currentQuantity > 1) {
+          updateQuantity(currentQuantity - 1);
         }
+      }
 
-        // Add to cart functionality
-        addToCartBtn.addEventListener('click', function() {
-            // Add loading state
-            const originalText = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Adding...';
-            this.disabled = true;
+      function increaseQuantity() {
+        updateQuantity(currentQuantity + 1);
+      }
 
-            // Simulate API call
-            setTimeout(() => {
-                // Reset button
-                this.innerHTML = originalText;
-                this.disabled = false;
+      decreaseBtn.addEventListener('click', decreaseQuantity);
+      increaseBtn.addEventListener('click', increaseQuantity);
 
-                // Show success toast
-                showSuccessToast();
+      orderBtn.addEventListener('click', () => {
+        const totalPrice = (productData.price * currentQuantity).toFixed(2);
+        alert(`Order placed!\nProduct: ${productData.name}\nQuantity: ${currentQuantity}\nTotal: ₦${totalPrice}`);
+      });
 
-                // Add to cart logic here
-                console.log('Added to cart:', {
-                    product: product,
-                    quantity: quantity,
-                    total: product.price * quantity
-                });
-            }, 1500);
-        });
+      addChartBtn.addEventListener('click', () => {
+        addChartBtn.textContent = 'Added!';
+        addChartBtn.style.backgroundColor = 'var(--accent-color)';
+        addChartBtn.style.color = 'white';
+        addChartBtn.style.borderColor = 'var(--accent-color)';
+        setTimeout(() => {
+          addChartBtn.textContent = 'Add Chart';
+          addChartBtn.style.backgroundColor = '';
+          addChartBtn.style.color = '';
+          addChartBtn.style.borderColor = '';
+        }, 1500);
+        alert(`Added ${currentQuantity} ${productData.name}(s) to chart!`);
+      });
 
-        // Order now functionality
-        orderNowBtn.addEventListener('click', function() {
-            // Add loading state
-            const originalText = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
-            this.disabled = true;
+      backBtn.addEventListener('click', () => {
+        window.history.length > 1 ? window.history.back() : window.location.href = 'dashboard.php';
+      });
 
-            // Simulate order processing
-            setTimeout(() => {
-                // Reset button
-                this.innerHTML = originalText;
-                this.disabled = false;
+      quantityDisplay.style.transition = 'transform 0.15s ease';
 
-                // Redirect to checkout or show order confirmation
-                console.log('Order now:', {
-                    product: product,
-                    quantity: quantity,
-                    total: product.price * quantity
-                });
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('Product details page loaded');
+        console.log('Product:', productData);
+      });
 
-                // You can redirect to checkout page here
-                // window.location.href = 'checkout.php';
-            }, 2000);
-        });
-
-        // Favorite functionality
-        favoriteBtn.addEventListener('click', function() {
-            const icon = this.querySelector('i');
-
-            if (icon.classList.contains('far')) {
-                icon.classList.remove('far');
-                icon.classList.add('fas', 'text-red-500');
-
-                // Add heart beat animation
-                icon.style.animation = 'bounce-gentle 0.6s ease-in-out';
-
-                // Change button background
-                this.classList.add('bg-red-50');
-            } else {
-                icon.classList.remove('fas', 'text-red-500');
-                icon.classList.add('far');
-                icon.style.animation = '';
-                this.classList.remove('bg-red-50');
-            }
-
-            // Add scale animation to button
-            this.style.transform = 'scale(1.1)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 200);
-        });
-
-        // Share functionality
-        shareBtn.addEventListener('click', function() {
-            if (navigator.share) {
-                navigator.share({
-                    title: product.name,
-                    text: `Check out this amazing product: ${product.name}`,
-                    url: window.location.href
-                });
-            } else {
-                // Fallback for browsers that don't support Web Share API
-                const url = window.location.href;
-                navigator.clipboard.writeText(url).then(() => {
-                    showSuccessToast('Link copied to clipboard!');
-                });
-            }
-
-            // Add animation
-            this.classList.add('animate-bounce-gentle');
-            setTimeout(() => {
-                this.classList.remove('animate-bounce-gentle');
-            }, 600);
-        });
-
-        // Back button functionality
-        function goBack() {
-            if (document.referrer && document.referrer.includes(window.location.host)) {
-                window.history.back();
-            } else {
-                window.location.href = 'dashboard.php';
-            }
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp' || e.key === '+') {
+          e.preventDefault();
+          increaseQuantity();
+        } else if (e.key === 'ArrowDown' || e.key === '-') {
+          e.preventDefault();
+          decreaseQuantity();
         }
+      });
 
-        // Show success toast
-        function showSuccessToast(message = 'Added to cart successfully!') {
-            const toast = successToast;
-            const messageElement = toast.querySelector('span');
-            messageElement.textContent = message;
-
-            // Show toast
-            toast.style.transform = 'translateY(0)';
-            toast.style.opacity = '1';
-
-            // Hide after 3 seconds
-            setTimeout(() => {
-                toast.style.transform = 'translateY(-100%)';
-                toast.style.opacity = '0';
-            }, 3000);
+      let touchStartY = 0;
+      quantityDisplay.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+      });
+      quantityDisplay.addEventListener('touchend', (e) => {
+        const touchEndY = e.changedTouches[0].clientY;
+        const difference = touchStartY - touchEndY;
+        if (Math.abs(difference) > 30) {
+          if (difference > 0) {
+            increaseQuantity();
+          } else {
+            decreaseQuantity();
+          }
         }
-
-        // Add ripple effect to buttons
-        document.querySelectorAll('.ripple').forEach(button => {
-            button.addEventListener('click', function(e) {
-                const ripple = document.createElement('span');
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-
-                ripple.style.width = ripple.style.height = size + 'px';
-                ripple.style.left = x + 'px';
-                ripple.style.top = y + 'px';
-                ripple.classList.add('ripple-effect');
-
-                this.appendChild(ripple);
-
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
-            });
-        });
-
-        // Add CSS for ripple effect
-        const style = document.createElement('style');
-        style.textContent = `
-            .ripple-effect {
-                position: absolute;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.3);
-                transform: scale(0);
-                animation: ripple-animation 0.6s linear;
-                pointer-events: none;
-            }
-            
-            @keyframes ripple-animation {
-                to {
-                    transform: scale(2);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Smooth scroll behavior
-        document.documentElement.style.scrollBehavior = 'smooth';
-
-        // Add intersection observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-fade-in');
-                }
-            });
-        }, observerOptions);
-
-        // Observe all animated elements
-        document.querySelectorAll('.animate-slide-up').forEach(el => {
-            observer.observe(el);
-        });
+      });
     </script>
 </body>
-
 </html>

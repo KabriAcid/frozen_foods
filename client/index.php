@@ -1,12 +1,14 @@
 <?php
 // Include utility functions
+require_once __DIR__ . '/../config/database.php';
 require_once 'util/util.php';
 
 // Get all products for the dashboard
-$products = getAllProducts();
-$categories = getProductCategories();
+$products = getAllProducts($pdo);
+$categories = getProductCategories($pdo);
 require_once 'partials/headers.php';
 ?>
+
 <body class="bg-gray font-dm pb-24 overflow-x-hidden">
     <!-- Main Content -->
     <main class="px-4 pt-6 space-y-6 animate-fade-in">
@@ -83,7 +85,7 @@ require_once 'partials/headers.php';
                 <?php foreach ($products as $product): ?>
                     <div class="product-card bg-white rounded-3xl shadow-lg overflow-hidden animate-scale-in" data-category="<?php echo strtolower($product['category']); ?>" data-name="<?php echo strtolower($product['name']); ?>" style="animation-delay: <?php echo rand(1, 6) * 0.1; ?>s;">
                         <div class="relative">
-                            <img src="<?php echo $product['image']; ?>" alt="<?php echo $product['name']; ?>" class="w-full h-36 object-cover">
+                            <img src="../assets/uploads/<?php echo $product['image']; ?>" alt="<?php echo $product['name']; ?>" class="w-full h-36 object-cover">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                             <button class="favorite-btn absolute top-3 right-3 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-300">
                                 <i class="far fa-heart text-gray-600 text-sm"></i>

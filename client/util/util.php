@@ -203,27 +203,6 @@ function getUserRecentOrders($pdo, $user_id, $limit = 5)
  * @param int $user_id
  * @return array
  */
-function getUserFavorites($pdo, $user_id)
-{
-    try {
-        $stmt = $pdo->prepare("SELECT product_id FROM user_favorites WHERE user_id = :user_id");
-        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->execute();
-        $favorites = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-        $favorite_products = [];
-        foreach ($favorites as $product_id) {
-            $product = getProductById($pdo, $product_id);
-            if ($product) {
-                $favorite_products[] = $product;
-            }
-        }
-        return $favorite_products;
-    } catch (PDOException $e) {
-        error_log("Error fetching user favorites: " . $e->getMessage());
-        return [];
-    }
-}
 
 /**
  * Add product to user favorites
@@ -337,30 +316,6 @@ function getUserActivityLog($user_id)
  * @param int $quantity
  * @return bool
  */
-function addToCart($product_id, $quantity = 1)
-{
-    if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = [];
-    }
-
-    // Validate product exists
-    $product = getProductById($pdo = '', $product_id);
-    if (!$product) {
-        return false;
-    }
-
-    // Check if item already exists in cart
-    if (isset($_SESSION['cart'][$product_id])) {
-        $_SESSION['cart'][$product_id]['quantity'] += $quantity;
-    } else {
-        $_SESSION['cart'][$product_id] = [
-            'product' => $product,
-            'quantity' => $quantity
-        ];
-    }
-
-    return true;
-}
 
 /**
  * Remove item from cart
@@ -448,40 +403,7 @@ function clearCart()
     return true;
 }
 
-/**
- * Validate cart before checkout
- * @return array
- */
-function validateCart()
-{
-    $cart = getCart();
-    $errors = [];
 
-    if (empty($cart)) {
-        $errors[] = 'Cart is empty';
-        return $errors;
-    }
-
-    foreach ($cart as $product_id => $item) {
-        // Check if product still exists
-        $product = getProductById($pdo = '', $product_id);
-        if (!$product) {
-            $errors[] = "Product '{$item['product']['name']}' is no longer available";
-            continue;
-        }
-
-        // Validate quantity
-        if ($item['quantity'] <= 0) {
-            $errors[] = "Invalid quantity for '{$item['product']['name']}'";
-        }
-
-        if ($item['quantity'] > 99) {
-            $errors[] = "Maximum quantity exceeded for '{$item['product']['name']}'";
-        }
-    }
-
-    return $errors;
-}
 
 /**
  * Calculate cart subtotal
@@ -751,176 +673,74 @@ function formatPhoneNumber($phone)
     return $phone;
 }
 
-/**
- * Product utility functions for Frozen Foods
- */
 
-/**
- * Get all products
- * @return array
- */
-function getAllProducts()
+function getAllProducts($pdo)
 {
-    // In a real application, this would fetch from a database
-    return [
-        [
-            'id' => 1,
-            'name' => 'Fresh Chicken Wings',
-            'description' => 'Premium quality chicken wings, perfect for grilling',
-            'price' => 2500,
-            'category' => 'chicken',
-            'image' => 'https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=400',
-            'rating' => 4.8
-        ],
-        [
-            'id' => 2,
-            'name' => 'Atlantic Salmon',
-            'description' => 'Fresh Atlantic salmon fillets, rich in omega-3',
-            'price' => 4500,
-            'category' => 'fish',
-            'image' => 'https://images.pexels.com/photos/725991/pexels-photo-725991.jpeg?auto=compress&cs=tinysrgb&w=400',
-            'rating' => 4.9
-        ],
-        [
-            'id' => 3,
-            'name' => 'Whole Turkey',
-            'description' => 'Farm-fresh whole turkey, perfect for special occasions',
-            'price' => 8500,
-            'category' => 'turkey',
-            'image' => 'https://images.pexels.com/photos/7245474/pexels-photo-7245474.jpeg?auto=compress&cs=tinysrgb&w=400',
-            'rating' => 4.7
-        ],
-        [
-            'id' => 4,
-            'name' => 'Chicken Breast',
-            'description' => 'Boneless chicken breast, lean and protein-rich',
-            'price' => 3200,
-            'category' => 'chicken',
-            'image' => 'https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=400',
-            'rating' => 4.6
-        ],
-        [
-            'id' => 5,
-            'name' => 'Tuna Steaks',
-            'description' => 'Premium tuna steaks, perfect for searing',
-            'price' => 5200,
-            'category' => 'fish',
-            'image' => 'https://images.pexels.com/photos/725991/pexels-photo-725991.jpeg?auto=compress&cs=tinysrgb&w=400',
-            'rating' => 4.8
-        ],
-        [
-            'id' => 6,
-            'name' => 'Turkey Slices',
-            'description' => 'Sliced turkey breast, ready for sandwiches',
-            'price' => 3800,
-            'category' => 'turkey',
-            'image' => 'https://images.pexels.com/photos/7245474/pexels-photo-7245474.jpeg?auto=compress&cs=tinysrgb&w=400',
-            'rating' => 4.5
-        ],
-        [
-            'id' => 7,
-            'name' => 'Chicken Thighs',
-            'description' => 'Juicy chicken thighs with skin, full of flavor',
-            'price' => 2800,
-            'category' => 'chicken',
-            'image' => 'https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=400',
-            'rating' => 4.7
-        ],
-        [
-            'id' => 8,
-            'name' => 'Sea Bass',
-            'description' => 'Fresh sea bass, delicate and flaky',
-            'price' => 4800,
-            'category' => 'fish',
-            'image' => 'https://images.pexels.com/photos/725991/pexels-photo-725991.jpeg?auto=compress&cs=tinysrgb&w=400',
-            'rating' => 4.9
-        ]
-    ];
+    try {
+        $stmt = $pdo->prepare("SELECT id, name, description, price, image, category_id FROM products");
+        $stmt->execute();
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($products as &$product) {
+            // Fetch category name for each product
+            $catStmt = $pdo->prepare("SELECT name FROM categories WHERE id = :cat_id");
+            $catStmt->bindParam(':cat_id', $product['category_id'], PDO::PARAM_INT);
+            $catStmt->execute();
+            $cat = $catStmt->fetch(PDO::FETCH_ASSOC);
+            $product['category'] = $cat ? $cat['name'] : '';
+        }
+
+        return $products;
+    } catch (PDOException $th) {
+        error_log("Some error occured" . $th->getMessage());
+        return [];
+    }
+}
+
+function getProductCategories($pdo)
+{
+    try {
+        $stmt = $pdo->prepare("SELECT name FROM categories");
+        $stmt->execute();
+        $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        return $categories;
+    } catch (PDOException $th) {
+        error_log("Some error occured" . $th->getMessage());
+        return [];
+    }
 }
 
 /**
  * Get product by ID
+ * @param PDO $pdo
  * @param int $id
  * @return array|null
  */
 function getProductById($pdo, $id)
 {
-    $products = getAllProducts();
+    try {
+        // Fetch product details
+        $stmt = $pdo->prepare("SELECT * FROM products WHERE id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    foreach ($products as $product) {
-        if ($product['id'] == $id) {
-            return $product;
+        if (!$product) {
+            return null;
         }
+
+        // Fetch category name
+        $catStmt = $pdo->prepare("SELECT name FROM categories WHERE id = :cat_id");
+        $catStmt->bindParam(':cat_id', $product['category_id'], PDO::PARAM_INT);
+        $catStmt->execute();
+        $cat = $catStmt->fetch(PDO::FETCH_ASSOC);
+        $product['category'] = $cat ? $cat['name'] : '';
+
+        // Optionally, fetch more details (e.g. nutritional info, features) if you have those tables
+
+        return $product;
+    } catch (PDOException $e) {
+        error_log("Error fetching product by ID: " . $e->getMessage());
+        return null;
     }
-
-    return null;
-}
-
-/**
- * Get all product categories
- * @return array
- */
-function getProductCategories()
-{
-    $products = getAllProducts();
-    $categories = [];
-
-    foreach ($products as $product) {
-        if (!in_array($product['category'], $categories)) {
-            $categories[] = $product['category'];
-        }
-    }
-
-    return $categories;
-}
-
-/**
- * Search products by name
- * @param string $query
- * @return array
- */
-function searchProducts($query)
-{
-    $products = getAllProducts();
-    $results = [];
-
-    $query = strtolower(trim($query));
-
-    if (empty($query)) {
-        return $products;
-    }
-
-    foreach ($products as $product) {
-        if (
-            strpos(strtolower($product['name']), $query) !== false ||
-            strpos(strtolower($product['description']), $query) !== false
-        ) {
-            $results[] = $product;
-        }
-    }
-
-    return $results;
-}
-
-/**
- * Filter products by category
- * @param string $category
- * @return array
- */
-function filterProductsByCategory($category)
-{
-    if ($category === 'all') {
-        return getAllProducts();
-    }
-
-    $products = getAllProducts();
-    $results = [];
-
-    foreach ($products as $product) {
-        if (strtolower($product['category']) === strtolower($category)) {
-            $results[] = $product;
-        }
-    }
-
-    return $results;
 }
