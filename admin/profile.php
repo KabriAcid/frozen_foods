@@ -7,7 +7,7 @@
         <!-- Top Navigation -->
         <?php require __DIR__ . '/partials/top-navbar.php'; ?>
         <!-- Profile Content -->
-        <main class="p-6 max-w-7xl mx-auto">
+        <main class="py-6 max-w-7xl mx-auto">
             <!-- Profile Header -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
                 <div class="relative">
@@ -25,7 +25,7 @@
                         <div class="flex flex-col sm:flex-row sm:items-end sm:space-x-6">
                             <!-- Avatar -->
                             <div class="relative -mt-16 mb-4 sm:mb-0">
-                                <img src="https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400"
+                                <img src="./img/avatar.jpg"
                                     alt="Admin Profile"
                                     class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
                                 <!-- <div class="absolute bottom-0 right-0 w-8 h-8 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
@@ -39,7 +39,7 @@
                             <!-- User Info -->
                             <div class="flex-1">
                                 <div class="flex items-center space-x-3 mb-2">
-                                    <h1 class="text-2xl font-bold text-gray-900" id="fullName">Alexandra Mitchell</h1>
+                                    <h1 class="text-2xl font-bold text-gray-900" id="fullName">Kabri Acid</h1>
                                     <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
                                         Super Admin
                                     </span>
