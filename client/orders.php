@@ -211,7 +211,7 @@ require_once 'partials/headers.php';
             </div>
             <h3 class="text-xl font-bold text-dark mb-2">No Orders Found</h3>
             <p class="text-gray-500 mb-6">You haven't placed any orders yet</p>
-            <a href="dashboard.php" class="bg-accent text-white px-8 py-3 rounded-2xl font-semibold hover:bg-orange-600 transition-colors inline-block">
+            <a href="index.php" class="bg-accent text-white px-8 py-3 rounded-2xl font-semibold hover:bg-orange-600 transition-colors inline-block">
                 Start Shopping
             </a>
         </div>
@@ -220,8 +220,8 @@ require_once 'partials/headers.php';
     <!-- Premium Mobile Bottom Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 glass-effect border-t border-gray-200/50 safe-area-bottom z-50 animate-slide-up" style="animation-delay: 0.5s;">
         <div class="grid grid-cols-4 h-20 px-2">
-            <!-- Dashboard -->
-            <a href="dashboard.php" class="nav-item flex flex-col items-center justify-center space-y-1 text-gray-500 hover:text-accent transition-all duration-300 relative group">
+            <!-- index -->
+            <a href="index.php" class="nav-item flex flex-col items-center justify-center space-y-1 text-gray-500 hover:text-accent transition-all duration-300 relative group">
                 <div class="nav-indicator"></div>
                 <div class="nav-icon w-12 h-12 rounded-2xl bg-transparent flex items-center justify-center transition-all duration-300 group-hover:bg-accent/10">
                     <i class="fas fa-home text-lg transition-all duration-300"></i>

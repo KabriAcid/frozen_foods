@@ -371,8 +371,8 @@ require __DIR__ . '/../components/header.php';
                     })
                     .catch((error) => {
                         overlay.classList.add("hidden"); // Hide overlay
+                        showToasted("An unexpected error occurred.", "error");
                         console.error("Error:", error);
-                        alert("An unexpected error occurred.");
 
                     });
             });

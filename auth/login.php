@@ -67,66 +67,78 @@ require __DIR__ . '/../components/header.php';
                 </div>
             </div>
         </div>
-        <script src="../assets/js/toasted.js"></script>
-        <script src="../assets/js/toggle-password.js"></script>
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                const form = document.querySelector("form");
 
-                form.addEventListener("submit", (e) => {
-                    e.preventDefault(); // Prevent default form submission
+        <!-- Overlay -->
+        <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="text-white text-lg font-bold">Processing...</div>
+        </div>
+        <!-- End Overlay -->
+    </main>
+    <script src="../assets/js/toasted.js"></script>
+    <script src="../assets/js/toggle-password.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.querySelector("form");
 
-                    const email = form.querySelector('input[type="email"]').value;
-                    const password = form.querySelector('input[type="password"]').value;
+            form.addEventListener("submit", (e) => {
+                e.preventDefault(); // Prevent default form submission
 
-                    // AJAX request
-                    fetch("../api/api_login.php", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                                email,
-                                password
-                            }),
-                        })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            if (data.success) {
-                                // Redirect to dashboard
-                                showToasted(data.message, 'success');
-                                setTimeout(() => {
-                                    window.location.href = "../client/dashboard.php";
-                                }, timeout = 2000);
-                            } else {
-                                // Show error message
-                                showToasted(data.message, 'error');
-                            }
-                        })
-                        .catch((error) => {
-                            console.error("Error:", error);
-                        });
-                });
+                const email = form.querySelector('input[type="email"]').value;
+                const password = form.querySelector('input[type="password"]').value;
 
-                // Eye Toggle
-                const passwordInput = form.querySelector('input[type="password"]');
-                const eyeToggleBtn = passwordInput.nextElementSibling;
+                const overlay = document.getElementById("overlay");
+                overlay.classList.remove("hidden"); // Show overlay
+                // AJAX request
+                fetch("../api/api_login.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            email,
+                            password
+                        }),
+                    })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        overlay.classList.add("hidden"); // Hide overlay after response
+                        if (data.success) {
+                            // Redirect to dashboard
+                            showToasted(data.message, 'success');
+                            setTimeout(() => {
+                                window.location.href = "../client/index.php";
+                            }, timeout = 2000);
+                        } else {
+                            // Show error message
+                            showToasted(data.message, 'error');
+                        }
+                    })
+                    .catch((error) => {
+                        overlay.classList.add("hidden"); // Hide overlay on error
+                        showToasted("An error occurred. Please try again.", 'error');
+                        console.error("Error:", error);
+                    });
+            });
 
-                eyeToggleBtn.addEventListener("click", () => {
-                    const isPassword = passwordInput.type === "password";
-                    passwordInput.type = isPassword ? "text" : "password";
-                    eyeToggleBtn.innerHTML = isPassword ?
-                        `<svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-eye-off h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            // Eye Toggle
+            const passwordInput = form.querySelector('input[type="password"]');
+            const eyeToggleBtn = passwordInput.nextElementSibling;
+
+            eyeToggleBtn.addEventListener("click", () => {
+                const isPassword = passwordInput.type === "password";
+                passwordInput.type = isPassword ? "text" : "password";
+                eyeToggleBtn.innerHTML = isPassword ?
+                    `<svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-eye-off h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path d="M17.94 17.94a10.94 10.94 0 0 1-5.94 1.94C5 19.88 2 12 2 12a21.05 21.05 0 0 1 4.29-6.29"/>
                     <path d="M1 1l22 22"/>
                 </svg>` :
-                        `<svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-eye h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    `<svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-eye h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12Z"/>
                     <circle cx="12" cy="12" r="3"/>
                 </svg>`;
-                });
             });
-        </script>
+        });
+    </script>
 </body>
 
 </html>
