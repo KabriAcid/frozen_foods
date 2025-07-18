@@ -152,3 +152,73 @@ body {
   border-radius: 50%;
   border: 2px solid white;
 }
+
+.order-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.order-card:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Filter button premium styling */
+.filter-button {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.filter-button:hover::before {
+    left: 100%;
+}
+
+/* Floating action effect */
+.floating-card {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Order details expansion */
+.order-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.order-details.expanded {
+    max-height: 500px;
+}
+
+/* Status badge animations */
+.status-badge {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.status-badge:hover {
+    transform: scale(1.05);
+}
+
+/* Pull to refresh indicator */
+.pull-indicator {
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-out;
+}
+
+.pull-indicator.visible {
+    transform: translateY(0);
+}

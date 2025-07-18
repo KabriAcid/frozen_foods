@@ -1,5 +1,5 @@
 <!-- USERS UTIL FUNCTIONS -->
- <?php
+<?php
 /**
  * User utility functions for Frozen Foods
  */
@@ -9,7 +9,8 @@
  * @param int $user_id
  * @return array|null
  */
-function getUserProfile($user_id) {
+function getUserProfile($user_id)
+{
     // In a real application, this would fetch from database
     // For demo purposes, return sample data
     return [
@@ -32,26 +33,27 @@ function getUserProfile($user_id) {
  * @param array $profile_data
  * @return bool
  */
-function updateUserProfile($user_id, $profile_data) {
+function updateUserProfile($user_id, $profile_data)
+{
     // Validate required fields
     $required_fields = ['name', 'email', 'phone', 'address'];
-    
+
     foreach ($required_fields as $field) {
         if (!isset($profile_data[$field]) || empty(trim($profile_data[$field]))) {
             return false;
         }
     }
-    
+
     // Validate email format
     if (!filter_var($profile_data['email'], FILTER_VALIDATE_EMAIL)) {
         return false;
     }
-    
+
     // Validate phone number
     if (!validatePhoneNumber($profile_data['phone'])) {
         return false;
     }
-    
+
     // Sanitize data
     $clean_data = [
         'name' => sanitizeInput($profile_data['name']),
@@ -59,11 +61,11 @@ function updateUserProfile($user_id, $profile_data) {
         'phone' => sanitizeInput($profile_data['phone']),
         'address' => sanitizeInput($profile_data['address'])
     ];
-    
+
     // In real app, update database
     // For demo, store in session
     $_SESSION['user_profile'] = array_merge(getUserProfile($user_id), $clean_data);
-    
+
     return true;
 }
 
@@ -74,22 +76,23 @@ function updateUserProfile($user_id, $profile_data) {
  * @param string $new_password
  * @return bool
  */
-function changeUserPassword($user_id, $current_password, $new_password) {
+function changeUserPassword($user_id, $current_password, $new_password)
+{
     // In real app, verify current password against database
     // For demo, assume current password is correct
-    
+
     // Validate new password
     if (strlen($new_password) < 6) {
         return false;
     }
-    
+
     // Hash new password
     $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-    
+
     // In real app, update database
     // For demo, store in session
     $_SESSION['password_changed'] = true;
-    
+
     return true;
 }
 
@@ -99,18 +102,19 @@ function changeUserPassword($user_id, $current_password, $new_password) {
  * @param array $preferences
  * @return bool
  */
-function updateNotificationPreferences($user_id, $preferences) {
+function updateNotificationPreferences($user_id, $preferences)
+{
     $valid_preferences = ['email_notifications', 'sms_notifications', 'marketing_notifications'];
-    
+
     $clean_preferences = [];
     foreach ($valid_preferences as $pref) {
         $clean_preferences[$pref] = isset($preferences[$pref]) ? (bool)$preferences[$pref] : false;
     }
-    
+
     // In real app, update database
     // For demo, store in session
     $_SESSION['notification_preferences'] = $clean_preferences;
-    
+
     return true;
 }
 
@@ -119,7 +123,8 @@ function updateNotificationPreferences($user_id, $preferences) {
  * @param int $user_id
  * @return array
  */
-function getUserStatistics($user_id) {
+function getUserStatistics($user_id)
+{
     // In real app, calculate from database
     return [
         'total_orders' => 12,
@@ -130,13 +135,32 @@ function getUserStatistics($user_id) {
     ];
 }
 
+// Function to get status color and icon
+function getStatusInfo($status)
+{
+    switch ($status) {
+        case 'delivered':
+            return ['color' => 'text-green-600', 'bg' => 'bg-green-100', 'icon' => 'fas fa-check-circle'];
+        case 'processing':
+            return ['color' => 'text-blue-600', 'bg' => 'bg-blue-100', 'icon' => 'fas fa-clock'];
+        case 'pending':
+            return ['color' => 'text-yellow-600', 'bg' => 'bg-yellow-100', 'icon' => 'fas fa-hourglass-half'];
+        case 'cancelled':
+            return ['color' => 'text-red-600', 'bg' => 'bg-red-100', 'icon' => 'fas fa-times-circle'];
+        default:
+            return ['color' => 'text-gray-600', 'bg' => 'bg-gray-100', 'icon' => 'fas fa-question-circle'];
+    }
+}
+
 /**
  * Get user's recent orders
  * @param int $user_id
  * @param int $limit
  * @return array
  */
-function getUserRecentOrders($user_id, $limit = 5) {
+
+function getUserRecentOrders($user_id, $limit = 5)
+{
     // In real app, fetch from database
     return [
         [
@@ -179,18 +203,19 @@ function getUserRecentOrders($user_id, $limit = 5) {
  * @param int $user_id
  * @return array
  */
-function getUserFavorites($user_id) {
+function getUserFavorites($user_id)
+{
     // In real app, fetch from database
     $favorites = [1, 2, 5, 8]; // Product IDs
     $favorite_products = [];
-    
+
     foreach ($favorites as $product_id) {
         $product = getProductById($product_id);
         if ($product) {
             $favorite_products[] = $product;
         }
     }
-    
+
     return $favorite_products;
 }
 
@@ -200,23 +225,24 @@ function getUserFavorites($user_id) {
  * @param int $product_id
  * @return bool
  */
-function addToFavorites($user_id, $product_id) {
+function addToFavorites($user_id, $product_id)
+{
     // Validate product exists
     $product = getProductById($product_id);
     if (!$product) {
         return false;
     }
-    
+
     // In real app, insert into database
     // For demo, store in session
     if (!isset($_SESSION['user_favorites'])) {
         $_SESSION['user_favorites'] = [];
     }
-    
+
     if (!in_array($product_id, $_SESSION['user_favorites'])) {
         $_SESSION['user_favorites'][] = $product_id;
     }
-    
+
     return true;
 }
 
@@ -226,15 +252,16 @@ function addToFavorites($user_id, $product_id) {
  * @param int $product_id
  * @return bool
  */
-function removeFromFavorites($user_id, $product_id) {
+function removeFromFavorites($user_id, $product_id)
+{
     // In real app, delete from database
     // For demo, remove from session
     if (isset($_SESSION['user_favorites'])) {
-        $_SESSION['user_favorites'] = array_filter($_SESSION['user_favorites'], function($id) use ($product_id) {
+        $_SESSION['user_favorites'] = array_filter($_SESSION['user_favorites'], function ($id) use ($product_id) {
             return $id != $product_id;
         });
     }
-    
+
     return true;
 }
 
@@ -244,11 +271,12 @@ function removeFromFavorites($user_id, $product_id) {
  * @param int $product_id
  * @return bool
  */
-function isProductFavorite($user_id, $product_id) {
+function isProductFavorite($user_id, $product_id)
+{
     if (!isset($_SESSION['user_favorites'])) {
         return false;
     }
-    
+
     return in_array($product_id, $_SESSION['user_favorites']);
 }
 
@@ -258,36 +286,37 @@ function isProductFavorite($user_id, $product_id) {
  * @param array $file
  * @return string|false
  */
-function uploadProfileImage($user_id, $file) {
+function uploadProfileImage($user_id, $file)
+{
     // Validate file
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
     $max_size = 2 * 1024 * 1024; // 2MB
-    
+
     if (!in_array($file['type'], $allowed_types)) {
         return false;
     }
-    
+
     if ($file['size'] > $max_size) {
         return false;
     }
-    
+
     // Generate unique filename
     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
     $filename = 'profile_' . $user_id . '_' . time() . '.' . $extension;
     $upload_path = '../uploads/profiles/' . $filename;
-    
+
     // Create directory if it doesn't exist
     if (!file_exists('../uploads/profiles/')) {
         mkdir('../uploads/profiles/', 0755, true);
     }
-    
+
     // Move uploaded file
     if (move_uploaded_file($file['tmp_name'], $upload_path)) {
         // In real app, update database with image path
         $_SESSION['profile_image'] = $filename;
         return $filename;
     }
-    
+
     return false;
 }
 
@@ -297,13 +326,14 @@ function uploadProfileImage($user_id, $file) {
  * @param string $password
  * @return bool
  */
-function deleteUserAccount($user_id, $password) {
+function deleteUserAccount($user_id, $password)
+{
     // In real app, verify password and delete from database
     // This is a destructive operation, so implement carefully
-    
+
     // For demo, just clear session
     session_destroy();
-    
+
     return true;
 }
 
@@ -312,7 +342,8 @@ function deleteUserAccount($user_id, $password) {
  * @param int $user_id
  * @return array
  */
-function getUserActivityLog($user_id) {
+function getUserActivityLog($user_id)
+{
     // In real app, fetch from database
     return [
         [
@@ -338,7 +369,8 @@ function getUserActivityLog($user_id) {
  * @param int $user_id
  * @return array
  */
-function exportUserData($user_id) {
+function exportUserData($user_id)
+{
     return [
         'profile' => getUserProfile($user_id),
         'orders' => getUserRecentOrders($user_id, 100),
@@ -551,22 +583,23 @@ function getCartTotals()
  * @param array $order_data
  * @return array|false
  */
-function createOrder($order_data) {
+function createOrder($order_data)
+{
     // Validate required fields
     $required_fields = ['customer_name', 'customer_phone', 'delivery_address', 'items'];
-    
+
     foreach ($required_fields as $field) {
         if (!isset($order_data[$field]) || empty($order_data[$field])) {
             return false;
         }
     }
-    
+
     // Generate order ID
     $order_id = generateOrderId();
-    
+
     // Calculate totals
     $totals = calculateOrderTotals($order_data['items']);
-    
+
     // Create order array
     $order = [
         'id' => $order_id,
@@ -582,11 +615,11 @@ function createOrder($order_data) {
         'created_at' => date('Y-m-d H:i:s'),
         'updated_at' => date('Y-m-d H:i:s')
     ];
-    
+
     // In a real application, save to database
     // For now, we'll save to a JSON file or session
     saveOrder($order);
-    
+
     return $order;
 }
 
@@ -594,7 +627,8 @@ function createOrder($order_data) {
  * Generate unique order ID
  * @return string
  */
-function generateOrderId() {
+function generateOrderId()
+{
     return 'FF' . date('Ymd') . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
 }
 
@@ -603,16 +637,17 @@ function generateOrderId() {
  * @param array $items
  * @return array
  */
-function calculateOrderTotals($items) {
+function calculateOrderTotals($items)
+{
     $subtotal = 0;
-    
+
     foreach ($items as $item) {
         $subtotal += $item['price'] * $item['quantity'];
     }
-    
+
     $delivery_fee = calculateDeliveryFee($subtotal);
     $total = $subtotal + $delivery_fee;
-    
+
     return [
         'subtotal' => $subtotal,
         'delivery_fee' => $delivery_fee,
@@ -625,14 +660,15 @@ function calculateOrderTotals($items) {
  * @param array $order
  * @return bool
  */
-function saveOrder($order) {
+function saveOrder($order)
+{
     // For demonstration, we'll save to session
     if (!isset($_SESSION['orders'])) {
         $_SESSION['orders'] = [];
     }
-    
+
     $_SESSION['orders'][$order['id']] = $order;
-    
+
     return true;
 }
 
@@ -641,11 +677,12 @@ function saveOrder($order) {
  * @param string $order_id
  * @return array|null
  */
-function getOrderById($order_id) {
+function getOrderById($order_id)
+{
     if (isset($_SESSION['orders'][$order_id])) {
         return $_SESSION['orders'][$order_id];
     }
-    
+
     return null;
 }
 
@@ -653,7 +690,8 @@ function getOrderById($order_id) {
  * Get all orders for current session
  * @return array
  */
-function getAllOrders() {
+function getAllOrders()
+{
     return isset($_SESSION['orders']) ? $_SESSION['orders'] : [];
 }
 
@@ -663,19 +701,20 @@ function getAllOrders() {
  * @param string $status
  * @return bool
  */
-function updateOrderStatus($order_id, $status) {
+function updateOrderStatus($order_id, $status)
+{
     $valid_statuses = ['pending', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'];
-    
+
     if (!in_array($status, $valid_statuses)) {
         return false;
     }
-    
+
     if (isset($_SESSION['orders'][$order_id])) {
         $_SESSION['orders'][$order_id]['status'] = $status;
         $_SESSION['orders'][$order_id]['updated_at'] = date('Y-m-d H:i:s');
         return true;
     }
-    
+
     return false;
 }
 
@@ -684,7 +723,8 @@ function updateOrderStatus($order_id, $status) {
  * @param string $status
  * @return string
  */
-function getOrderStatusText($status) {
+function getOrderStatusText($status)
+{
     $status_texts = [
         'pending' => 'Order Pending',
         'confirmed' => 'Order Confirmed',
@@ -693,7 +733,7 @@ function getOrderStatusText($status) {
         'delivered' => 'Delivered',
         'cancelled' => 'Cancelled'
     ];
-    
+
     return isset($status_texts[$status]) ? $status_texts[$status] : 'Unknown Status';
 }
 
@@ -702,7 +742,8 @@ function getOrderStatusText($status) {
  * @param string $status
  * @return string
  */
-function getOrderStatusColor($status) {
+function getOrderStatusColor($status)
+{
     $status_colors = [
         'pending' => 'text-yellow-600 bg-yellow-100',
         'confirmed' => 'text-blue-600 bg-blue-100',
@@ -711,7 +752,7 @@ function getOrderStatusColor($status) {
         'delivered' => 'text-green-600 bg-green-100',
         'cancelled' => 'text-red-600 bg-red-100'
     ];
-    
+
     return isset($status_colors[$status]) ? $status_colors[$status] : 'text-gray-600 bg-gray-100';
 }
 
@@ -720,7 +761,8 @@ function getOrderStatusColor($status) {
  * @param string $input
  * @return string
  */
-function sanitizeInput($input) {
+function sanitizeInput($input)
+{
     return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
 }
 
@@ -729,19 +771,20 @@ function sanitizeInput($input) {
  * @param string $phone
  * @return bool
  */
-function validatePhoneNumber($phone) {
+function validatePhoneNumber($phone)
+{
     // Remove all non-numeric characters
     $phone = preg_replace('/[^0-9]/', '', $phone);
-    
+
     // Check if it's a valid Nigerian phone number
     if (strlen($phone) === 11 && substr($phone, 0, 1) === '0') {
         return true;
     }
-    
+
     if (strlen($phone) === 13 && substr($phone, 0, 3) === '234') {
         return true;
     }
-    
+
     return false;
 }
 
@@ -750,13 +793,14 @@ function validatePhoneNumber($phone) {
  * @param string $phone
  * @return string
  */
-function formatPhoneNumber($phone) {
+function formatPhoneNumber($phone)
+{
     $phone = preg_replace('/[^0-9]/', '', $phone);
-    
+
     if (strlen($phone) === 11) {
         return substr($phone, 0, 4) . ' ' . substr($phone, 4, 3) . ' ' . substr($phone, 7);
     }
-    
+
     return $phone;
 }
 
@@ -768,7 +812,8 @@ function formatPhoneNumber($phone) {
  * Get all products
  * @return array
  */
-function getAllProducts() {
+function getAllProducts()
+{
     // In a real application, this would fetch from a database
     return [
         [
@@ -851,15 +896,16 @@ function getAllProducts() {
  * @param int $id
  * @return array|null
  */
-function getProductById($id) {
+function getProductById($id)
+{
     $products = getAllProducts();
-    
+
     foreach ($products as $product) {
         if ($product['id'] == $id) {
             return $product;
         }
     }
-    
+
     return null;
 }
 
@@ -867,16 +913,17 @@ function getProductById($id) {
  * Get all product categories
  * @return array
  */
-function getProductCategories() {
+function getProductCategories()
+{
     $products = getAllProducts();
     $categories = [];
-    
+
     foreach ($products as $product) {
         if (!in_array($product['category'], $categories)) {
             $categories[] = $product['category'];
         }
     }
-    
+
     return $categories;
 }
 
@@ -885,23 +932,26 @@ function getProductCategories() {
  * @param string $query
  * @return array
  */
-function searchProducts($query) {
+function searchProducts($query)
+{
     $products = getAllProducts();
     $results = [];
-    
+
     $query = strtolower(trim($query));
-    
+
     if (empty($query)) {
         return $products;
     }
-    
+
     foreach ($products as $product) {
-        if (strpos(strtolower($product['name']), $query) !== false || 
-            strpos(strtolower($product['description']), $query) !== false) {
+        if (
+            strpos(strtolower($product['name']), $query) !== false ||
+            strpos(strtolower($product['description']), $query) !== false
+        ) {
             $results[] = $product;
         }
     }
-    
+
     return $results;
 }
 
@@ -910,19 +960,20 @@ function searchProducts($query) {
  * @param string $category
  * @return array
  */
-function filterProductsByCategory($category) {
+function filterProductsByCategory($category)
+{
     if ($category === 'all') {
         return getAllProducts();
     }
-    
+
     $products = getAllProducts();
     $results = [];
-    
+
     foreach ($products as $product) {
         if (strtolower($product['category']) === strtolower($category)) {
             $results[] = $product;
         }
     }
-    
+
     return $results;
 }
