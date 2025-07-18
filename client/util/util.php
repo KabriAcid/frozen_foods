@@ -1,347 +1,293 @@
 <!-- USERS UTIL FUNCTIONS -->
 <?php
 /**
- * User utility functions for Frozen Foods
- */
-
-/**
  * Get user profile by ID
  * @param int $user_id
  * @return array|null
  */
-function getUserProfile($user_id)
+function getUserProfile($pdo, $user_id)
 {
-    // In a real application, this would fetch from database
-    // For demo purposes, return sample data
-    return [
-        'id' => $user_id,
-        'name' => 'John Doe',
-        'email' => 'john.doe@example.com',
-        'phone' => '08012345678',
-        'address' => '123 Lagos Street, Victoria Island, Lagos',
-        'joined_date' => '2024-01-15',
-        'email_notifications' => true,
-        'sms_notifications' => true,
-        'marketing_notifications' => false,
-        'profile_image' => null
-    ];
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :user_id");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching user profile: " . $e->getMessage());
+        return null;
+    }
 }
 
 /**
  * Update user profile
+ * @param PDO $pdo
  * @param int $user_id
  * @param array $profile_data
  * @return bool
  */
-function updateUserProfile($user_id, $profile_data)
+function updateUserProfile($pdo, $user_id, $profile_data)
 {
-    // Validate required fields
     $required_fields = ['name', 'email', 'phone', 'address'];
-
     foreach ($required_fields as $field) {
         if (!isset($profile_data[$field]) || empty(trim($profile_data[$field]))) {
             return false;
         }
     }
 
-    // Validate email format
     if (!filter_var($profile_data['email'], FILTER_VALIDATE_EMAIL)) {
         return false;
     }
 
-    // Validate phone number
     if (!validatePhoneNumber($profile_data['phone'])) {
         return false;
     }
 
-    // Sanitize data
-    $clean_data = [
-        'name' => sanitizeInput($profile_data['name']),
-        'email' => sanitizeInput($profile_data['email']),
-        'phone' => sanitizeInput($profile_data['phone']),
-        'address' => sanitizeInput($profile_data['address'])
-    ];
+    try {
+        $stmt = $pdo->prepare("UPDATE users SET name = :name, email = :email, phone = :phone WHERE id = :user_id");
+        $stmt->bindParam(':name', $profile_data['name']);
+        $stmt->bindParam(':email', $profile_data['email']);
+        $stmt->bindParam(':phone', $profile_data['phone']);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
 
-    // In real app, update database
-    // For demo, store in session
-    $_SESSION['user_profile'] = array_merge(getUserProfile($user_id), $clean_data);
+        // Optionally update address in user_addresses table
+        $stmt2 = $pdo->prepare("UPDATE user_addresses SET street_address = :address WHERE user_id = :user_id");
+        $stmt2->bindParam(':address', $profile_data['address']);
+        $stmt2->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt2->execute();
 
-    return true;
+        return true;
+    } catch (PDOException $e) {
+        error_log("Error updating user profile: " . $e->getMessage());
+        return false;
+    }
 }
 
 /**
  * Change user password
+ * @param PDO $pdo
  * @param int $user_id
  * @param string $current_password
  * @param string $new_password
  * @return bool
  */
-function changeUserPassword($user_id, $current_password, $new_password)
+function changeUserPassword($pdo, $user_id, $current_password, $new_password)
 {
-    // In real app, verify current password against database
-    // For demo, assume current password is correct
-
-    // Validate new password
     if (strlen($new_password) < 6) {
         return false;
     }
 
-    // Hash new password
-    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+    try {
+        // Verify current password
+        $stmt = $pdo->prepare("SELECT password FROM users WHERE id = :user_id");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // In real app, update database
-    // For demo, store in session
-    $_SESSION['password_changed'] = true;
+        if (!$user || !password_verify($current_password, $user['password'])) {
+            return false;
+        }
 
-    return true;
+        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+        $stmt2 = $pdo->prepare("UPDATE users SET password = :password WHERE id = :user_id");
+        $stmt2->bindParam(':password', $hashed_password);
+        $stmt2->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt2->execute();
+
+        return true;
+    } catch (PDOException $e) {
+        error_log("Error changing password: " . $e->getMessage());
+        return false;
+    }
 }
 
 /**
  * Update notification preferences
+ * @param PDO $pdo
  * @param int $user_id
  * @param array $preferences
  * @return bool
  */
-function updateNotificationPreferences($user_id, $preferences)
+function updateNotificationPreferences($pdo, $user_id, $preferences)
 {
     $valid_preferences = ['email_notifications', 'sms_notifications', 'marketing_notifications'];
-
-    $clean_preferences = [];
+    $prefs = [];
     foreach ($valid_preferences as $pref) {
-        $clean_preferences[$pref] = isset($preferences[$pref]) ? (bool)$preferences[$pref] : false;
+        $prefs[$pref] = isset($preferences[$pref]) ? (int)$preferences[$pref] : 0;
     }
 
-    // In real app, update database
-    // For demo, store in session
-    $_SESSION['notification_preferences'] = $clean_preferences;
-
-    return true;
+    try {
+        $stmt = $pdo->prepare("UPDATE users SET email_notifications = :email, sms_notifications = :sms, marketing_notifications = :marketing WHERE id = :user_id");
+        $stmt->bindParam(':email', $prefs['email_notifications'], PDO::PARAM_INT);
+        $stmt->bindParam(':sms', $prefs['sms_notifications'], PDO::PARAM_INT);
+        $stmt->bindParam(':marketing', $prefs['marketing_notifications'], PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return true;
+    } catch (PDOException $e) {
+        error_log("Error updating notification preferences: " . $e->getMessage());
+        return false;
+    }
 }
 
 /**
  * Get user statistics
+ * @param PDO $pdo
  * @param int $user_id
  * @return array
  */
-function getUserStatistics($user_id)
+function getUserStatistics($pdo, $user_id)
 {
-    // In real app, calculate from database
-    return [
-        'total_orders' => 12,
-        'total_spent' => 45600,
-        'favorite_count' => 8,
-        'last_order_date' => '2025-01-01',
-        'member_since' => '2024-01-15'
-    ];
-}
+    try {
+        // Total orders
+        $stmt = $pdo->prepare("SELECT COUNT(*) as total_orders, MAX(created_at) as last_order_date FROM orders WHERE user_id = :user_id");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $orders = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Function to get status color and icon
-function getStatusInfo($status)
-{
-    switch ($status) {
-        case 'delivered':
-            return ['color' => 'text-green-600', 'bg' => 'bg-green-100', 'icon' => 'fas fa-check-circle'];
-        case 'processing':
-            return ['color' => 'text-blue-600', 'bg' => 'bg-blue-100', 'icon' => 'fas fa-clock'];
-        case 'pending':
-            return ['color' => 'text-yellow-600', 'bg' => 'bg-yellow-100', 'icon' => 'fas fa-hourglass-half'];
-        case 'cancelled':
-            return ['color' => 'text-red-600', 'bg' => 'bg-red-100', 'icon' => 'fas fa-times-circle'];
-        default:
-            return ['color' => 'text-gray-600', 'bg' => 'bg-gray-100', 'icon' => 'fas fa-question-circle'];
+        // Total spent
+        $stmt2 = $pdo->prepare("SELECT SUM(total) as total_spent FROM orders WHERE user_id = :user_id");
+        $stmt2->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt2->execute();
+        $spent = $stmt2->fetch(PDO::FETCH_ASSOC);
+
+        // Favorite count
+        $stmt3 = $pdo->prepare("SELECT COUNT(*) as favorite_count FROM user_favorites WHERE user_id = :user_id");
+        $stmt3->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt3->execute();
+        $fav = $stmt3->fetch(PDO::FETCH_ASSOC);
+
+        // Member since
+        $stmt4 = $pdo->prepare("SELECT created_at FROM users WHERE id = :user_id");
+        $stmt4->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt4->execute();
+        $user = $stmt4->fetch(PDO::FETCH_ASSOC);
+
+        return [
+            'total_orders' => $orders['total_orders'] ?? 0,
+            'total_spent' => $spent['total_spent'] ?? 0,
+            'favorite_count' => $fav['favorite_count'] ?? 0,
+            'last_order_date' => $orders['last_order_date'] ?? null,
+            'member_since' => $user['created_at'] ?? null
+        ];
+    } catch (PDOException $e) {
+        error_log("Error fetching user statistics: " . $e->getMessage());
+        return [];
     }
 }
 
 /**
  * Get user's recent orders
+ * @param PDO $pdo
  * @param int $user_id
  * @param int $limit
  * @return array
  */
-
-function getUserRecentOrders($user_id, $limit = 5)
+function getUserRecentOrders($pdo, $user_id, $limit = 5)
 {
-    // In real app, fetch from database
-    return [
-        [
-            'id' => 'FF20250101001',
-            'date' => '2025-01-01',
-            'total' => 8500,
-            'status' => 'delivered',
-            'items_count' => 3,
-            'items' => [
-                ['name' => 'Fresh Chicken Wings', 'quantity' => 2],
-                ['name' => 'Atlantic Salmon', 'quantity' => 1]
-            ]
-        ],
-        [
-            'id' => 'FF20241228002',
-            'date' => '2024-12-28',
-            'total' => 5200,
-            'status' => 'delivered',
-            'items_count' => 2,
-            'items' => [
-                ['name' => 'Whole Turkey', 'quantity' => 1]
-            ]
-        ],
-        [
-            'id' => 'FF20241225003',
-            'date' => '2024-12-25',
-            'total' => 12300,
-            'status' => 'out_for_delivery',
-            'items_count' => 5,
-            'items' => [
-                ['name' => 'Chicken Breast', 'quantity' => 3],
-                ['name' => 'Tuna Steaks', 'quantity' => 2]
-            ]
-        ]
-    ];
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM orders WHERE user_id = :user_id ORDER BY created_at DESC LIMIT :limit");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching recent orders: " . $e->getMessage());
+        return [];
+    }
 }
 
 /**
  * Get user's favorite products
+ * @param PDO $pdo
  * @param int $user_id
  * @return array
  */
-function getUserFavorites($user_id)
+function getUserFavorites($pdo, $user_id)
 {
-    // In real app, fetch from database
-    $favorites = [1, 2, 5, 8]; // Product IDs
-    $favorite_products = [];
+    try {
+        $stmt = $pdo->prepare("SELECT product_id FROM user_favorites WHERE user_id = :user_id");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $favorites = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-    foreach ($favorites as $product_id) {
-        $product = getProductById($product_id);
-        if ($product) {
-            $favorite_products[] = $product;
+        $favorite_products = [];
+        foreach ($favorites as $product_id) {
+            $product = getProductById($pdo, $product_id);
+            if ($product) {
+                $favorite_products[] = $product;
+            }
         }
+        return $favorite_products;
+    } catch (PDOException $e) {
+        error_log("Error fetching user favorites: " . $e->getMessage());
+        return [];
     }
-
-    return $favorite_products;
 }
 
 /**
  * Add product to user favorites
+ * @param PDO $pdo
  * @param int $user_id
  * @param int $product_id
  * @return bool
  */
-function addToFavorites($user_id, $product_id)
+function addToFavorites($pdo, $user_id, $product_id)
 {
-    // Validate product exists
-    $product = getProductById($product_id);
-    if (!$product) {
+    try {
+        $stmt = $pdo->prepare("INSERT IGNORE INTO user_favorites (user_id, product_id) VALUES (:user_id, :product_id)");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return true;
+    } catch (PDOException $e) {
+        error_log("Error adding to favorites: " . $e->getMessage());
         return false;
     }
-
-    // In real app, insert into database
-    // For demo, store in session
-    if (!isset($_SESSION['user_favorites'])) {
-        $_SESSION['user_favorites'] = [];
-    }
-
-    if (!in_array($product_id, $_SESSION['user_favorites'])) {
-        $_SESSION['user_favorites'][] = $product_id;
-    }
-
-    return true;
 }
 
 /**
  * Remove product from user favorites
+ * @param PDO $pdo
  * @param int $user_id
  * @param int $product_id
  * @return bool
  */
-function removeFromFavorites($user_id, $product_id)
+function removeFromFavorites($pdo, $user_id, $product_id)
 {
-    // In real app, delete from database
-    // For demo, remove from session
-    if (isset($_SESSION['user_favorites'])) {
-        $_SESSION['user_favorites'] = array_filter($_SESSION['user_favorites'], function ($id) use ($product_id) {
-            return $id != $product_id;
-        });
+    try {
+        $stmt = $pdo->prepare("DELETE FROM user_favorites WHERE user_id = :user_id AND product_id = :product_id");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return true;
+    } catch (PDOException $e) {
+        error_log("Error removing from favorites: " . $e->getMessage());
+        return false;
     }
-
-    return true;
 }
 
 /**
  * Check if product is in user favorites
+ * @param PDO $pdo
  * @param int $user_id
  * @param int $product_id
  * @return bool
  */
-function isProductFavorite($user_id, $product_id)
+function isProductFavorite($pdo, $user_id, $product_id)
 {
-    if (!isset($_SESSION['user_favorites'])) {
+    try {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_favorites WHERE user_id = :user_id AND product_id = :product_id");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
+    } catch (PDOException $e){
+        error_log($e->getMessage());
         return false;
     }
-
-    return in_array($product_id, $_SESSION['user_favorites']);
 }
 
-/**
- * Upload user profile image
- * @param int $user_id
- * @param array $file
- * @return string|false
- */
-function uploadProfileImage($user_id, $file)
-{
-    // Validate file
-    $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
-    $max_size = 2 * 1024 * 1024; // 2MB
-
-    if (!in_array($file['type'], $allowed_types)) {
-        return false;
-    }
-
-    if ($file['size'] > $max_size) {
-        return false;
-    }
-
-    // Generate unique filename
-    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $filename = 'profile_' . $user_id . '_' . time() . '.' . $extension;
-    $upload_path = '../uploads/profiles/' . $filename;
-
-    // Create directory if it doesn't exist
-    if (!file_exists('../uploads/profiles/')) {
-        mkdir('../uploads/profiles/', 0755, true);
-    }
-
-    // Move uploaded file
-    if (move_uploaded_file($file['tmp_name'], $upload_path)) {
-        // In real app, update database with image path
-        $_SESSION['profile_image'] = $filename;
-        return $filename;
-    }
-
-    return false;
-}
-
-/**
- * Delete user account
- * @param int $user_id
- * @param string $password
- * @return bool
- */
-function deleteUserAccount($user_id, $password)
-{
-    // In real app, verify password and delete from database
-    // This is a destructive operation, so implement carefully
-
-    // For demo, just clear session
-    session_destroy();
-
-    return true;
-}
-
-/**
- * Generate user activity log
- * @param int $user_id
- * @return array
- */
 function getUserActivityLog($user_id)
 {
     // In real app, fetch from database
@@ -361,22 +307,6 @@ function getUserActivityLog($user_id)
             'timestamp' => '2024-12-28 09:45:00',
             'details' => 'Password updated successfully'
         ]
-    ];
-}
-
-/**
- * Export user data (GDPR compliance)
- * @param int $user_id
- * @return array
- */
-function exportUserData($user_id)
-{
-    return [
-        'profile' => getUserProfile($user_id),
-        'orders' => getUserRecentOrders($user_id, 100),
-        'favorites' => getUserFavorites($user_id),
-        'activity_log' => getUserActivityLog($user_id),
-        'statistics' => getUserStatistics($user_id)
     ];
 }
 
