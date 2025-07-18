@@ -1,0 +1,11 @@
+# Database Configuration
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USERNAME=root
+DB_PASSWORD=123456
+DB_DATABASE=frozen_foods
+
+# Application Environment
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost/frozen_foods
