@@ -1,6 +1,6 @@
 <?php
 // Include utility functions
-require_once '../util/products.php';
+require_once 'util/products.php';
 
 // Get all products for the dashboard
 $products = getAllProducts();
@@ -354,7 +354,7 @@ $categories = getProductCategories();
         </div>
     </nav>
 
-    <script src="../util/dashboard.js"></script>
+    <script src="util/dashboard.js"></script>
     <script>
         // Premium mobile interactions with enhanced animations
         document.addEventListener('DOMContentLoaded', function() {

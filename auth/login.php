@@ -96,7 +96,7 @@ require __DIR__ . '/../components/header.php';
                                 // Redirect to dashboard
                                 showToasted(data.message, 'success');
                                 setTimeout(() => {
-                                    window.location.href = "../user/dashboard.php";
+                                    window.location.href = "../client/dashboard.php";
                                 }, timeout = 2000);
                             } else {
                                 // Show error message

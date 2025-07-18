@@ -1,6 +1,6 @@
 <?php
 // Include utility functions
-require_once '../util/products.php';
+require_once 'util/products.php';
 
 // Get product ID from URL
 $product_id = isset($_GET['id']) ? (int)$_GET['id'] : 1;

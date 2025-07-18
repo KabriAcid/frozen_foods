@@ -356,7 +356,7 @@ $user = [
                     <i class="fas fa-chevron-right text-gray-400"></i>
                 </button>
 
-                <div class="border-t border-gray-600"></div>
+                <div class="border-t border-gray-100"></div>
 
                 <button onclick="openAddressModal()" class="menu-item w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center">
@@ -371,7 +371,7 @@ $user = [
                     <i class="fas fa-chevron-right text-gray-400"></i>
                 </button>
 
-                <div class="border-t border-gray-600"></div>
+                <div class="border-t border-gray-100"></div>
 
                 <button onclick="openPaymentModal()" class="menu-item w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center">
@@ -408,7 +408,7 @@ $user = [
                     </label>
                 </div>
 
-                <div class="border-t border-gray-600"></div>
+                <div class="border-t border-gray-100"></div>
 
                 <div class="menu-item flex items-center justify-between p-4">
                     <div class="flex items-center">
@@ -426,7 +426,7 @@ $user = [
                     </label>
                 </div>
 
-                <div class="border-t border-gray-600"></div>
+                <div class="border-t border-gray-100"></div>
 
                 <button onclick="openLanguageModal()" class="menu-item w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center">
@@ -460,7 +460,7 @@ $user = [
                     <i class="fas fa-chevron-right text-gray-400"></i>
                 </button>
 
-                <div class="border-t border-gray-600"></div>
+                <div class="border-t border-gray-100"></div>
 
                 <button onclick="openContactModal()" class="menu-item w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center">
@@ -475,7 +475,7 @@ $user = [
                     <i class="fas fa-chevron-right text-gray-400"></i>
                 </button>
 
-                <div class="border-t border-gray-600"></div>
+                <div class="border-t border-gray-100"></div>
 
                 <button onclick="openAboutModal()" class="menu-item w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center">
@@ -505,7 +505,7 @@ $user = [
     <nav class="fixed bottom-0 left-0 right-0 glass-effect border-t border-gray-200/50 safe-area-bottom z-50 animate-slide-up" style="animation-delay: 0.6s;">
         <div class="grid grid-cols-4 h-20 px-2">
             <!-- Dashboard -->
-            <a href="dashboard.php" class="nav-item flex flex-col items-center justify-center space-y-1 text-gray-500 hover:text-accent transition-all duration-300 relative group">
+            <a href="index.php" class="nav-item flex flex-col items-center justify-center space-y-1 text-gray-500 hover:text-accent transition-all duration-300 relative group">
                 <div class="nav-indicator"></div>
                 <div class="nav-icon w-12 h-12 rounded-2xl bg-transparent flex items-center justify-center transition-all duration-300 group-hover:bg-accent/10">
                     <i class="fas fa-home text-lg transition-all duration-300"></i>
