@@ -871,13 +871,15 @@ $user = [
         function signOut() {
             // Add loading state
             const signOutBtn = document.querySelector('#signOutModal button:last-child');
+            const originalText = signOutBtn.innerHTML;
             signOutBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Signing out...';
             signOutBtn.disabled = true;
 
-            // Faster sign out process (0.7s)
+            // Simulate sign out process
             setTimeout(() => {
-                window.location.href = '../../index.php';
-            }, 700);
+                // Redirect to login page or handle sign out
+                window.location.href = 'login.php';
+            }, 2000);
         }
 
         // Close modals when clicking outside
