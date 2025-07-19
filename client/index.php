@@ -1,5 +1,4 @@
 <?php
-// Include utility functions
 require_once __DIR__ . '/../config/database.php';
 require_once 'util/util.php';
 
@@ -24,34 +23,36 @@ require_once 'partials/headers.php';
                         <!-- <i class="fas fa-snowflake text-white text-xl"></i> -->
                         <div class="w-10 h-10 flex items-center justify-center">
                             <!-- Cart Icon SVG -->
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Cart body -->
-                                <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V16.5"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round" />
+                            <a href="cart.php">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Cart body -->
+                                    <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V16.5"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round" />
 
-                                <!-- Cart wheels -->
-                                <circle cx="9" cy="20" r="1"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round" />
+                                    <!-- Cart wheels -->
+                                    <circle cx="9" cy="20" r="1"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round" />
 
-                                <circle cx="20" cy="20" r="1"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round" />
+                                    <circle cx="20" cy="20" r="1"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round" />
 
-                                <!-- Premium accent line (optional highlight) -->
-                                <path d="M8 9H19"
-                                    stroke="currentColor"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    opacity="0.6" />
-                            </svg>
+                                    <!-- Premium accent line (optional highlight) -->
+                                    <path d="M8 9H19"
+                                        stroke="currentColor"
+                                        stroke-width="1.5"
+                                        stroke-linecap="round"
+                                        opacity="0.6" />
+                                </svg>
+                            </a>
                         </div>
 
                     </div>
@@ -148,7 +149,7 @@ require_once 'partials/headers.php';
                                     <a href="product.php?id=<?php echo $product['id']; ?>" class="bg-dark text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-gray-800 transition-all duration-300 hover:scale-105 active:scale-95">
                                         View
                                     </a>
-                                      </div>
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>

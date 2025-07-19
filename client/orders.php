@@ -1,5 +1,5 @@
 <?php
-// Include utility functions (assuming you have order-related functions)
+require_once '../config/database.php';
 require_once 'util/util.php';
 
 // Mock data for orders - replace with your actual data source
