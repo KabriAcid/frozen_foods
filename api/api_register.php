@@ -24,12 +24,25 @@ try {
         exit();
     }
 
+    // Split fullName into first_name and last_name
+    $nameParts = preg_split('/\s+/', trim($fullName));
+    if (count($nameParts) === 1) {
+        $first_name = $nameParts[0];
+        $last_name = '';
+    } elseif (count($nameParts) === 2) {
+        $first_name = $nameParts[0];
+        $last_name = $nameParts[1];
+    } else {
+        $first_name = $nameParts[0];
+        $last_name = implode(' ', array_slice($nameParts, 1));
+    }
+
     // Hash the password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Insert user into the database
-    $stmt = $pdo->prepare("INSERT INTO users (full_name, email, phone, password_hash) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$fullName, $email, $phone, $hashedPassword]);
+    $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, phone, password_hash) VALUES (?, ?, ?, ?, ?)");
+    $stmt->execute([$first_name, $last_name, $email, $phone, $hashedPassword]);
 
     echo json_encode(['success' => true, 'message' => 'Registration successful.']);
 } catch (PDOException $e) {

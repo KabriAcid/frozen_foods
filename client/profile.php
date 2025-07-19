@@ -1,15 +1,10 @@
 <?php
-// Mock user data - replace with your actual user data source
-$user = [
-    'name' => 'John Doe',
-    'email' => 'john.doe@example.com',
-    'phone' => '+234 801 234 5678',
-    'avatar' => 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150',
-    'member_since' => '2023-01-15',
-    'total_orders' => 24,
-    'total_spent' => 125000,
-    'loyalty_points' => 1250
-];
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/auth.php';
+require_once __DIR__ . '/util/util.php';
+
+$user = getUserProfile($pdo, $user_id = 1);
+$userStats = getUserStatistics($pdo, $user_id = 1);
 require_once 'partials/headers.php';
 ?>
 
@@ -19,15 +14,19 @@ require_once 'partials/headers.php';
         <!-- Profile Header -->
         <div class="gradient-bg rounded-3xl p-6 text-white floating-card animate-slide-up">
             <div class="flex items-center space-x-4">
-                <div class="profile-avatar rounded-full">
-                    <img src="<?php echo $user['avatar']; ?>" alt="Profile" class="w-20 h-20 rounded-full object-cover">
+                <div class="profile-avatar rounded-full position-relative">
+                    <img src="../assets/img/<?php echo $user['avatar']; ?>" alt="Profile" class="w-20 h-20 rounded-full object-cover">
+                    <!-- data lucid for camera icon -->
+                    <div class="absolute bottom-0 right-0 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-lg">
+                        <i class="fas fa-camera text-gray-600 text-xs"></i>
+                    </div>
                 </div>
                 <div class="flex-1">
-                    <h2 class="text-2xl font-bold mb-1"><?php echo $user['name']; ?></h2>
+                    <h2 class="text-2xl font-bold mb-1"><?php echo $user['first_name'] . '&nbsp;' . $user['last_name']; ?></h2>
                     <p class="text-orange-100 text-sm mb-2"><?php echo $user['email']; ?></p>
                     <div class="flex items-center text-orange-100 text-xs">
                         <i class="fas fa-calendar mr-1"></i>
-                        <span>Member since <?php echo date('M Y', strtotime($user['member_since'])); ?></span>
+                        <span>Member since <?php echo date('M Y', strtotime($user['created_at'])); ?></span>
                     </div>
                 </div>
                 <button onclick="openEditProfileModal()" class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-2xl border border-white/30 flex items-center justify-center hover:bg-white/30 transition-colors">
@@ -42,21 +41,21 @@ require_once 'partials/headers.php';
                 <div class="w-10 h-10 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-2">
                     <i class="fas fa-shopping-bag text-blue-600 text-lg"></i>
                 </div>
-                <p class="text-2xl font-bold text-dark"><?php echo $user['total_orders']; ?></p>
+                <p class="text-2xl font-bold text-dark"><?php echo $userStats['total_orders'] ?? 0; ?></p>
                 <p class="text-gray-500 text-xs">Orders</p>
             </div>
             <div class="stats-card bg-white rounded-2xl p-4 floating-card text-center">
                 <div class="w-10 h-10 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-2">
                     <i class="fas fa-naira-sign text-green-600 text-lg"></i>
                 </div>
-                <p class="text-2xl font-bold text-dark">₦<?php echo number_format($user['total_spent'] / 1000); ?>k</p>
+                <p class="text-2xl font-bold text-dark">₦<?php echo number_format(($userStats['total_amount'] ?? 0) / 1000); ?>k</p>
                 <p class="text-gray-500 text-xs">Spent</p>
             </div>
             <div class="stats-card bg-white rounded-2xl p-4 floating-card text-center">
                 <div class="w-10 h-10 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-2">
                     <i class="fas fa-star text-accent text-lg"></i>
                 </div>
-                <p class="text-2xl font-bold text-dark"><?php echo number_format($user['loyalty_points']); ?></p>
+                <p class="text-2xl font-bold text-dark"><?php echo number_format($user['loyalty_points'] ?? 0); ?></p>
                 <p class="text-gray-500 text-xs">Points</p>
             </div>
         </div>
@@ -261,7 +260,7 @@ require_once 'partials/headers.php';
                 <form class="space-y-4">
                     <div>
                         <label class="block text-sm font-semibold text-dark mb-2">Full Name</label>
-                        <input type="text" value="<?php echo $user['name']; ?>" class="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-accent focus:border-accent transition-colors">
+                        <input type="text" value="<?php echo $user['first_name'] . ' ' . $user['last_name']; ?>" class="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-accent focus:border-accent transition-colors">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-dark mb-2">Email</label>
@@ -641,15 +640,42 @@ require_once 'partials/headers.php';
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
             submitBtn.disabled = true;
 
-            // Simulate form submission
-            setTimeout(() => {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-                closeModal('editProfileModal');
+            // Gather form data
+            const form = this;
+            const fullName = form.querySelector('input[type="text"]').value.trim();
+            const email = form.querySelector('input[type="email"]').value.trim();
+            const phone = form.querySelector('input[type="tel"]').value.trim();
 
-                // Show success message
-                showToast('Profile updated successfully!', 'success');
-            }, 2000);
+            fetch('../api/api_update_profile.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fullName,
+                        email,
+                        phone
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    if (data.success) {
+                        closeModal('editProfileModal');
+                        showToast('Profile updated successfully!', 'success');
+                        // Optionally update UI with new values
+                        document.querySelector('.flex-1 h2').innerHTML = fullName;
+                        document.querySelector('.flex-1 .text-orange-100').innerHTML = email;
+                    } else {
+                        showToast(data.message || 'Update failed', 'error');
+                    }
+                })
+                .catch(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    showToast('Network error. Please try again.', 'error');
+                });
         });
 
         // Toast notification function

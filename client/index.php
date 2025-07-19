@@ -114,32 +114,45 @@ require_once 'partials/headers.php';
 
             <!-- Product Grid -->
             <div id="products-grid" class="grid grid-cols-2 gap-4">
-                <?php foreach ($products as $product): ?>
-                    <div class="product-card bg-white rounded-3xl shadow-lg overflow-hidden animate-scale-in" data-category="<?php echo strtolower($product['category']); ?>" data-name="<?php echo strtolower($product['name']); ?>" style="animation-delay: <?php echo rand(1, 6) * 0.1; ?>s;">
-                        <div class="relative">
-                            <img src="../assets/uploads/<?php echo $product['image']; ?>" alt="<?php echo $product['name']; ?>" class="w-full h-36 object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                            <button class="favorite-btn absolute top-3 right-3 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-300">
-                                <i class="far fa-heart text-gray-600 text-sm"></i>
-                            </button>
-                            <div class="absolute bottom-3 left-3">
-                                <span class="bg-accent text-white text-xs font-semibold px-2 py-1 rounded-lg">
-                                    Fresh
-                                </span>
-                            </div>
+                <?php if (empty($products)): ?>
+                    <!-- Empty State for Products -->
+                    <div class="col-span-2 text-center py-16">
+                        <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18M9 3v12a3 3 0 006 0V3"></path>
+                            </svg>
                         </div>
-                        <div class="p-4">
-                            <h4 class="font-bold text-dark text-sm mb-1 line-clamp-1"><?php echo $product['name']; ?></h4>
-                            <p class="text-gray-500 text-xs mb-3 line-clamp-2"><?php echo $product['description']; ?></p>
-                            <div class="flex items-center justify-between">
-                                <span class="text-lg font-bold text-accent">₦<?php echo number_format($product['price']); ?></span>
-                                <a href="product.php?id=<?php echo $product['id']; ?>" class="bg-dark text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-gray-800 transition-all duration-300 hover:scale-105 active:scale-95">
-                                    View
-                                </a>
-                            </div>
-                        </div>
+                        <h3 class="text-xl font-bold text-custom-dark mb-2">No Products Found</h3>
+                        <p class="text-gray-500">There are currently no products available. Please check back later!</p>
                     </div>
-                <?php endforeach; ?>
+                <?php else: ?>
+                    <?php foreach ($products as $product): ?>
+                        <div class="product-card bg-white rounded-3xl shadow-lg overflow-hidden animate-scale-in" data-category="<?php echo strtolower($product['category']); ?>" data-name="<?php echo strtolower($product['name']); ?>" style="animation-delay: <?php echo rand(1, 6) * 0.1; ?>s;">
+                            <div class="relative">
+                                <img src="../assets/uploads/<?php echo $product['image']; ?>" alt="<?php echo $product['name']; ?>" class="w-full h-36 object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                                <button class="favorite-btn absolute top-3 right-3 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-300">
+                                    <i class="far fa-heart text-gray-600 text-sm"></i>
+                                </button>
+                                <div class="absolute bottom-3 left-3">
+                                    <span class="bg-accent text-white text-xs font-semibold px-2 py-1 rounded-lg">
+                                        Fresh
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <h4 class="font-bold text-dark text-sm mb-1 line-clamp-1"><?php echo $product['name']; ?></h4>
+                                <p class="text-gray-500 text-xs mb-3 line-clamp-2"><?php echo $product['description']; ?></p>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg font-bold text-accent">₦<?php echo number_format($product['price']); ?></span>
+                                    <a href="product.php?id=<?php echo $product['id']; ?>" class="bg-dark text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-gray-800 transition-all duration-300 hover:scale-105 active:scale-95">
+                                        View
+                                    </a>
+                                      </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
     </main>

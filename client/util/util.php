@@ -11,7 +11,7 @@ function getUserProfile($pdo, $user_id)
         $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :user_id");
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_ASSOC);  
     } catch (PDOException $e) {
         error_log("Error fetching user profile: " . $e->getMessage());
         return null;
@@ -157,33 +157,23 @@ function getUserStatistics($pdo, $user_id)
 {
     try {
         // Total orders
-        $stmt = $pdo->prepare("SELECT COUNT(*) as total_orders, MAX(created_at) as last_order_date FROM orders WHERE user_id = :user_id");
-        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->execute();
+        $stmt = $pdo->prepare("SELECT COUNT(*) as total_orders FROM orders WHERE user_id = ?");
+        $stmt->execute([$user_id]);
         $orders = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Total spent
-        $stmt2 = $pdo->prepare("SELECT SUM(total) as total_spent FROM orders WHERE user_id = :user_id");
-        $stmt2->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt2->execute();
+        $stmt2 = $pdo->prepare("SELECT SUM(total) as total_amount FROM orders WHERE user_id = ?");
+        $stmt2->execute([$user_id]);
         $spent = $stmt2->fetch(PDO::FETCH_ASSOC);
 
-        // Favorite count
-        $stmt3 = $pdo->prepare("SELECT COUNT(*) as favorite_count FROM user_favorites WHERE user_id = :user_id");
-        $stmt3->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt3->execute();
-        $fav = $stmt3->fetch(PDO::FETCH_ASSOC);
-
         // Member since
-        $stmt4 = $pdo->prepare("SELECT created_at FROM users WHERE id = :user_id");
-        $stmt4->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt4->execute();
+        $stmt4 = $pdo->prepare("SELECT created_at FROM users WHERE id = ?");
+        $stmt4->execute([$user_id]);
         $user = $stmt4->fetch(PDO::FETCH_ASSOC);
 
         return [
             'total_orders' => $orders['total_orders'] ?? 0,
-            'total_spent' => $spent['total_spent'] ?? 0,
-            'favorite_count' => $fav['favorite_count'] ?? 0,
+            'total_amount' => $spent['total_amount'] ?? 0,
             'last_order_date' => $orders['last_order_date'] ?? null,
             'member_since' => $user['created_at'] ?? null
         ];
@@ -192,7 +182,6 @@ function getUserStatistics($pdo, $user_id)
         return [];
     }
 }
-
 /**
  * Get user's recent orders
  * @param PDO $pdo
