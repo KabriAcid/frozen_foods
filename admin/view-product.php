@@ -216,31 +216,6 @@ $recentOrders = getRecentOrdersForProduct($pdo, $productId, 5);
                         </div>
                     </div>
 
-                    <!-- Quick Actions -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
-                        <div class="p-6 border-b border-gray-200">
-                            <h3 class="text-lg font-semibold text-gray-800">Quick Actions</h3>
-                        </div>
-                        <div class="p-6 space-y-3">
-                            <button class="w-full bg-orange-500 text-white px-4 py-3 rounded-lg hover:bg-orange-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5">
-                                <i data-lucide="plus" class="w-4 h-4 mr-2 inline"></i>
-                                Add to Inventory
-                            </button>
-                            <button class="w-full bg-blue-500 text-white px-4 py-3 rounded-lg hover:bg-blue-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5">
-                                <i data-lucide="copy" class="w-4 h-4 mr-2 inline"></i>
-                                Duplicate Product
-                            </button>
-                            <button class="w-full bg-green-500 text-white px-4 py-3 rounded-lg hover:bg-green-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5">
-                                <i data-lucide="eye" class="w-4 h-4 mr-2 inline"></i>
-                                View in Store
-                            </button>
-                            <button class="w-full bg-red-500 text-white px-4 py-3 rounded-lg hover:bg-red-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5">
-                                <i data-lucide="trash-2" class="w-4 h-4 mr-2 inline"></i>
-                                Delete Product
-                            </button>
-                        </div>
-                    </div>
-
                     <!-- Product Status -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
                         <div class="p-6 border-b border-gray-200">
@@ -266,6 +241,18 @@ $recentOrders = getRecentOrdersForProduct($pdo, $productId, 5);
                                     <p class="text-xs text-gray-500">Last updated: <?php echo date('M d, Y \a\t g:i A', strtotime($product['updated_at'] ?? $product['created_at'])); ?></p>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-800">Quick Actions</h3>
+                        </div>
+                        <div class="p-6 space-y-3">
+                            <button class="w-full bg-red-500 text-white px-4 py-3 rounded-lg hover:bg-red-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5">
+                                <i data-lucide="trash-2" class="w-4 h-4 mr-2 inline"></i>
+                                Delete Product
+                            </button>
                         </div>
                     </div>
                 </div>
