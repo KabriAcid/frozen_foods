@@ -1,10 +1,20 @@
-<?php require __DIR__ . '/partials/headers.php'; ?>
+<?php
+require __DIR__ . '/../config/database.php';
+require __DIR__ . '/../config/auth.php';
+require __DIR__ . '/util/utilities.php';
+
+// Fetch dashboard stats
+$stats = getDashboardStats($pdo);
+$recentOrders = getRecentOrders($pdo, 5);
+require __DIR__ . '/partials/headers.php';
+?>
+
 <body class="bg-gray-50 font-sans">
     <?php require __DIR__ . '/partials/sidebar.php'; ?>
     <!-- Main Content -->
     <div class="main-content lg:ml-64">
         <!-- Top Navigation -->
-        <?php require __DIR__ . '/partials/top-navbar.php'; ?>        
+        <?php require __DIR__ . '/partials/top-navbar.php'; ?>
         <!-- Dashboard Content -->
         <main class="p-6">
             <!-- KPI Cards -->
@@ -13,7 +23,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Total Orders</p>
-                            <p class="text-3xl font-bold text-gray-900">1,234</p>
+                            <p class="text-3xl font-bold text-gray-900"><?php echo number_format($stats['total_orders'] ?? 0); ?></p>
                         </div>
                         <div class="bg-blue-50 p-3 rounded-lg">
                             <i data-lucide="shopping-cart" class="w-6 h-6 text-blue-600"></i>
@@ -25,7 +35,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Revenue</p>
-                            <p class="text-3xl font-bold text-gray-900">$45,678</p>
+                            <p class="text-3xl font-bold text-gray-900">₦<?php echo number_format($stats['total_revenue'] ?? 0); ?></p>
                         </div>
                         <div class="bg-green-50 p-3 rounded-lg">
                             <i data-lucide="dollar-sign" class="w-6 h-6 text-green-600"></i>
@@ -37,7 +47,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Active Users</p>
-                            <p class="text-3xl font-bold text-gray-900">892</p>
+                            <p class="text-3xl font-bold text-gray-900"><?php echo number_format($stats['active_users'] ?? 0); ?></p>
                         </div>
                         <div class="bg-orange-50 p-3 rounded-lg">
                             <i data-lucide="users" class="w-6 h-6 text-orange-600"></i>
@@ -48,8 +58,8 @@
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium text-gray-600">Reviews</p>
-                            <p class="text-3xl font-bold text-gray-900">4.8</p>
+                            <p class="text-sm font-medium text-gray-600">Total Products</p>
+                            <p class="text-3xl font-bold text-gray-900"><?php echo number_format($stats['total_products'] ?? 0); ?></p>
                         </div>
                         <div class="bg-yellow-50 p-3 rounded-lg">
                             <i data-lucide="star" class="w-6 h-6 text-yellow-600"></i>
@@ -81,67 +91,63 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Recent Orders -->
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                    <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between align-center p-6 border-b border-gray-200">
                         <h3 class="text-lg font-semibold text-gray-800">Recent Orders</h3>
+                        <a href="orders.php" class="text-orange-600 hover:text-orange-700 font-medium text-sm">View all orders →</a>
                     </div>
                     <div class="p-6">
                         <div class="space-y-4">
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                                        <i data-lucide="package" class="w-5 h-5 text-orange-600"></i>
+                            <?php if (empty($recentOrders)): ?>
+                                <div class="text-center text-gray-500 py-8">No recent orders found.</div>
+                            <?php else: ?>
+                                <?php
+                                // Fetch user names for recent orders without JOINs
+                                $userIds = array_unique(array_column($recentOrders, 'user_id'));
+                                $userNames = [];
+                                if ($userIds) {
+                                    $in  = str_repeat('?,', count($userIds) - 1) . '?';
+                                    $userStmt = $pdo->prepare("SELECT id, first_name, last_name FROM users WHERE id IN ($in)");
+                                    $userStmt->execute($userIds);
+                                    foreach ($userStmt->fetchAll(PDO::FETCH_ASSOC) as $user) {
+                                        $userNames[$user['id']] = $user['first_name'] . ' ' . $user['last_name'];
+                                    }
+                                }
+                                ?>
+                                <?php foreach ($recentOrders as $order): ?>
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                                <i data-lucide="package" class="w-5 h-5 text-orange-600"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium text-gray-900">#<?php echo htmlspecialchars($order['order_number'] ?? $order['id']); ?></p>
+                                                <p class="text-sm text-gray-500">
+                                                    <?php
+                                                    $uid = $order['user_id'];
+                                                    echo isset($userNames[$uid]) ? htmlspecialchars($userNames[$uid]) : 'Unknown User';
+                                                    ?>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="font-semibold text-gray-900">₦<?php echo number_format($order['total'] ?? 0); ?></p>
+                                            <?php
+                                            $status = strtolower($order['status']);
+                                            $statusColors = [
+                                                'delivered' => 'bg-green-100 text-green-800',
+                                                'processing' => 'bg-yellow-100 text-yellow-800',
+                                                'shipped' => 'bg-blue-100 text-blue-800',
+                                                'cancelled' => 'bg-red-100 text-red-800',
+                                            ];
+                                            $color = $statusColors[$status] ?? 'bg-gray-100 text-gray-800';
+                                            ?>
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?php echo $color; ?>">
+                                                <?php echo ucfirst($order['status']); ?>
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p class="font-medium text-gray-900">#ORD-001</p>
-                                        <p class="text-sm text-gray-500">Frozen Chicken Breast</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">$24.99</p>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Delivered
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                        <i data-lucide="package" class="w-5 h-5 text-blue-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-gray-900">#ORD-002</p>
-                                        <p class="text-sm text-gray-500">Frozen Salmon Fillet</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">$34.50</p>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        Processing
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                                        <i data-lucide="package" class="w-5 h-5 text-red-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-gray-900">#ORD-003</p>
-                                        <p class="text-sm text-gray-500">Turkey Wings</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">$18.75</p>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        Shipped
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-6">
-                            <a href="orders.php" class="text-orange-600 hover:text-orange-700 font-medium text-sm">View all orders →</a>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -213,7 +219,7 @@
     <!-- Overlay for mobile sidebar -->
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
 
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 
 </html>

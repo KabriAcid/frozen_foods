@@ -228,7 +228,7 @@ New York, NY 10001</textarea>
     <!-- Overlay for mobile sidebar -->
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
 
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 
 </html>
