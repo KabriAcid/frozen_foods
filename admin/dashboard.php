@@ -6,7 +6,9 @@ require __DIR__ . '/util/utilities.php';
 // Fetch dashboard stats
 $stats = getDashboardStats($pdo);
 $recentOrders = getRecentOrders($pdo, 5);
+$topProducts = getTopProducts($pdo, 3);
 require __DIR__ . '/partials/headers.php';
+
 ?>
 
 <body class="bg-gray-50 font-sans">
@@ -91,7 +93,7 @@ require __DIR__ . '/partials/headers.php';
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Recent Orders -->
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                    <div class="flex justify-between align-center p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center p-6 border-b border-gray-200">
                         <h3 class="text-lg font-semibold text-gray-800">Recent Orders</h3>
                         <a href="orders.php" class="text-orange-600 hover:text-orange-700 font-medium text-sm">View all orders →</a>
                     </div>
@@ -154,61 +156,33 @@ require __DIR__ . '/partials/headers.php';
 
                 <!-- Top Products -->
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                    <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center p-6 border-b border-gray-200">
                         <h3 class="text-lg font-semibold text-gray-800">Top Products</h3>
+                        <a href="products.php" class="text-orange-600 hover:text-orange-700 font-medium text-sm">View all products →</a>
                     </div>
                     <div class="p-6">
                         <div class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <img src="https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Chicken" class="w-12 h-12 rounded-lg object-cover">
-                                    <div>
-                                        <p class="font-medium text-gray-900">Chicken Breast</p>
-                                        <p class="text-sm text-gray-500">124 orders</p>
+                            <?php if (empty($topProducts)): ?>
+                                <div class="text-center text-gray-500 py-8">No top products found.</div>
+                            <?php else: ?>
+                                <?php foreach ($topProducts as $product): ?>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-3">
+                                            <img src="../assets/uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="w-12 h-12 rounded-lg object-cover">
+                                            <div>
+                                                <p class="font-medium text-gray-900"><?php echo htmlspecialchars($product['name']); ?></p>
+                                                <p class="text-sm text-gray-500"><?php echo (int)$product['orders_count']; ?> orders</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="font-semibold text-gray-900">₦<?php echo number_format($product['total_revenue'] ?? 0); ?></p>
+                                            <div class="w-20 bg-gray-200 rounded-full h-2 mt-1">
+                                                <div class="bg-orange-500 h-2 rounded-full" style="width: <?php echo min(100, ($product['orders_count'] / max(array_column($topProducts, 'orders_count'))) * 100); ?>%"></div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">$3,098</p>
-                                    <div class="w-20 bg-gray-200 rounded-full h-2 mt-1">
-                                        <div class="bg-orange-500 h-2 rounded-full" style="width: 85%"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <img src="https://images.pexels.com/photos/725997/pexels-photo-725997.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Salmon" class="w-12 h-12 rounded-lg object-cover">
-                                    <div>
-                                        <p class="font-medium text-gray-900">Salmon Fillet</p>
-                                        <p class="text-sm text-gray-500">89 orders</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">$2,890</p>
-                                    <div class="w-20 bg-gray-200 rounded-full h-2 mt-1">
-                                        <div class="bg-blue-500 h-2 rounded-full" style="width: 70%"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <img src="https://images.pexels.com/photos/8447662/pexels-photo-8447662.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Turkey" class="w-12 h-12 rounded-lg object-cover">
-                                    <div>
-                                        <p class="font-medium text-gray-900">Turkey Wings</p>
-                                        <p class="text-sm text-gray-500">67 orders</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">$1,256</p>
-                                    <div class="w-20 bg-gray-200 rounded-full h-2 mt-1">
-                                        <div class="bg-red-500 h-2 rounded-full" style="width: 45%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-6">
-                            <a href="products.php" class="text-orange-600 hover:text-orange-700 font-medium text-sm">View all products →</a>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
