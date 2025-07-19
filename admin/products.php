@@ -354,7 +354,7 @@ require __DIR__ . '/partials/headers.php'; ?>
                         <button type="button" id="cancelAddBtn" class="px-6 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium">
                             Cancel
                         </button>
-                        <button type="submit" form="addProductForm" class="px-6 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5 flex items-center">
+                        <button id="submitProductBtn" type="submit" form="addProductForm" class="px-6 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5 flex items-center">
                             <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
                             Add Product
                         </button>
@@ -369,6 +369,7 @@ require __DIR__ . '/partials/headers.php'; ?>
 
     <script src="js/script.js"></script>
     <script>
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Modal elements
             const addProductModal = document.getElementById('addProductModal');
@@ -433,7 +434,7 @@ require __DIR__ . '/partials/headers.php'; ?>
                 if (file) {
                     // Validate file size (10MB max)
                     if (file.size > 10 * 1024 * 1024) {
-                        showNotification('File size too large. Maximum size is 10MB.', 'error');
+                        showToasted('File size too large. Maximum size is 10MB.', 'error');
                         this.value = '';
                         return;
                     }
@@ -441,7 +442,7 @@ require __DIR__ . '/partials/headers.php'; ?>
                     // Validate file type
                     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
                     if (!allowedTypes.includes(file.type)) {
-                        showNotification('Invalid file type. Only JPG, PNG, GIF, and WebP are allowed.', 'error');
+                        showToasted('Invalid file type. Only JPG, PNG, GIF, and WebP are allowed.', 'error');
                         this.value = '';
                         return;
                     }
@@ -463,14 +464,9 @@ require __DIR__ . '/partials/headers.php'; ?>
                 const productName = formData.get('name');
                 const productPrice = formData.get('price');
 
-                // Confirmation dialog
-                const confirmed = confirm(`Are you sure you want to add "${productName}" for ₦${parseFloat(productPrice).toLocaleString()}?`);
-                if (!confirmed) {
-                    return;
-                }
 
                 const submitBtn = e.target.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
+                const originalText = submitBtn.textContent;
 
                 // Show loading state
                 submitBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Adding Product...';
@@ -486,7 +482,7 @@ require __DIR__ . '/partials/headers.php'; ?>
 
                     if (result.success) {
                         // Show success message
-                        showNotification('Product added successfully!', 'success');
+                        showToasted('Product added successfully!', 'success');
 
                         // Close modal after short delay
                         setTimeout(() => {
@@ -495,11 +491,11 @@ require __DIR__ . '/partials/headers.php'; ?>
                             window.location.reload();
                         }, 1500);
                     } else {
-                        showNotification(result.message || 'Failed to add product', 'error');
+                        showToasted(result.message || 'Failed to add product', 'error');
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    showNotification('An error occurred while adding the product', 'error');
+                    showToasted('An error occurred while adding the product', 'error');
                 } finally {
                     // Restore button state
                     submitBtn.innerHTML = originalText;
@@ -547,44 +543,6 @@ require __DIR__ . '/partials/headers.php'; ?>
                     this.classList.add('border-gray-300');
                 }
             });
-
-            // Notification function
-            function showNotification(message, type = 'info') {
-                const notification = document.createElement('div');
-                notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full ${
-            type === 'success' ? 'bg-green-500 text-white' : 
-            type === 'error' ? 'bg-red-500 text-white' : 
-            'bg-blue-500 text-white'
-        }`;
-                notification.innerHTML = `
-            <div class="flex items-center space-x-2">
-                <i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info'}" class="w-5 h-5"></i>
-                <span>${message}</span>
-            </div>
-        `;
-
-                document.body.appendChild(notification);
-
-                // Initialize Lucide icons for the notification
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
-
-                // Trigger animation
-                setTimeout(() => {
-                    notification.classList.remove('translate-x-full');
-                }, 100);
-
-                // Remove notification after 4 seconds
-                setTimeout(() => {
-                    notification.classList.add('translate-x-full');
-                    setTimeout(() => {
-                        if (document.body.contains(notification)) {
-                            document.body.removeChild(notification);
-                        }
-                    }, 300);
-                }, 4000);
-            }
 
             // Initialize Lucide icons
             if (typeof lucide !== 'undefined') {
