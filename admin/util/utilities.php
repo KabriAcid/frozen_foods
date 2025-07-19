@@ -152,3 +152,72 @@ function getTotalProducts($pdo)
         return 0;
     }
 }
+
+// Function that retrieves all orders table columns
+function getAllOrders($pdo)
+{
+    try {
+        $stmt = $pdo->query("SELECT * FROM orders");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // <-- fetchAll, not fetch
+    } catch (PDOException $e) {
+        error_log("Error fetching orders: " . $e->getMessage());
+        return [];
+    }
+}
+
+function getOrderStatusCount($pdo, $status) {
+    try {
+        $stmt = $pdo->prepare("SELECT COUNT(*) AS count FROM orders WHERE status = ?");
+        $stmt->execute([$status]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)($row['count'] ?? 0);
+    } catch (PDOException $e) {
+        error_log("Error fetching order status count: " . $e->getMessage());
+        return 0;
+    }
+}
+
+// function for getting user by id
+function getUserById($pdo, $userId) {
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching user by ID: " . $e->getMessage());
+        return null;
+    }
+}
+
+function getProductById($pdo, $productId) {
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
+        $stmt->execute([$productId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching product by ID: " . $e->getMessage());
+        return null;
+    }
+}
+
+function getOrderByNumber($pdo, $orderNumber) {
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM orders WHERE order_number = ?");
+        $stmt->execute([$orderNumber]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching order by ID: " . $e->getMessage());
+        return null;
+    }
+}
+
+function getOrderItems($pdo, $orderId) {
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM order_items WHERE order_id = ?");
+        $stmt->execute([$orderId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching order items: " . $e->getMessage());
+        return [];
+    }
+}

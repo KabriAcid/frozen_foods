@@ -3,6 +3,12 @@ require __DIR__ . '/../config/database.php';
 require __DIR__ . '/../config/auth.php';
 require __DIR__ . '/util/utilities.php';
 require __DIR__ . '/partials/headers.php';
+
+$totalOrders = getTotalOrders($pdo);
+$totalRevenue = getTotalRevenue($pdo);
+$activeUsers = getActiveUsers($pdo);
+$totalProducts = getTotalProducts($pdo);
+$orders = getAllOrders($pdo);
 ?>
 
 <body class="bg-gray-50 font-sans">
@@ -19,7 +25,7 @@ require __DIR__ . '/partials/headers.php';
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Total Orders</p>
-                            <p class="text-2xl font-bold text-gray-900">1,234</p>
+                            <p class="text-2xl font-bold text-gray-900"><?php echo number_format($totalOrders); ?></p>
                         </div>
                         <div class="bg-blue-50 p-3 rounded-lg">
                             <i data-lucide="shopping-cart" class="w-6 h-6 text-blue-600"></i>
@@ -31,7 +37,7 @@ require __DIR__ . '/partials/headers.php';
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Pending</p>
-                            <p class="text-2xl font-bold text-yellow-600">56</p>
+                            <p class="text-2xl font-bold text-yellow-600"><?php echo number_format(getOrderStatusCount($pdo, 'pending')); ?></p>
                         </div>
                         <div class="bg-yellow-50 p-3 rounded-lg">
                             <i data-lucide="clock" class="w-6 h-6 text-yellow-600"></i>
@@ -43,7 +49,7 @@ require __DIR__ . '/partials/headers.php';
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Processing</p>
-                            <p class="text-2xl font-bold text-orange-600">89</p>
+                            <p class="text-2xl font-bold text-orange-600"><?php echo number_format(getOrderStatusCount($pdo, 'processing')); ?></p>
                         </div>
                         <div class="bg-orange-50 p-3 rounded-lg">
                             <i data-lucide="truck" class="w-6 h-6 text-orange-600"></i>
@@ -55,7 +61,7 @@ require __DIR__ . '/partials/headers.php';
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Delivered</p>
-                            <p class="text-2xl font-bold text-green-600">1,089</p>
+                            <p class="text-2xl font-bold text-green-600"><?php echo number_format(getOrderStatusCount($pdo, 'delivered')); ?></p>
                         </div>
                         <div class="bg-green-50 p-3 rounded-lg">
                             <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
@@ -99,78 +105,68 @@ require __DIR__ . '/partials/headers.php';
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#ORD-001</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <img src="https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Customer" class="w-8 h-8 rounded-full mr-3">
-                                        <div>
-                                            <div class="text-sm font-medium text-gray-900">John Smith</div>
-                                            <div class="text-sm text-gray-500">john@example.com</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Frozen Chicken Breast</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$24.99</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Delivered
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jan 15, 2024</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button class="text-orange-600 hover:text-orange-900 mr-3">View</button>
-                                    <button class="text-blue-600 hover:text-blue-900">Edit</button>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#ORD-002</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <img src="https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Customer" class="w-8 h-8 rounded-full mr-3">
-                                        <div>
-                                            <div class="text-sm font-medium text-gray-900">Jane Doe</div>
-                                            <div class="text-sm text-gray-500">jane@example.com</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Frozen Salmon Fillet</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$34.50</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        Processing
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jan 14, 2024</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button class="text-orange-600 hover:text-orange-900 mr-3">View</button>
-                                    <button class="text-blue-600 hover:text-blue-900">Edit</button>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#ORD-003</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <img src="https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Customer" class="w-8 h-8 rounded-full mr-3">
-                                        <div>
-                                            <div class="text-sm font-medium text-gray-900">Mike Johnson</div>
-                                            <div class="text-sm text-gray-500">mike@example.com</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Turkey Wings</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$18.75</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        Shipped
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jan 13, 2024</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button class="text-orange-600 hover:text-orange-900 mr-3">View</button>
-                                    <button class="text-blue-600 hover:text-blue-900">Edit</button>
-                                </td>
-                            </tr>
+                            <?php if (empty($orders)): ?>
+                                <tr>
+                                    <td colspan="7" class="px-6 py-4 text-center text-gray-500">No orders found.</td>
+                                </tr>
+                            <?php else: ?>
+                                <?php foreach ($orders as $order): ?>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            #<?php echo htmlspecialchars($order['order_number'] ?? $order['id']); ?>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <?php
+                                            // Use your util function to get user details by ID
+                                            $user = getUserById($pdo, $order['user_id']);
+                                            ?>
+                                            <div class="flex items-center">
+                                                <img src="../assets/uploads/<?php echo $user['avatar']; ?>" alt="Customer" class="w-8 h-8 rounded-full mr-3">
+                                                <div>
+                                                    <div class="text-sm font-medium text-gray-900">
+                                                        <?php echo $user ? htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) : 'Unknown'; ?>
+                                                    </div>
+                                                    <div class="text-sm text-gray-500">
+                                                        <?php echo $user ? htmlspecialchars($user['email']) : ''; ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            <?php
+                                            // Use your util function to get product details by ID
+                                            $product = getProductById($pdo, $order['product_id']);
+                                            echo $product ? htmlspecialchars($product['name']) : 'Unknown';
+                                            ?>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            ₦<?php echo number_format($order['total_amount'], 2); ?>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <?php
+                                            $status = strtolower($order['status']);
+                                            $statusColors = [
+                                                'delivered' => 'bg-green-100 text-green-800',
+                                                'processing' => 'bg-yellow-100 text-yellow-800',
+                                                'pending' => 'bg-orange-100 text-orange-800',
+                                                'shipped' => 'bg-blue-100 text-blue-800',
+                                                'cancelled' => 'bg-red-100 text-red-800',
+                                            ];
+                                            $color = $statusColors[$status] ?? 'bg-gray-100 text-gray-800';
+                                            ?>
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?php echo $color; ?>">
+                                                <?php echo ucfirst($order['status']); ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <?php echo date('M d, Y', strtotime($order['created_at'])); ?>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                            <a href="view-order.php?order_number=<?= $order['order_number'] ?>" class="text-xs bg-gray-100 px-3 rounded py-1 text-orange-600 hover:text-orange-900 mr-3">View</a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>

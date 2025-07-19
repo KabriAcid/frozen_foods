@@ -1,4 +1,11 @@
-<?php require __DIR__ . '/partials/headers.php'; ?>
+<?php
+require __DIR__ . '/../config/database.php';
+require __DIR__ . '/util/util_products.php';
+require __DIR__ . '/partials/headers.php';
+
+$productStats = getProductStats($pdo);
+
+require __DIR__ . '/partials/headers.php'; ?>
 
 <body class="bg-gray-50 font-sans">
     <?php require __DIR__ . '/partials/sidebar.php'; ?>
@@ -9,12 +16,16 @@
         <!-- Products Content -->
         <main class="p-6">
             <!-- Products Stats -->
+            <!-- Products Stats -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <!-- Total Products -->
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Total Products</p>
-                            <p class="text-2xl font-bold text-gray-900">245</p>
+                            <p class="text-2xl font-bold text-gray-900">
+                                <?= $productStats['total'] ?? 0 ?>
+                            </p>
                         </div>
                         <div class="bg-blue-50 p-3 rounded-lg">
                             <i data-lucide="package" class="w-6 h-6 text-blue-600"></i>
@@ -22,11 +33,14 @@
                     </div>
                 </div>
 
+                <!-- Low Stock -->
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Low Stock</p>
-                            <p class="text-2xl font-bold text-red-600">12</p>
+                            <p class="text-2xl font-bold text-red-600">
+                                <?= $productStats['low_stock'] ?? 0 ?>
+                            </p>
                         </div>
                         <div class="bg-red-50 p-3 rounded-lg">
                             <i data-lucide="alert-triangle" class="w-6 h-6 text-red-600"></i>
@@ -34,11 +48,14 @@
                     </div>
                 </div>
 
+                <!-- Categories -->
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Categories</p>
-                            <p class="text-2xl font-bold text-orange-600">3</p>
+                            <p class="text-2xl font-bold text-orange-600">
+                                <?= $productStats['categories'] ?? 0 ?>
+                            </p>
                         </div>
                         <div class="bg-orange-50 p-3 rounded-lg">
                             <i data-lucide="layers" class="w-6 h-6 text-orange-600"></i>
@@ -46,11 +63,14 @@
                     </div>
                 </div>
 
+                <!-- Out of Stock -->
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Out of Stock</p>
-                            <p class="text-2xl font-bold text-gray-600">8</p>
+                            <p class="text-2xl font-bold text-gray-600">
+                                <?= $productStats['out_of_stock'] ?? 0 ?>
+                            </p>
                         </div>
                         <div class="bg-gray-50 p-3 rounded-lg">
                             <i data-lucide="x-circle" class="w-6 h-6 text-gray-600"></i>
@@ -58,6 +78,7 @@
                     </div>
                 </div>
             </div>
+    
 
             <!-- Products Management -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200">

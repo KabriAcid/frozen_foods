@@ -329,12 +329,12 @@ require __DIR__ . '/../components/header.php';
 
 
                 if (!termsAccepted) {
-                    alert("You must accept the Terms of Service and Privacy Policy.");
+                    showToasted("You must accept the Terms of Service and Privacy Policy.", 'info', 3000);
                     return;
                 }
 
                 if (password !== confirmPassword) {
-                    alert("Passwords do not match.");
+                    showToasted("Passwords do not match.", 'error');
                     return;
                 }
 
