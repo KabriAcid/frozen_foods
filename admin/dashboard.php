@@ -2,12 +2,12 @@
 require __DIR__ . '/../config/database.php';
 require __DIR__ . '/../config/auth.php';
 require __DIR__ . '/util/utilities.php';
+require __DIR__ . '/partials/headers.php';
 
 // Fetch dashboard stats
 $stats = getDashboardStats($pdo);
 $recentOrders = getRecentOrders($pdo, 5);
 $topProducts = getTopProducts($pdo, 3);
-require __DIR__ . '/partials/headers.php';
 
 ?>
 
@@ -37,7 +37,7 @@ require __DIR__ . '/partials/headers.php';
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Revenue</p>
-                            <p class="text-3xl font-bold text-gray-900">₦<?php echo number_format($stats['total_revenue'] ?? 0); ?></p>
+                            <p class="text-3xl font-bold text-gray-900">₦<?php echo number_format($stats['total_revenue'] ?? 0, 2); ?></p>
                         </div>
                         <div class="bg-green-50 p-3 rounded-lg">
                             <i data-lucide="dollar-sign" class="w-6 h-6 text-green-600"></i>
@@ -132,7 +132,7 @@ require __DIR__ . '/partials/headers.php';
                                             </div>
                                         </div>
                                         <div class="text-right">
-                                            <p class="font-semibold text-gray-900">₦<?php echo number_format($order['total'] ?? 0); ?></p>
+                                            <p class="font-semibold text-gray-900">₦<?php echo number_format($order['total'] ?? 0, 2); ?></p>
                                             <?php
                                             $status = strtolower($order['status']);
                                             $statusColors = [
@@ -175,7 +175,7 @@ require __DIR__ . '/partials/headers.php';
                                             </div>
                                         </div>
                                         <div class="text-right">
-                                            <p class="font-semibold text-gray-900">₦<?php echo number_format($product['total_revenue'] ?? 0); ?></p>
+                                            <p class="font-semibold text-gray-900">₦<?php echo number_format($product['total_revenue'] ?? 0, 2); ?></p>
                                             <div class="w-20 bg-gray-200 rounded-full h-2 mt-1">
                                                 <div class="bg-orange-500 h-2 rounded-full" style="width: <?php echo min(100, ($product['orders_count'] / max(array_column($topProducts, 'orders_count'))) * 100); ?>%"></div>
                                             </div>
@@ -194,6 +194,7 @@ require __DIR__ . '/partials/headers.php';
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
 
     <script src="js/script.js"></script>
+    <script src="js/analytics.js"></script>
 </body>
 
 </html>

@@ -1,4 +1,9 @@
-<?php require __DIR__ . '/partials/headers.php'; ?>
+<?php
+require __DIR__ . '/../config/database.php';
+require __DIR__ . '/../config/auth.php';
+require __DIR__ . '/util/utilities.php';
+require __DIR__ . '/partials/headers.php';
+?>
 
 <body class="bg-gray-50 font-sans">
     <?php require __DIR__ . '/partials/sidebar.php'; ?>

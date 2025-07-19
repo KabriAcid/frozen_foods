@@ -84,3 +84,71 @@ function getTopProducts($pdo, $limit = 3)
         return [];
     }
 }
+
+/**
+ * Fetch total orders count
+ * @param PDO $pdo
+ * @return int
+ */
+function getTotalOrders($pdo)
+{
+    try {
+        $stmt = $pdo->query("SELECT COUNT(*) AS total_orders FROM orders");
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)($row['total_orders'] ?? 0);
+    } catch (PDOException $e) {
+        error_log("Error fetching total orders: " . $e->getMessage());
+        return 0;
+    }
+}
+
+/**
+ * Fetch total revenue
+ * @param PDO $pdo
+ * @return float
+ */
+function getTotalRevenue($pdo)
+{
+    try {
+        $stmt = $pdo->query("SELECT SUM(total) AS total_revenue FROM orders");
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (float)($row['total_revenue'] ?? 0);
+    } catch (PDOException $e) {
+        error_log("Error fetching total revenue: " . $e->getMessage());
+        return 0;
+    }
+}
+
+/**
+ * Fetch active users (users who have placed at least 1 order)
+ * @param PDO $pdo
+ * @return int
+ */
+function getActiveUsers($pdo)
+{
+    try {
+        $stmt = $pdo->query("SELECT COUNT(DISTINCT user_id) AS active_users FROM orders");
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)($row['active_users'] ?? 0);
+    } catch (PDOException $e) {
+        error_log("Error fetching active users: " . $e->getMessage());
+        return 0;
+    }
+}
+
+/**
+ * Fetch total products count
+ * @param PDO $pdo
+ * @return int
+ */
+function getTotalProducts($pdo)
+{
+    try {
+        $stmt = $pdo->query("SELECT COUNT(*) AS total_products FROM products");
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)($row['total_products'] ?? 0);
+    } catch (PDOException $e) {
+        error_log("Error fetching total products: " . $e->getMessage());
+        return 0;
+    }
+}
