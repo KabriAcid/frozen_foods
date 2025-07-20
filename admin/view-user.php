@@ -276,11 +276,11 @@ $orders = $userOrders['orders'];
                                 <i data-lucide="mail" class="w-4 h-4 mr-3 text-gray-400"></i>
                                 Send Email
                             </button>
-                            <button class="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors flex items-center">
+                            <button id="openPasswordBtn" class="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors flex items-center">
                                 <i data-lucide="lock" class="w-4 h-4 mr-3 text-gray-400"></i>
                                 Reset Password
                             </button>
-                            <button class="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors flex items-center">
+                            <button id="openStatusBtn" class="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors flex items-center">
                                 <i data-lucide="ban" class="w-4 h-4 mr-3 text-gray-400"></i>
                                 <?= $user['status'] === 'Active' ? 'Suspend Account' : 'Activate Account' ?>
                             </button>
@@ -441,6 +441,76 @@ $orders = $userOrders['orders'];
             </div>
         </div>
     </div>
+
+    <!-- Send Email Modal -->
+    <div id="sendEmailModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-xl w-full transform transition-all duration-300 scale-95 opacity-0" id="emailModalContent">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-900">Send Email</h3>
+                    <button class="text-gray-400 hover:text-gray-600" onclick="closeEmailModal()">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <form id="sendEmailForm" class="space-y-4">
+                    <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                        <input type="text" name="subject" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                        <textarea name="message" rows="5" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500"></textarea>
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button type="button" onclick="closeEmailModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div id="resetPasswordModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full transform transition-all duration-300 scale-95 opacity-0" id="resetModalContent">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-900">Reset Password</h3>
+                    <button class="text-gray-400 hover:text-gray-600" onclick="closeResetModal()">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">Are you sure you want to reset this user’s password? A temporary password will be emailed to them.</p>
+                <div class="flex justify-end gap-2">
+                    <button onclick="closeResetModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
+                    <button id="confirmResetBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Suspend/Activate Account Modal -->
+    <div id="statusToggleModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full transform transition-all duration-300 scale-95 opacity-0" id="statusModalContent">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-900"><?= $user['status'] === 'Active' ? 'Suspend Account' : 'Activate Account' ?></h3>
+                    <button class="text-gray-400 hover:text-gray-600" onclick="closeStatusModal()">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">
+                    Are you sure you want to <?= strtolower($user['status'] === 'Active' ? 'suspend' : 'activate') ?> <strong><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></strong>'s account?
+                </p>
+                <div class="flex justify-end gap-2">
+                    <button onclick="closeStatusModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
+                    <button id="toggleStatusBtn" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"><?= $user['status'] === 'Active' ? 'Suspend' : 'Activate' ?></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Overlay for mobile sidebar -->
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
@@ -674,6 +744,71 @@ $orders = $userOrders['orders'];
             }
         });
     </script>
+    <script>
+        // Email Modal
+        const sendEmailModal = document.getElementById('sendEmailModal');
+        const emailModalContent = document.getElementById('emailModalContent');
+        document.getElementById('openEmailBtn').onclick = () => {
+            sendEmailModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => {
+                emailModalContent.classList.remove('scale-95', 'opacity-0');
+                emailModalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        };
+
+        function closeEmailModal() {
+            emailModalContent.classList.remove('scale-100', 'opacity-100');
+            emailModalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                sendEmailModal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        // Reset Modal
+        const resetPasswordModal = document.getElementById('resetPasswordModal');
+        const resetModalContent = document.getElementById('resetModalContent');
+        document.getElementById("openPasswordBtn").onclick = () => {
+            resetPasswordModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => {
+                resetModalContent.classList.remove('scale-95', 'opacity-0');
+                resetModalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        };
+
+        function closeResetModal() {
+            resetModalContent.classList.remove('scale-100', 'opacity-100');
+            resetModalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                resetPasswordModal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        // Status Modal
+        const statusToggleModal = document.getElementById('statusToggleModal');
+        const statusModalContent = document.getElementById('statusModalContent');
+        document.getElementById("openStatusBtn").onclick = () => {
+            statusToggleModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => {
+                statusModalContent.classList.remove('scale-95', 'opacity-0');
+                statusModalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        };
+
+        function closeStatusModal() {
+            statusModalContent.classList.remove('scale-100', 'opacity-100');
+            statusModalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                statusToggleModal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+    </script>
+
 </body>
 
 </html>
