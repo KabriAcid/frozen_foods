@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/../config/database.php';
-require __DIR__ . '/util/util_products.php';
+require __DIR__ . '/util/utilities.php';
 require __DIR__ . '/partials/headers.php';
 
 $productStats = getProductStats($pdo);
