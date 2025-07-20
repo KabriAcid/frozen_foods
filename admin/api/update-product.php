@@ -4,13 +4,12 @@ header('Content-Type: application/json');
 require __DIR__ . '/../../config/database.php';
 require __DIR__ . '/../util/utilities.php';
 
-// Enable error reporting internally
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Keep display off for production
+ini_set('display_errors', 0);
 
 function logError($message, $data = [])
 {
-    $log = "[ADD PRODUCT ERROR] $message\n";
+    $log = "[UPDATE PRODUCT ERROR] $message\n";
     if (!empty($data)) {
         $log .= print_r($data, true);
     }
@@ -32,20 +31,21 @@ function sanitize($input)
     return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
 }
 
-// Validate request method
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    jsonError('Invalid request method');
-}
-
 try {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        jsonError('Invalid request method');
+    }
+
     $errors = [];
 
-    // Sanitize & validate required fields
+    // Required fields
+    $id = $_POST['product_id'] ?? '';
     $name = $_POST['name'] ?? '';
     $category_id = $_POST['category_id'] ?? '';
     $price = $_POST['price'] ?? '';
     $in_stock = $_POST['in_stock'] ?? '';
 
+    if (empty($id)) $errors[] = 'Product ID is required';
     if (empty(trim($name))) $errors[] = 'Product name is required';
     if (empty(trim($category_id))) $errors[] = 'Category is required';
     if (empty(trim($price))) $errors[] = 'Price is required';
@@ -54,7 +54,24 @@ try {
     if (!is_numeric($price) || $price < 0) $errors[] = 'Price must be a valid positive number';
     if (!filter_var($in_stock, FILTER_VALIDATE_INT) || $in_stock < 0) $errors[] = 'Stock must be a valid positive integer';
 
-    // Validate image if provided
+    // Validate category exists
+    $stmt = $pdo->prepare("SELECT id FROM categories WHERE id = ?");
+    $stmt->execute([$category_id]);
+    if (!$stmt->fetch()) {
+        $errors[] = 'Invalid category selected';
+    }
+
+    // Check product exists
+    $stmt = $pdo->prepare("SELECT image FROM products WHERE id = ?");
+    $stmt->execute([$id]);
+    $existingProduct = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$existingProduct) {
+        $errors[] = 'Product not found';
+    }
+
+    // Image validation if provided
+    $imageName = $existingProduct['image']; // default to existing image
     if (!empty($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
         $file = $_FILES['image'];
 
@@ -74,14 +91,6 @@ try {
         }
     }
 
-    // Check category exists
-    $stmt = $pdo->prepare("SELECT id FROM categories WHERE id = ?");
-    $stmt->execute([$category_id]);
-    if (!$stmt->fetch()) {
-        $errors[] = 'Invalid category selected';
-    }
-
-    // Return errors
     if (!empty($errors)) {
         jsonError(implode(', ', $errors), $_POST);
     }
@@ -96,8 +105,7 @@ try {
     $is_active = isset($_POST['is_active']) ? 1 : 0;
     $is_featured = isset($_POST['is_featured']) ? 1 : 0;
 
-    // Handle image
-    $imageName = null;
+    // Handle image upload
     if (!empty($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
         $uploadDir = __DIR__ . '/../../assets/uploads/';
         if (!is_dir($uploadDir)) {
@@ -109,20 +117,19 @@ try {
         $uploadPath = $uploadDir . $imageName;
 
         if (!move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
-            jsonError('Failed to upload image', $_FILES);
+            jsonError('Failed to upload new image', $_FILES);
         }
-    } else {
-        // If no image provided, send AJAX response
-        if ($_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
-            jsonError('Image upload error', $_FILES);
-        }
+
+        // Optionally delete old image here (if it's not a default image)
+        // unlink($uploadDir . $existingProduct['image']);
     }
 
-    // Insert into DB
-    $sql = "INSERT INTO products (
-        name, sku, description, category_id, price, in_stock, weight,
-        dimensions, image, is_active, is_featured, meta_title, meta_description, created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+    // Update the product in DB
+    $sql = "UPDATE products SET 
+        name = ?, sku = ?, description = ?, category_id = ?, price = ?, 
+        in_stock = ?, weight = ?, dimensions = ?, image = ?, 
+        is_active = ?, is_featured = ?, meta_title = ?, meta_description = ?, updated_at = NOW()
+        WHERE id = ?";
 
     $stmt = $pdo->prepare($sql);
     $success = $stmt->execute([
@@ -138,21 +145,22 @@ try {
         $is_active,
         $is_featured,
         $meta_title,
-        $meta_description
+        $meta_description,
+        $id
     ]);
 
     if ($success) {
         echo json_encode([
             'success' => true,
-            'message' => 'Product added successfully',
-            'product_id' => $pdo->lastInsertId()
+            'message' => 'Product updated successfully'
         ]);
     } else {
-        jsonError('Failed to insert product into database');
+        jsonError('Failed to update product in database');
+        
     }
 } catch (Exception $e) {
-    jsonError('An unexpected error occurred: ' . $e->getMessage(), [
-        'exception' => $e->getTraceAsString(),
+    jsonError('Unexpected error: ' . $e->getMessage(), [
+        'trace' => $e->getTraceAsString(),
         'input' => $_POST
     ]);
 }

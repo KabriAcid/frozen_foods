@@ -110,7 +110,7 @@ function getTotalOrders($pdo)
 function getTotalRevenue($pdo)
 {
     try {
-        $stmt = $pdo->query("SELECT SUM(total) AS total_revenue FROM orders");
+        $stmt = $pdo->query("SELECT SUM(total_amount) AS total_revenue FROM orders");
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return (float)($row['total_revenue'] ?? 0);
     } catch (PDOException $e) {
@@ -358,7 +358,7 @@ function getAllCategories(PDO $pdo)
 function getProductImages($pdo, $productId) {
     try {
         $stmt = $pdo->prepare("
-            SELECT * FROM product_images 
+            SELECT * FROM products 
             WHERE product_id = ? 
             ORDER BY sort_order ASC, created_at ASC
         ");
@@ -585,22 +585,6 @@ function updateProductStock($pdo, $productId, $newStock) {
 }
 
 /**
- * Add product image
- */
-function addProductImage($pdo, $productId, $imagePath, $sortOrder = 0) {
-    try {
-        $stmt = $pdo->prepare("
-            INSERT INTO product_images (product_id, image_path, sort_order, created_at) 
-            VALUES (?, ?, ?, NOW())
-        ");
-        return $stmt->execute([$productId, $imagePath, $sortOrder]);
-    } catch (PDOException $e) {
-        error_log("Error adding product image: " . $e->getMessage());
-        return false;
-    }
-}
-
-/**
  * Delete product image
  */
 function deleteProductImage($pdo, $imageId) {
@@ -777,4 +761,78 @@ function handleProductImageUpload($file, $uploadDir = '../assets/uploads/') {
     }
 }
 
-?>
+/**
+ * Analytics utility functions
+ * These functions can be used to fetch analytics
+ */
+
+
+function getAnalyticsData(PDO $pdo): array
+{
+    $analytics = [
+        'total_revenue' => 0,
+        'total_orders' => 0,
+        'active_users' => 0,
+        'avg_order_value' => 0,
+        'top_products' => [],
+        'peak_times' => []
+    ];
+
+    try {
+        // Total revenue
+        $stmt = $pdo->query("SELECT SUM(total_amount) AS total FROM orders");
+        $analytics['total_revenue'] = (float) $stmt->fetchColumn();
+
+        // Total orders
+        $stmt = $pdo->query("SELECT COUNT(*) FROM orders");
+        $analytics['total_orders'] = (int) $stmt->fetchColumn();
+
+        // Active users (last 30 days)
+        $stmt = $pdo->query("SELECT COUNT(DISTINCT user_id) FROM orders WHERE created_at >= NOW() - INTERVAL 30 DAY");
+        $analytics['active_users'] = (int) $stmt->fetchColumn();
+
+        // Average order value
+        $analytics['avg_order_value'] = $analytics['total_orders'] > 0
+            ? round($analytics['total_revenue'] / $analytics['total_orders'], 2)
+            : 0;
+
+        // Top selling products
+        $stmt = $pdo->query("SELECT p.name, p.image, SUM(oi.quantity) AS total_sold, SUM(oi.quantity * oi.price) AS total_amount
+            FROM order_items oi
+            JOIN products p ON p.id = oi.product_id
+            GROUP BY oi.product_id
+            ORDER BY total_sold DESC
+            LIMIT 4");
+        $analytics['top_products'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Peak hours
+        $stmt = $pdo->query("SELECT HOUR(created_at) AS hr, COUNT(*) AS cnt FROM orders GROUP BY hr ORDER BY cnt DESC LIMIT 4");
+        $peaks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($peaks as $row) {
+            $hour = (int) $row['hr'];
+            $end = ($hour + 2) % 24;
+            $label = sprintf("%02d:00 - %02d:00", $hour, $end);
+            $tag = match (true) {
+                $hour >= 10 && $hour < 12 => 'Morning Orders',
+                $hour >= 12 && $hour < 14 => 'Lunch Rush',
+                $hour >= 18 && $hour < 20 => 'Dinner Time',
+                $hour >= 20 && $hour < 22 => 'Evening Orders',
+                default => 'Other'
+            };
+            $percent = $analytics['total_orders'] > 0 ? round(($row['cnt'] / $analytics['total_orders']) * 100) : 0;
+
+            $analytics['peak_times'][] = [
+                'label' => $label,
+                'tag' => $tag,
+                'count' => (int) $row['cnt'],
+                'percentage' => $percent
+            ];
+        }
+    } catch (PDOException $e) {
+        error_log("[ANALYTICS ERROR] " . $e->getMessage());
+    }
+
+    return $analytics;
+}
+

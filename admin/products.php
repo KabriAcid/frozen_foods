@@ -4,8 +4,8 @@ require __DIR__ . '/util/utilities.php';
 require __DIR__ . '/partials/headers.php';
 
 $productStats = getProductStats($pdo);
-$products = getAllProducts($pdo); // fetch all products
-require __DIR__ . '/partials/headers.php'; ?>
+$products = getAllProducts($pdo);
+?>
 
 <body class="bg-gray-50 font-sans">
     <?php require __DIR__ . '/partials/sidebar.php'; ?>
@@ -15,7 +15,6 @@ require __DIR__ . '/partials/headers.php'; ?>
         <?php require __DIR__ . '/partials/top-navbar.php'; ?>
         <!-- Products Content -->
         <main class="p-6">
-            <!-- Products Stats -->
             <!-- Products Stats -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <!-- Total Products -->
@@ -113,12 +112,12 @@ require __DIR__ . '/partials/headers.php'; ?>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
+                            <?php if (empty($products)): ?>
+                                <tr>
+                                    <td colspan="6" class="text-center text-gray-500 py-6">No products found.</td>
+                                </tr>
+                            <?php endif; ?>
                             <?php foreach ($products as $product): ?>
-                                <?php if (empty($products)): ?>
-                                    <tr>
-                                        <td colspan="6" class="text-center text-gray-500 py-6">No products found.</td>
-                                    </tr>
-                                <?php endif; ?>
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
@@ -155,7 +154,6 @@ require __DIR__ . '/partials/headers.php'; ?>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                         <a href="view-product.php?product_id=<?= $product['id'] ?>" class="text-xs bg-gray-100 px-3 rounded py-1 text-orange-600 hover:text-orange-900 mr-3">View</a>
-
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -244,7 +242,7 @@ require __DIR__ . '/partials/headers.php'; ?>
                         </div>
                         <div class="space-y-2">
                             <label class="block text-sm font-semibold text-gray-700">Price (₦) *</label>
-                            <div class="relative">
+                            <div class="relative z-10">
                                 <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₦</span>
                                 <input type="number" name="price" step="0.01" min="0" required
                                     class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
@@ -282,7 +280,7 @@ require __DIR__ . '/partials/headers.php'; ?>
                     <div class="space-y-4">
                         <div class="flex items-center space-x-6">
                             <div class="flex-shrink-0">
-                                <img id="imagePreview" src="data:image/svg+xml,%3csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100' height='100' fill='%23f3f4f6'/%3e%3ctext x='50%25' y='50%25' font-size='14' text-anchor='middle' dy='.3em' fill='%236b7280'%3eNo Image%3c/text%3e%3c/svg%3e"
+                                <img name="img" id="imagePreview" src="data:image/svg+xml,%3csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100' height='100' fill='%23f3f4f6'/%3e%3ctext x='50%25' y='50%25' font-size='14' text-anchor='middle' dy='.3em' fill='%236b7280'%3eNo Image%3c/text%3e%3c/svg%3e"
                                     alt="Product preview" class="w-24 h-24 rounded-lg object-cover border border-gray-300">
                             </div>
                             <div class="flex-1">
@@ -368,8 +366,10 @@ require __DIR__ . '/partials/headers.php'; ?>
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
 
     <script src="js/script.js"></script>
+    <script src="js/confirmation-modal.js"></script>
+    <script src="js/loading-overlay.js"></script>
+    <script src="js/toast.js"></script>
     <script>
-        
         document.addEventListener('DOMContentLoaded', function() {
             // Modal elements
             const addProductModal = document.getElementById('addProductModal');
@@ -456,7 +456,7 @@ require __DIR__ . '/partials/headers.php'; ?>
             });
 
             // Form submission with confirmation
-            addProductForm.addEventListener('submit', async (e) => {
+            addProductForm.addEventListener('submit', (e) => {
                 e.preventDefault();
 
                 // Get form data
@@ -464,19 +464,37 @@ require __DIR__ . '/partials/headers.php'; ?>
                 const productName = formData.get('name');
                 const productPrice = formData.get('price');
 
-
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                const originalText = submitBtn.textContent;
+                const submitBtn = document.getElementById('submitProductBtn');
+                const originalText = submitBtn.innerHTML;
 
                 // Show loading state
                 submitBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Adding Product...';
                 submitBtn.disabled = true;
 
                 try {
+                    // Submit form with AJAX
+                    submitProduct(formData, submitBtn, originalText);
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToasted('An error occurred while adding the product', 'error');
+                    // Restore button state
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+
+            // AJAX form submission function
+            async function submitProduct(formData, submitBtn, originalText) {
+                try {
                     const response = await fetch('api/add-product.php', {
                         method: 'POST',
                         body: formData
                     });
+
+                    // Check if response is ok
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
 
                     const result = await response.json();
 
@@ -495,13 +513,19 @@ require __DIR__ . '/partials/headers.php'; ?>
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    showToasted('An error occurred while adding the product', 'error');
+                    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                        showToasted('Network error. Please check your connection and try again.', 'error');
+                    } else if (error.message.includes('HTTP error')) {
+                        showToasted('Server error. Please try again later.', 'error');
+                    } else {
+                        showToasted('An unexpected error occurred while adding the product', 'error');
+                    }
                 } finally {
                     // Restore button state
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                 }
-            });
+            }
 
             // Form validation
             const requiredFields = addProductForm.querySelectorAll('[required]');

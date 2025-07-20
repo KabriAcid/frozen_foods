@@ -43,6 +43,11 @@ body {
     background: #a8a8a8;
 }
 
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
 /* Sidebar animations */
 .sidebar-transition {
     transition: transform 0.3s ease-in-out;

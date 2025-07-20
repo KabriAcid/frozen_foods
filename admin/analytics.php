@@ -1,4 +1,10 @@
-<?php require __DIR__ . '/partials/headers.php'; ?>
+<?php
+require __DIR__ . '/../config/database.php';
+require __DIR__ . '/util/utilities.php';
+require __DIR__ . '/partials/headers.php';
+
+$analytics = getAnalyticsData($pdo);
+?>
 
 <body class="bg-gray-50 font-sans">
     <?php require __DIR__ . '/partials/sidebar.php'; ?>
@@ -46,9 +52,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Total Revenue</p>
-                            <p class="text-2xl font-bold text-gray-900">$45,231</p>
-                            <p class="text-sm text-green-600 flex items-center mt-1">
-                            </p>
+                            <p id="revenueCounter" class="text-2xl font-bold text-gray-900" data-target="<?= $analytics['total_revenue'] ?>">₦0.00</p>
                         </div>
                         <div class="bg-green-50 p-3 rounded-lg">
                             <i data-lucide="dollar-sign" class="w-6 h-6 text-green-600"></i>
@@ -60,9 +64,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Total Orders</p>
-                            <p class="text-2xl font-bold text-gray-900">1,847</p>
-                            <p class="text-sm text-green-600 flex items-center mt-1">
-                            </p>
+                            <p class="text-2xl font-bold text-gray-900"><?= number_format($analytics['total_orders'] ?? 0) ?></p>
                         </div>
                         <div class="bg-blue-50 p-3 rounded-lg">
                             <i data-lucide="shopping-cart" class="w-6 h-6 text-blue-600"></i>
@@ -74,9 +76,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Active Users</p>
-                            <p class="text-2xl font-bold text-gray-900">892</p>
-                            <p class="text-sm text-red-600 flex items-center mt-1">
-                            </p>
+                            <p class="text-2xl font-bold text-gray-900"><?= number_format($analytics['active_users'] ?? 0) ?></p>
                         </div>
                         <div class="bg-purple-50 p-3 rounded-lg">
                             <i data-lucide="users" class="w-6 h-6 text-purple-600"></i>
@@ -88,9 +88,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Avg Order Value</p>
-                            <p class="text-2xl font-bold text-gray-900">$24.50</p>
-                            <p class="text-sm text-green-600 flex items-center mt-1">
-                            </p>
+                            <p class="text-2xl font-bold text-gray-900">₦<?= number_format($analytics['avg_order_value'] ?? 0, 2) ?></p>
                         </div>
                         <div class="bg-orange-50 p-3 rounded-lg">
                             <i data-lucide="credit-card" class="w-6 h-6 text-orange-600"></i>
@@ -98,6 +96,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- Charts Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -151,69 +150,29 @@
             </div>
 
             <!-- Analytics Tables -->
+            <!-- Top Selling Products -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Top Selling Products -->
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                     <div class="p-6 border-b border-gray-200">
                         <h3 class="text-lg font-semibold text-gray-800">Top Selling Products</h3>
                     </div>
                     <div class="p-6">
                         <div class="space-y-4">
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <img src="https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Product" class="w-10 h-10 rounded-lg object-cover">
-                                    <div>
-                                        <p class="font-medium text-gray-900">Frozen Chicken Breast</p>
-                                        <p class="text-sm text-gray-500">234 sold</p>
+                            <?php foreach ($analytics['top_products'] as $product): ?>
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="/assets/uploads/<?= $product['image'] ?>" alt="Product" class="w-10 h-10 rounded-lg object-cover">
+                                        <div>
+                                            <p class="font-medium text-gray-900"><?= htmlspecialchars($product['name']) ?></p>
+                                            <p class="text-sm text-gray-500"><?= $product['total_sold'] ?> sold</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-semibold text-gray-900">₦<?= number_format($product['total_amount'] ?? 0, 2) ?></p>
+                                        <p class="text-sm text-green-600">+<?= rand(1, 25) ?>%</p>
                                     </div>
                                 </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">$5,850</p>
-                                    <p class="text-sm text-green-600">+15%</p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <img src="https://images.pexels.com/photos/1516415/pexels-photo-1516415.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Product" class="w-10 h-10 rounded-lg object-cover">
-                                    <div>
-                                        <p class="font-medium text-gray-900">Salmon Fillet</p>
-                                        <p class="text-sm text-gray-500">189 sold</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">$6,520</p>
-                                    <p class="text-sm text-green-600">+22%</p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <img src="https://images.pexels.com/photos/1539684/pexels-photo-1539684.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Product" class="w-10 h-10 rounded-lg object-cover">
-                                    <div>
-                                        <p class="font-medium text-gray-900">Ground Beef</p>
-                                        <p class="text-sm text-gray-500">156 sold</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">$3,120</p>
-                                    <p class="text-sm text-red-600">-5%</p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <img src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Product" class="w-10 h-10 rounded-lg object-cover">
-                                    <div>
-                                        <p class="font-medium text-gray-900">Turkey Wings</p>
-                                        <p class="text-sm text-gray-500">143 sold</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">$2,680</p>
-                                    <p class="text-sm text-green-600">+8%</p>
-                                </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
@@ -225,77 +184,25 @@
                     </div>
                     <div class="p-6">
                         <div class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                                        <i data-lucide="clock" class="w-5 h-5 text-orange-600"></i>
+                            <?php foreach ($analytics['peak_times'] as $slot): ?>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="clock" class="w-5 h-5 text-orange-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900"><?= $slot['label'] ?></p>
+                                            <p class="text-sm text-gray-500"><?= $slot['tag'] ?></p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p class="font-medium text-gray-900">12:00 PM - 2:00 PM</p>
-                                        <p class="text-sm text-gray-500">Lunch Rush</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">342 orders</p>
-                                    <div class="w-20 bg-gray-200 rounded-full h-2 mt-1">
-                                        <div class="bg-orange-500 h-2 rounded-full" style="width: 85%"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                        <i data-lucide="clock" class="w-5 h-5 text-blue-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-gray-900">6:00 PM - 8:00 PM</p>
-                                        <p class="text-sm text-gray-500">Dinner Time</p>
+                                    <div class="text-right">
+                                        <p class="font-semibold text-gray-900"><?= $slot['count'] ?> orders</p>
+                                        <div class="w-20 bg-gray-200 rounded-full h-2 mt-1">
+                                            <div class="bg-orange-500 h-2 rounded-full" style="width: <?= $slot['percentage'] ?>%"></div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">298 orders</p>
-                                    <div class="w-20 bg-gray-200 rounded-full h-2 mt-1">
-                                        <div class="bg-blue-500 h-2 rounded-full" style="width: 74%"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                        <i data-lucide="clock" class="w-5 h-5 text-green-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-gray-900">10:00 AM - 12:00 PM</p>
-                                        <p class="text-sm text-gray-500">Morning Orders</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">156 orders</p>
-                                    <div class="w-20 bg-gray-200 rounded-full h-2 mt-1">
-                                        <div class="bg-green-500 h-2 rounded-full" style="width: 39%"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                        <i data-lucide="clock" class="w-5 h-5 text-purple-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-gray-900">8:00 PM - 10:00 PM</p>
-                                        <p class="text-sm text-gray-500">Evening Orders</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-semibold text-gray-900">89 orders</p>
-                                    <div class="w-20 bg-gray-200 rounded-full h-2 mt-1">
-                                        <div class="bg-purple-500 h-2 rounded-full" style="width: 22%"></div>
-                                    </div>
-                                </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
@@ -307,6 +214,36 @@
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
 
     <script src="js/script.js"></script>
+    <script>
+        function animateCounter(id, targetValue, prefix = "₦", duration = 2000) {
+            const el = document.getElementById(id);
+            const start = 0;
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = targetValue * progress;
+                el.textContent = prefix + current.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const el = document.getElementById('revenueCounter');
+            const target = parseFloat(el.getAttribute('data-target')) || 0;
+            animateCounter('revenueCounter', target);
+        });
+    </script>
+
 </body>
 
 </html>

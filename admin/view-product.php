@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../config/database.php';
 require __DIR__ . '/../config/auth.php';
-require __DIR__ . '/util/util_products.php';
+require __DIR__ . '/util/utilities.php';
 require __DIR__ . '/partials/headers.php';
 
 // Get product ID from URL parameter
@@ -249,7 +249,7 @@ $recentOrders = getRecentOrdersForProduct($pdo, $productId, 5);
                             <h3 class="text-lg font-semibold text-gray-800">Quick Actions</h3>
                         </div>
                         <div class="p-6 space-y-3">
-                            <button class="w-full bg-red-500 text-white px-4 py-3 rounded-lg hover:bg-red-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5">
+                            <button id="deleteProductBtn" class="w-full bg-red-500 text-white px-4 py-3 rounded-lg hover:bg-red-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5">
                                 <i data-lucide="trash-2" class="w-4 h-4 mr-2 inline"></i>
                                 Delete Product
                             </button>
@@ -280,7 +280,7 @@ $recentOrders = getRecentOrdersForProduct($pdo, $productId, 5);
             </div>
 
             <!-- Modal Body -->
-            <form id="editProductForm" class="p-6 space-y-8">
+            <form id="editProductForm" class="p-6 space-y-8" method="post">
                 <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
 
                 <!-- Basic Information -->
@@ -321,7 +321,7 @@ $recentOrders = getRecentOrdersForProduct($pdo, $productId, 5);
                         </div>
                         <div class="space-y-2">
                             <label class="block text-sm font-semibold text-gray-700">Price (₦) *</label>
-                            <div class="relative">
+                            <div class="relative z-10">
                                 <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₦</span>
                                 <input type="number" name="price" value="<?php echo $product['price']; ?>" step="0.01" min="0" required
                                     class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200">
@@ -357,7 +357,7 @@ $recentOrders = getRecentOrdersForProduct($pdo, $productId, 5);
                     <div class="space-y-4">
                         <div class="flex items-center space-x-6">
                             <div class="flex-shrink-0">
-                                <img id="currentImage" src="../assets/uploads/<?php echo htmlspecialchars($product['image']); ?>"
+                                <img name="image" id="currentImage" src="../assets/uploads/<?php echo htmlspecialchars($product['image']); ?>"
                                     alt="Current product image" class="w-24 h-24 rounded-lg object-cover border border-gray-300">
                             </div>
                             <div class="flex-1">
@@ -429,7 +429,7 @@ $recentOrders = getRecentOrdersForProduct($pdo, $productId, 5);
                         <button type="button" id="cancelBtn" class="px-6 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium">
                             Cancel
                         </button>
-                        <button type="submit" form="editProductForm" class="px-6 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5 flex items-center">
+                        <button id="updateProductBtn" type="submit" form="editProductForm" class="px-6 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5 flex items-center">
                             <i data-lucide="save" class="w-4 h-4 mr-2"></i>
                             Save Changes
                         </button>
@@ -439,7 +439,33 @@ $recentOrders = getRecentOrdersForProduct($pdo, $productId, 5);
         </div>
     </div>
 
+    <!-- Delete Modal -->
+    <div id="deleteConfirmModal" class="fixed inset-0 modal-overlay z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="modal-content bg-white rounded-3xl p-6 w-full max-w-sm animate-modal-in">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="trash" class="text-red-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-2">Delete</h3>
+                    <p class="text-gray-600 mb-6">Are you sure you want to delete product?</p>
+                    <div class="flex space-x-3">
+                        <button onclick="hideModal()" class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-2xl font-semibold hover:bg-gray-200 transition-colors">
+                            Cancel
+                        </button>
+                        <button id="deleteConfirmBtn" class="flex-1 bg-red-500 text-white py-3 rounded-2xl font-semibold hover:bg-red-600 transition-colors">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="js/script.js"></script>
+    <script src="js/confirmation-modal.js"></script>
+    <script src="js/loading-overlay.js"></script>
+    <script src="js/toast.js"></script>
     <script>
         // Image gallery functionality
         document.querySelectorAll('.thumbnail-image').forEach(img => {
@@ -488,6 +514,11 @@ $recentOrders = getRecentOrdersForProduct($pdo, $productId, 5);
             }, 300);
         }
 
+        function hideModal() {
+            const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+            deleteConfirmModal.classList.add('hidden');
+        }
+
         // Close modal events
         closeModalBtn.addEventListener('click', closeModal);
         cancelBtn.addEventListener('click', closeModal);
@@ -522,10 +553,10 @@ $recentOrders = getRecentOrdersForProduct($pdo, $productId, 5);
         });
 
         // Form submission
-        editProductForm.addEventListener('submit', async (e) => {
+        editProductForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const submitBtn = document.getElementById('updateProductBtn');
             const originalText = submitBtn.innerHTML;
 
             // Show loading state
@@ -535,16 +566,17 @@ $recentOrders = getRecentOrdersForProduct($pdo, $productId, 5);
             try {
                 const formData = new FormData(editProductForm);
 
-                const response = await fetch('api/update-product.php', {
+                const response = fetch('api/update-product.php', {
                     method: 'POST',
                     body: formData
                 });
 
-                const result = await response.json();
+                const result = JSON.stringify(response);
+                console.log(result);
 
                 if (result.success) {
                     // Show success message
-                    showNotification('Product updated successfully!', 'success');
+                    showToasted('Product updated successfully!', 'success');
 
                     // Close modal after short delay
                     setTimeout(() => {
@@ -553,11 +585,12 @@ $recentOrders = getRecentOrdersForProduct($pdo, $productId, 5);
                         window.location.reload();
                     }, 1500);
                 } else {
-                    showNotification(result.message || 'Failed to update product', 'error');
+                    showToasted(result.message || 'Failed to update product', 'error');
+                    console.error('Update failed:', result);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showNotification('An error occurred while updating the product', 'error');
+                showToasted('An error occurred while updating the product', 'error');
             } finally {
                 // Restore button state
                 submitBtn.innerHTML = originalText;
@@ -565,36 +598,43 @@ $recentOrders = getRecentOrdersForProduct($pdo, $productId, 5);
             }
         });
 
-        // Notification function
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full ${
-                type === 'success' ? 'bg-green-500 text-white' : 
-                type === 'error' ? 'bg-red-500 text-white' : 
-                'bg-blue-500 text-white'
-            }`;
-            notification.innerHTML = `
-                <div class="flex items-center space-x-2">
-                    <i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info'}" class="w-5 h-5"></i>
-                    <span>${message}</span>
-                </div>
-            `;
+        // Delete product confirmation
+        document.getElementById('deleteProductBtn').addEventListener('click', () => {
+            const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+            deleteConfirmModal.classList.remove('hidden');
 
-            document.body.appendChild(notification);
+            document.getElementById('deleteConfirmBtn').addEventListener('click', () => {
+                const productId = <?php echo $product['id']; ?>;
+                fetch('api/delete-product.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            product_id: productId
+                        })
+                    })
 
-            // Trigger animation
-            setTimeout(() => {
-                notification.classList.remove('translate-x-full');
-            }, 100);
-
-            // Remove notification after 3 seconds
-            setTimeout(() => {
-                notification.classList.add('translate-x-full');
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
-        }
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showToasted('Product deleted successfully!', 'success');
+                            setTimeout(() => {
+                                window.location.href = 'products.php';
+                            }, 1500);
+                        } else {
+                            showToasted(data.message || 'Failed to delete product', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToasted('An error occurred while deleting the product', 'error');
+                    })
+                    .finally(() => {
+                        deleteConfirmModal.classList.add('hidden');
+                    });
+            });
+        });
 
         // Initialize Lucide icons
         if (typeof lucide !== 'undefined') {
