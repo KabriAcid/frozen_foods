@@ -35,7 +35,7 @@ $userActivity = getUserActivity($pdo, $user_id, 10);
         <!-- User Details Content -->
         <main class="p-6">
             <!-- Breadcrumb -->
-            <div class="mb-6">
+            <div class="mb-8">
                 <nav class="flex" aria-label="Breadcrumb">
                     <ol class="inline-flex items-center space-x-1 md:space-x-3">
                         <li class="inline-flex items-center">

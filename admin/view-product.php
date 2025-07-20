@@ -35,6 +35,31 @@ $recentOrders = getRecentOrdersForProduct($pdo, $productId, 5);
 
         <!-- Product Details Content -->
         <main class="p-6">
+            <!-- Breadcrumb -->
+            <div class="mb-8">
+                <nav class="flex" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                        <li class="inline-flex items-center">
+                            <a href="dashboard.php" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-orange-600">
+                                <i data-lucide="home" class="w-4 h-4 mr-2"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <div class="flex items-center">
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                                <a href="products.php" class="ml-1 text-sm font-medium text-gray-700 hover:text-orange-600 md:ml-2">Products</a>
+                            </div>
+                        </li>
+                        <li aria-current="page">
+                            <div class="flex items-center">
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                                <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2"><?= htmlspecialchars($product['name']) ?></span>
+                            </div>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
             <!-- Header Section -->
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-6">
