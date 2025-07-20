@@ -116,7 +116,7 @@ $userStats = getAllUsersStats($pdo);
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?= htmlspecialchars($user['email']) ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?= (int) $user['order_count'] ?></td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        $<?= number_format((float) $user['total_spent'], 2) ?>
+                                        &#8358;<?= number_format((float) $user['total_spent'], 2) ?>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?= $user['status'] === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' ?>">

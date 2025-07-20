@@ -22,6 +22,8 @@ if (!$user) {
 $userOrders = getUserOrders($pdo, $user_id, 5);
 // Fetch user activity
 $userActivity = getUserActivity($pdo, $user_id, 10);
+
+$orders = $userOrders['orders'];
 ?>
 
 <body class="bg-gray-50 font-sans">
@@ -114,7 +116,7 @@ $userActivity = getUserActivity($pdo, $user_id, 10);
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm font-medium text-gray-600">Total Orders</p>
-                                    <p class="text-2xl font-bold text-blue-600"><?= (int)$user['order_count'] ?></p>
+                                    <p class="text-2xl font-bold text-blue-600"><?= (int)$userOrders['order_count'] ?></p>
                                 </div>
                                 <div class="bg-blue-50 p-3 rounded-lg">
                                     <i data-lucide="shopping-bag" class="w-6 h-6 text-blue-600"></i>
@@ -126,7 +128,7 @@ $userActivity = getUserActivity($pdo, $user_id, 10);
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm font-medium text-gray-600">Total Spent</p>
-                                    <p class="text-2xl font-bold text-green-600">₦<?= number_format((float)$user['total_spent'], 2) ?></p>
+                                    <p class="text-2xl font-bold text-green-600">₦<?= number_format((float)$userOrders['total_spent'], 2) ?></p>
                                 </div>
                                 <div class="bg-green-50 p-3 rounded-lg">
                                     <i data-lucide="dollar-sign" class="w-6 h-6 text-green-600"></i>
@@ -139,7 +141,7 @@ $userActivity = getUserActivity($pdo, $user_id, 10);
                                 <div>
                                     <p class="text-sm font-medium text-gray-600">Avg. Order Value</p>
                                     <p class="text-2xl font-bold text-purple-600">
-                                        ₦<?= $user['order_count'] > 0 ? number_format((float)$user['total_spent'] / (int)$user['order_count'], 2) : '0.00' ?>
+                                        ₦<?= $userOrders['order_count'] > 0 ? number_format((float)$userOrders['total_spent'] / (int)$userOrders['order_count'], 2) : '0.00' ?>
                                     </p>
                                 </div>
                                 <div class="bg-purple-50 p-3 rounded-lg">
@@ -173,7 +175,7 @@ $userActivity = getUserActivity($pdo, $user_id, 10);
                                             </td>
                                         </tr>
                                     <?php else: ?>
-                                        <?php foreach ($userOrders as $order): ?>
+                                        <?php foreach ($orders as $order): ?>
                                             <tr class="hover:bg-gray-50">
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                     #<?= htmlspecialchars($order['order_number']) ?>
@@ -182,13 +184,13 @@ $userActivity = getUserActivity($pdo, $user_id, 10);
                                                     <?= date('M d, Y', strtotime($order['created_at'])) ?>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    ₦<?= number_format((float)$order['total'], 2) ?>
+                                                    ₦<?= number_format((float)$order['total_amount'], 2) ?>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
                                                         <?php
                                                         switch ($order['status']) {
-                                                            case 'completed':
+                                                            case 'delivered':
                                                                 echo 'bg-green-100 text-green-800';
                                                                 break;
                                                             case 'pending':
@@ -237,7 +239,7 @@ $userActivity = getUserActivity($pdo, $user_id, 10);
                                 <i data-lucide="map-pin" class="w-5 h-5 text-gray-400 mr-3"></i>
                                 <div>
                                     <p class="text-sm text-gray-500">Address</p>
-                                    <p class="text-sm font-medium text-gray-900"><?= htmlspecialchars($user['address'] ?? 'Not provided') ?></p>
+                                    <p class="text-sm font-medium text-gray-900"><?= htmlspecialchars($user['address'] ?? 'N/A') ?></p>
                                 </div>
                             </div>
                         </div>
@@ -258,9 +260,9 @@ $userActivity = getUserActivity($pdo, $user_id, 10);
                                 </p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-500">Email Verified</p>
-                                <p class="text-sm font-medium <?= $user['email_verified'] ? 'text-green-600' : 'text-red-600' ?>">
-                                    <?= $user['email_verified'] ? 'Verified' : 'Not Verified' ?>
+                                <p class="text-sm text-gray-500">Verified</p>
+                                <p class="text-sm font-medium <?= $user['verified'] ? 'text-green-600' : 'text-red-600' ?>">
+                                    <?= $user['verified'] ? 'Verified' : 'Not Verified' ?>
                                 </p>
                             </div>
                         </div>
@@ -270,7 +272,7 @@ $userActivity = getUserActivity($pdo, $user_id, 10);
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                         <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
                         <div class="space-y-3">
-                            <button class="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors flex items-center">
+                            <button id="openEmailBtn" class="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors flex items-center">
                                 <i data-lucide="mail" class="w-4 h-4 mr-3 text-gray-400"></i>
                                 Send Email
                             </button>
@@ -388,7 +390,7 @@ $userActivity = getUserActivity($pdo, $user_id, 10);
                             <p class="text-xs text-gray-500">Mark this user's email as verified</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" name="email_verified" value="1" class="sr-only peer" <?= $user['email_verified'] ? 'checked' : '' ?>>
+                            <input type="checkbox" name="verified" value="1" class="sr-only peer" <?= $user['verified'] ? 'checked' : '' ?>>
                             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                         </label>
                     </div>

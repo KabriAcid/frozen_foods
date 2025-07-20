@@ -915,21 +915,37 @@ function getAnalyticsData(PDO $pdo): array
 }
 
 // Function for getting user orders 
-
 function getUserOrders(PDO $pdo, int $userId, int $limit = 5): array
 {
     try {
-        // Use a named prepared statement for user_id only and safely append limit
+        // Order count
+        $stmt = $pdo->prepare("SELECT COUNT(*) AS order_count FROM orders WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $total_count = $stmt->fetch();
+
+        // Total spent
+        $stmt = $pdo->prepare("SELECT SUM(total_amount) AS total_spent FROM orders WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $total_spent = $stmt->fetch();
+
+        // Latest orders (limited)
         $stmt = $pdo->prepare("SELECT * FROM orders WHERE user_id = :userId ORDER BY created_at DESC LIMIT :limit");
         $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'order_count' => (int) $total_count['order_count'],
+            'total_spent' => (float) $total_spent['total_spent'],
+            'orders' => $orders
+        ];
     } catch (PDOException $e) {
         error_log("Error fetching user orders: " . $e->getMessage());
         return [];
     }
 }
+
 
 
 // Function for getting user activity
