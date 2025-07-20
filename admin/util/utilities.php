@@ -48,6 +48,84 @@ function getDashboardStats($pdo)
     }
 }
 
+function getUsersData(PDO $pdo): array
+{
+    try {
+        // Fetch all users
+        $stmt = $pdo->query("SELECT * FROM users ORDER BY created_at DESC");
+        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($users)) return [];
+
+        // Extract user IDs
+        $userIds = array_column($users, 'id');
+        $placeholders = implode(',', array_fill(0, count($userIds), '?'));
+
+        // Fetch orders per user with total amount
+        $orderStmt = $pdo->prepare("
+            SELECT user_id, COUNT(*) AS order_count, SUM(total_amount) AS total_spent
+            FROM orders
+            WHERE user_id IN ($placeholders)
+            GROUP BY user_id
+        ");
+        $orderStmt->execute($userIds);
+        $orderData = [];
+        foreach ($orderStmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $orderData[$row['user_id']] = $row;
+        }
+
+        // Attach order stats to each user
+        foreach ($users as &$user) {
+            $uid = $user['id'];
+            $user['order_count'] = $orderData[$uid]['order_count'] ?? 0;
+            $user['total_spent'] = $orderData[$uid]['total_spent'] ?? 0;
+        }
+
+        return $users;
+    } catch (PDOException $e) {
+        error_log("[USERS FETCH ERROR] " . $e->getMessage());
+        return [];
+    }
+}
+
+// Get all users stats i.e total users, active users, new this month, premium users
+function getAllUsersStats(PDO $pdo): array
+{
+    try {
+        // Total users
+        $stmt = $pdo->query("SELECT COUNT(*) AS total_users FROM users");
+        $totalUsers = $stmt->fetch(PDO::FETCH_ASSOC)['total_users'] ?? 0;
+
+        // Active users (users who have placed at least 1 order)
+        $stmt = $pdo->query("SELECT COUNT(DISTINCT user_id) AS active_users FROM orders");
+        $activeUsers = $stmt->fetch(PDO::FETCH_ASSOC)['active_users'] ?? 0;
+
+        // New users this month
+        $stmt = $pdo->query("SELECT COUNT(*) AS new_users FROM users WHERE MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE())");
+        $newUsersThisMonth = $stmt->fetch(PDO::FETCH_ASSOC)['new_users'] ?? 0;
+
+        // Premium users (assuming premium users have a specific role)
+        $stmt = $pdo->query("SELECT COUNT(*) AS loyal_users FROM users WHERE role = 'loyal'");
+        $premiumUsers = $stmt->fetch(PDO::FETCH_ASSOC)['loyal_users'] ?? 0;
+
+        return [
+            'total_users' => (int)$totalUsers,
+            'active_users' => (int)$activeUsers,
+            'new_users_this_month' => (int)$newUsersThisMonth,
+            'loyal_users' => (int)$premiumUsers,
+        ];
+    } catch (PDOException $e) {
+        error_log("[USERS STATS ERROR] " . $e->getMessage());
+        return [
+            'total_users' => 0,
+            'active_users' => 0,
+            'new_users_this_month' => 0,
+            'loyal_users' => 0,
+        ];
+    }
+}
+
+
 function getRecentOrders($pdo, $limit = 5){
     try {
         $limit = (int)$limit;
@@ -836,3 +914,41 @@ function getAnalyticsData(PDO $pdo): array
     return $analytics;
 }
 
+// Function for getting user orders 
+
+function getUserOrders(PDO $pdo, int $userId, int $limit = 5): array
+{
+    try {
+        // Use a named prepared statement for user_id only and safely append limit
+        $stmt = $pdo->prepare("SELECT * FROM orders WHERE user_id = :userId ORDER BY created_at DESC LIMIT :limit");
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching user orders: " . $e->getMessage());
+        return [];
+    }
+}
+
+
+// Function for getting user activity
+function getUserActivity(PDO $pdo, int $userId, int $limit = 10): array
+{
+    try {
+        // Safely bind both user ID and limit
+        $stmt = $pdo->prepare("
+            SELECT * FROM user_activity 
+            WHERE user_id = :userId 
+            ORDER BY activity_time DESC 
+            LIMIT :limit
+        ");
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching user activity: " . $e->getMessage());
+        return [];
+    }
+}

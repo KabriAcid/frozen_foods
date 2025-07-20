@@ -1,4 +1,13 @@
-<?php require __DIR__ . '/partials/headers.php'; ?>
+<?php
+require __DIR__ . '/../config/database.php';
+require __DIR__ . '/util/utilities.php';
+require __DIR__ . '/partials/headers.php';
+
+// Fetch user data from the database
+$users = getUsersData($pdo);
+// fetch user stats
+$userStats = getAllUsersStats($pdo);
+?>
 
 <body class="bg-gray-50 font-sans">
     <?php require __DIR__ . '/partials/sidebar.php'; ?>
@@ -14,7 +23,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Total Users</p>
-                            <p class="text-2xl font-bold text-gray-900">2,847</p>
+                            <p class="text-2xl font-bold text-gray-900"><?= htmlspecialchars($userStats['total_users']) ?></p>
                         </div>
                         <div class="bg-blue-50 p-3 rounded-lg">
                             <i data-lucide="users" class="w-6 h-6 text-blue-600"></i>
@@ -26,7 +35,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Active Users</p>
-                            <p class="text-2xl font-bold text-green-600">1,892</p>
+                            <p class="text-2xl font-bold text-green-600"><?= htmlspecialchars($userStats['active_users']) ?></p>
                         </div>
                         <div class="bg-green-50 p-3 rounded-lg">
                             <i data-lucide="user-check" class="w-6 h-6 text-green-600"></i>
@@ -38,7 +47,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">New This Month</p>
-                            <p class="text-2xl font-bold text-orange-600">234</p>
+                            <p class="text-2xl font-bold text-orange-600"><?= htmlspecialchars($userStats['new_users_this_month']) ?></p>
                         </div>
                         <div class="bg-orange-50 p-3 rounded-lg">
                             <i data-lucide="user-plus" class="w-6 h-6 text-orange-600"></i>
@@ -49,8 +58,8 @@
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium text-gray-600">Premium Users</p>
-                            <p class="text-2xl font-bold text-purple-600">567</p>
+                            <p class="text-sm font-medium text-gray-600">Loyal Users</p>
+                            <p class="text-2xl font-bold text-purple-600"><?= htmlspecialchars($userStats['loyal_users']) ?></p>
                         </div>
                         <div class="bg-purple-50 p-3 rounded-lg">
                             <i data-lucide="crown" class="w-6 h-6 text-purple-600"></i>
@@ -93,78 +102,35 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <img src="https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400" alt="User" class="w-10 h-10 rounded-full mr-4">
-                                        <div>
-                                            <div class="text-sm font-medium text-gray-900">John Smith</div>
-                                            <div class="text-sm text-gray-500">Premium Customer</div>
+                            <?php foreach ($users as $user): ?>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <img src="../assets/uploads/<?= htmlspecialchars($user['avatar']) ?>" alt="User" class="w-10 h-10 rounded-full mr-4">
+                                            <div>
+                                                <div class="text-sm font-medium text-gray-900"><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></div>
+                                                <div class="text-sm text-gray-500 capitalize"><?= htmlspecialchars($user['role']) ?></div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">john.smith@example.com</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">23</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$1,234.56</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Active
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jan 15, 2024</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                                    <button class="text-red-600 hover:text-red-900">Suspend</button>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <img src="https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400" alt="User" class="w-10 h-10 rounded-full mr-4">
-                                        <div>
-                                            <div class="text-sm font-medium text-gray-900">Jane Doe</div>
-                                            <div class="text-sm text-gray-500">Regular Customer</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">jane.doe@example.com</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$567.89</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Active
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Dec 08, 2023</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                                    <button class="text-red-600 hover:text-red-900">Suspend</button>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <img src="https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=400" alt="User" class="w-10 h-10 rounded-full mr-4">
-                                        <div>
-                                            <div class="text-sm font-medium text-gray-900">Mike Johnson</div>
-                                            <div class="text-sm text-gray-500">New Customer</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">mike.j@example.com</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$89.50</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        Inactive
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jan 20, 2024</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                                    <button class="text-green-600 hover:text-green-900">Activate</button>
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?= htmlspecialchars($user['email']) ?></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?= (int) $user['order_count'] ?></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        $<?= number_format((float) $user['total_spent'], 2) ?>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?= $user['status'] === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' ?>">
+                                            <?= htmlspecialchars($user['status']) ?>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <?= date('M d, Y', strtotime($user['created_at'])) ?>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="view-user.php?id=<?= (int) $user['id'] ?>" class="text-xs bg-gray-100 px-3 rounded py-1 text-orange-600 hover:text-orange-900 mr-3">View</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
