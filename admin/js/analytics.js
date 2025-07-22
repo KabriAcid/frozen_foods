@@ -375,3 +375,4 @@ function updateKPICards() {
 
 // Initialize real-time updates
 simulateRealTimeUpdates();
+

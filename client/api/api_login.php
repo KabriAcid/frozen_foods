@@ -17,7 +17,7 @@ try {
     }
 
     // Look up user
-    $stmt = $pdo->prepare("SELECT id, password_hash FROM admins WHERE email = :email LIMIT 1");
+    $stmt = $pdo->prepare("SELECT id, password_hash FROM users WHERE email = :email LIMIT 1");
     $stmt->execute(['email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -27,7 +27,7 @@ try {
     }
 
     // Successful login
-    $_SESSION['admin_id'] = $user['id'];
+    $_SESSION['user_id'] = $user['id'];
 
     echo json_encode(['success' => true, 'message' => 'Login successful.']);
 } catch (PDOException $e) {

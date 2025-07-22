@@ -44,9 +44,9 @@
                     <a href="#testimonials" class="text-dark-custom hover:text-accent transition-colors">Reviews</a>
                     <a href="#contact" class="text-dark-custom hover:text-accent transition-colors">Contact</a>
                     <a href="pages/about.php" class="text-dark-custom hover:text-accent transition-colors">About</a>
-                    
-                    <a href="auth/login.php" class="text-accent font-semibold hover:underline">Login</a>
-                    <a href="auth/register.php" class="text-accent font-semibold hover:underline">Register</a>
+
+                    <a href="client/index.php" class="text-accent font-semibold hover:underline">Login</a>
+                    <a href="client/register.php" class="text-accent font-semibold hover:underline">Register</a>
                 </div>
                 <div class="md:hidden">
                     <button id="mobile-menu-btn" class="text-dark-custom">
@@ -63,8 +63,8 @@
                     <a href="#testimonials" class="text-dark-custom hover:text-accent transition-colors py-2">Reviews</a>
                     <a href="#contact" class="text-dark-custom hover:text-accent transition-colors py-2">Contact</a>
                     <a href="pages/about.php" class="text-accent font-semibold py-2">About</a>
-                    <a href="auth/login.php" class="text-accent font-semibold py-2">Login</a>
-                    <a href="auth/register.php" class="text-accent font-semibold py-2">Register</a>
+                    <a href="client/index.php" class="text-accent font-semibold py-2">Login</a>
+                    <a href="client/register.php" class="text-accent font-semibold py-2">Register</a>
                 </div>
             </div>
         </div>
@@ -83,7 +83,7 @@
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up-delay-2">
                 <button onclick="document.getElementById('categories').scrollIntoView({ behavior: 'smooth' });"
-                        class="bg-white text-accent px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 btn-custom">
+                    class="bg-white text-accent px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 btn-custom">
                     Shop Now
                 </button>
                 <button class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-accent btn-custom">
@@ -401,12 +401,12 @@
                     <h4 class="text-lg font-semibold mb-4">Customer Service</h4>
                     <ul class="space-y-2">
                         <li><a href="pages/about.php"
-                               class="<?php echo basename($_SERVER['PHP_SELF']) == 'about.php' ? 'text-accent font-semibold' : 'text-gray-300 hover:text-accent transition-colors'; ?>">
-                               About Us
+                                class="<?php echo basename($_SERVER['PHP_SELF']) == 'about.php' ? 'text-accent font-semibold' : 'text-gray-300 hover:text-accent transition-colors'; ?>">
+                                About Us
                             </a>
                         </li>
-                        <li><a href="auth/login.php" class="text-gray-300 hover:text-accent transition-colors">Login</a></li>
-                        <li><a href="auth/register.php" class="text-gray-300 hover:text-accent transition-colors">Register</a></li>
+                        <li><a href="client/index.php" class="text-gray-300 hover:text-accent transition-colors">Login</a></li>
+                        <li><a href="client/register.php" class="text-gray-300 hover:text-accent transition-colors">Register</a></li>
                         <li><a href="#" class="text-gray-300 hover:text-accent transition-colors">Contact Support</a></li>
                         <li><a href="#" class="text-gray-300 hover:text-accent transition-colors">FAQ</a></li>
                         <li><a href="#" class="text-gray-300 hover:text-accent transition-colors">Delivery Policy</a></li>

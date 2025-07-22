@@ -342,7 +342,7 @@ require __DIR__ . '/../components/header.php';
                 overlay.classList.remove("hidden");
 
                 // AJAX request
-                fetch("../api/api_register.php", {
+                fetch("api/api_register.php", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -362,7 +362,7 @@ require __DIR__ . '/../components/header.php';
                             // Redirect to login page
                             showToasted(data.message, 'success');
                             setTimeout(() => {
-                                window.location.href = "login.php";
+                                window.location.href = "index.php";
                             }, timeout = 2000);
                         } else {
                             // Show error message

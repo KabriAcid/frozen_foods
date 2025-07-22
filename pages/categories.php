@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Categories - Frozen Food</title>
@@ -25,6 +25,7 @@
         }
     </script>
 </head>
+
 <body class="font-dm-sans bg-gray-custom">
     <!-- Navigation -->
     <nav class="fixed top-0 w-full bg-white shadow-lg z-50">
@@ -37,8 +38,8 @@
                 <a href="../index.php" class="text-dark-custom hover:text-accent">Home</a>
                 <a href="categories.php" class="text-accent font-semibold underline">Categories</a>
                 <a href="about.php" class="text-dark-custom hover:text-accent">About</a>
-                <a href="../auth/login.php" class="text-dark-custom hover:text-accent">Login</a>
-                <a href="../auth/register.php" class="text-dark-custom hover:text-accent">Register</a>
+                <a href="../client/index.php" class="text-dark-custom hover:text-accent">Login</a>
+                <a href="../client/register.php" class="text-dark-custom hover:text-accent">Register</a>
             </div>
         </div>
     </nav>
@@ -101,4 +102,5 @@
         </div>
     </main>
 </body>
+
 </html>

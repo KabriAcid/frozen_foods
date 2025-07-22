@@ -1,306 +1,142 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
-require_once 'util/util.php';
-
-// Get all products for the dashboard
-$products = getAllProducts($pdo);
-$categories = getProductCategories($pdo);
-require_once 'partials/headers.php';
+session_start();
+require __DIR__ . '/../config/database.php';
+require __DIR__ . '/../components/header.php';
 ?>
 
-<body class="bg-gray font-dm pb-24 overflow-x-hidden">
-    <!-- Main Content -->
-    <main class="px-4 pt-6 space-y-6 animate-fade-in">
-        <!-- Welcome Section -->
-        <div class="gradient-bg rounded-3xl p-6 text-white floating-card animate-slide-up">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h2 class="text-2xl font-bold mb-2">Welcome back!</h2>
-                    <p class="text-orange-100 text-sm">Discover fresh frozen foods for your family</p>
-                </div>
-                <div class="relative">
-                    <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl border border-white/30 flex items-center justify-center">
-                        <!-- <i class="fas fa-snowflake text-white text-xl"></i> -->
-                        <div class="w-10 h-10 flex items-center justify-center">
-                            <!-- Cart Icon SVG -->
-                            <a href="cart.php">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- Cart body -->
-                                    <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V16.5"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round" />
-
-                                    <!-- Cart wheels -->
-                                    <circle cx="9" cy="20" r="1"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round" />
-
-                                    <circle cx="20" cy="20" r="1"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round" />
-
-                                    <!-- Premium accent line (optional highlight) -->
-                                    <path d="M8 9H19"
-                                        stroke="currentColor"
-                                        stroke-width="1.5"
-                                        stroke-linecap="round"
-                                        opacity="0.6" />
-                                </svg>
-                            </a>
+<body>
+    <main class="dashboard">
+        <div id="root">
+            <div class="min-h-screen bg-gray-50">
+                <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
+                    <div class="w-full max-w-md">
+                        <div class="text-center mb-6">
+                            <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-orange-400 to-orange-600 rounded-3xl shadow-lg flex items-center justify-center">
+                                <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center">
+                                    <div class="w-6 h-6 bg-gradient-to-br from-orange-400 to-orange-600 rounded-lg"></div>
+                                </div>
+                            </div>
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+                            <p class="text-gray-500 text-lg">Sign in to continue.</p>
                         </div>
-
+                        <div class="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
+                            <form class="space-y-6">
+                                <div class="space-y-2"><label class="text-sm font-medium text-gray-700 block">Email Address</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail h-5 w-5 text-gray-400">
+                                                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                                            </svg></div><input type="email" class="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200" placeholder="Enter your email" value="">
+                                    </div>
+                                </div>
+                                <div class="space-y-2"><label class="text-sm font-medium text-gray-700 block">Password</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock h-5 w-5 text-gray-400">
+                                                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+                                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                            </svg></div><input type="password" class="w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200" placeholder="Enter your password" value=""><button type="button" class="absolute inset-y-0 right-0 pr-4 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg></button>
+                                    </div>
+                                </div>
+                                <div class="text-right"><button type="button" class="text-orange-500 hover:text-orange-600 text-sm font-medium transition-colors duration-200">Forgot Password?</button></div><button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 rounded-2xl font-bold text-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"><span>Sign In</span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right w-5 h-5">
+                                        <path d="M5 12h14"></path>
+                                        <path d="m12 5 7 7-7 7"></path>
+                                    </svg></button>
+                            </form>
+                            <div class="my-8 flex items-center">
+                                <div class="flex-1 border-t border-gray-200"></div><span class="px-4 text-sm text-gray-500 bg-white">or continue with</span>
+                                <div class="flex-1 border-t border-gray-200"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4"><button class="flex items-center justify-center space-x-2 py-3 px-4 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-colors duration-200 border border-gray-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chrome w-5 h-5 text-gray-600">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <circle cx="12" cy="12" r="4"></circle>
+                                        <line x1="21.17" x2="12" y1="8" y2="8"></line>
+                                        <line x1="3.95" x2="8.54" y1="6.06" y2="14"></line>
+                                        <line x1="10.88" x2="15.46" y1="21.94" y2="14"></line>
+                                    </svg><span class="text-sm font-medium text-gray-700">Google</span></button><button class="flex items-center justify-center space-x-2 py-3 px-4 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-colors duration-200 border border-gray-200"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-apple w-5 h-5 text-gray-600">
+                                        <path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"></path>
+                                        <path d="M10 2c1 .5 2 2 2 5"></path>
+                                    </svg><span class="text-sm font-medium text-gray-700">Apple</span></button></div>
+                        </div>
+                        <div class="text-center mt-8">
+                            <p class="text-gray-600">Don't have an account? <a href="register.php" class="text-orange-500 hover:text-orange-600 font-semibold transition-colors duration-200">Create Account</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="flex items-center space-x-4 text-orange-100 text-sm">
-                <div class="flex items-center">
-                    <i class="fas fa-clock mr-2"></i>
-                    <span>Fresh daily</span>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-truck mr-2"></i>
-                    <span>Fast delivery</span>
-                </div>
-            </div>
         </div>
 
-        <!-- Search Bar -->
-        <div class="search-container animate-slide-up" style="animation-delay: 0.1s;">
-            <div class="relative">
-                <input
-                    type="text"
-                    id="search-input"
-                    placeholder="Search for chicken, fish, turkey..."
-                    class="w-full pl-14 pr-4 py-4 rounded-2xl border-0 bg-white shadow-lg focus:ring-2 focus:ring-accent focus:outline-none text-base transition-all duration-300 hover:shadow-xl">
-                <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
-                    <i class="fas fa-search text-gray-400 text-lg"></i>
-                </div>
-                <button class="absolute right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-accent rounded-xl flex items-center justify-center text-white hover:bg-orange-600 transition-colors">
-                    <i class="fas fa-sliders-h text-sm"></i>
-                </button>
-            </div>
+        <!-- Overlay -->
+        <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="text-white text-lg font-bold">Processing...</div>
         </div>
-
-        <!-- Category Tabs -->
-        <div class="overflow-x-auto hide-scrollbar animate-slide-up" style="animation-delay: 0.2s;">
-            <div class="flex space-x-3 pb-2">
-                <button class="tab-button active px-6 py-3 rounded-2xl text-sm font-semibold whitespace-nowrap bg-accent text-white shadow-lg hover:shadow-xl transform hover:scale-105" data-category="all">
-                    All
-                </button>
-                <?php foreach ($categories as $category): ?>
-                    <button class="tab-button px-6 py-3 rounded-2xl text-sm font-semibold whitespace-nowrap bg-white text-gray-600 shadow-md hover:shadow-lg hover:bg-gray-50 transform hover:scale-105" data-category="<?php echo strtolower($category); ?>">
-                        <?php echo ucfirst($category); ?>
-                    </button>
-                <?php endforeach; ?>
-            </div>
-        </div>
-
-        <!-- Products Section -->
-        <div class="animate-slide-up" style="animation-delay: 0.3s;">
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h3 class="text-xl font-bold text-dark">Popular Items</h3>
-                    <p class="text-gray-500 text-sm">Fresh and quality guaranteed</p>
-                </div>
-                <button class="text-accent text-sm font-semibold bg-orange-50 px-4 py-2 rounded-xl hover:bg-orange-100 transition-colors">
-                    See all
-                </button>
-            </div>
-
-            <!-- Product Grid -->
-            <div id="products-grid" class="grid grid-cols-2 gap-4">
-                <?php if (empty($products)): ?>
-                    <!-- Empty State for Products -->
-                    <div class="col-span-2 text-center py-16">
-                        <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18M9 3v12a3 3 0 006 0V3"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-custom-dark mb-2">No Products Found</h3>
-                        <p class="text-gray-500">There are currently no products available. Please check back later!</p>
-                    </div>
-                <?php else: ?>
-                    <?php foreach ($products as $product): ?>
-                        <div class="product-card bg-white rounded-3xl shadow-lg overflow-hidden animate-scale-in" data-category="<?php echo strtolower($product['category']); ?>" data-name="<?php echo strtolower($product['name']); ?>" style="animation-delay: <?php echo rand(1, 6) * 0.1; ?>s;">
-                            <div class="relative">
-                                <img src="../assets/uploads/<?php echo $product['image']; ?>" alt="<?php echo $product['name']; ?>" class="w-full h-36 object-cover">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                                <button class="favorite-btn absolute top-3 right-3 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-300">
-                                    <i class="far fa-heart text-gray-600 text-sm"></i>
-                                </button>
-                                <div class="absolute bottom-3 left-3">
-                                    <span class="bg-accent text-white text-xs font-semibold px-2 py-1 rounded-lg">
-                                        Fresh
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="p-4">
-                                <h4 class="font-bold text-dark text-sm mb-1 line-clamp-1"><?php echo $product['name']; ?></h4>
-                                <p class="text-gray-500 text-xs mb-3 line-clamp-2"><?php echo $product['description']; ?></p>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-lg font-bold text-accent">₦<?php echo number_format($product['price']); ?></span>
-                                    <a href="product.php?id=<?php echo $product['id']; ?>" class="bg-dark text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-gray-800 transition-all duration-300 hover:scale-105 active:scale-95">
-                                        View
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-        </div>
+        <!-- End Overlay -->
     </main>
-
-    <!-- Bottom navigation include -->
-    <?php include 'partials/bottom-nav.php'; ?>
-
-    <script src="js/dashboard.js"></script>
+    <script src="../assets/js/toasted.js"></script>
+    <script src="../assets/js/toggle-password.js"></script>
     <script>
-        // Premium mobile interactions with enhanced animations
-        document.addEventListener('DOMContentLoaded', function() {
-            // Enhanced tab functionality with smooth transitions
-            const tabButtons = document.querySelectorAll('.tab-button');
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.querySelector("form");
 
-            tabButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    // Remove active class from all buttons with animation
-                    tabButtons.forEach(btn => {
-                        btn.classList.remove('active', 'bg-accent', 'text-white');
-                        btn.classList.add('bg-white', 'text-gray-600');
-                        btn.style.transform = 'scale(1)';
+            form.addEventListener("submit", (e) => {
+                e.preventDefault(); // Prevent default form submission
+
+                const email = form.querySelector('input[type="email"]').value;
+                const password = form.querySelector('input[type="password"]').value;
+
+                const overlay = document.getElementById("overlay");
+                overlay.classList.remove("hidden"); // Show overlay
+                // AJAX request
+                fetch("api/api_login.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            email,
+                            password
+                        }),
+                    })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        overlay.classList.add("hidden"); // Hide overlay after response
+                        if (data.success) {
+                            // Redirect to dashboard
+                            showToasted(data.message, 'success');
+                            setTimeout(() => {
+                                window.location.href = "dashboard.php";
+                            }, timeout = 2000);
+                        } else {
+                            // Show error message
+                            showToasted(data.message, 'error');
+                        }
+                    })
+                    .catch((error) => {
+                        overlay.classList.add("hidden"); // Hide overlay on error
+                        showToasted("An error occurred. Please try again.", 'error');
+                        console.error("Error:", error);
                     });
-
-                    // Add active class to clicked button with bounce animation
-                    this.classList.add('active', 'bg-accent', 'text-white');
-                    this.classList.remove('bg-white', 'text-gray-600');
-                    this.style.transform = 'scale(1.05)';
-
-                    // Add bounce animation
-                    this.classList.add('animate-bounce-gentle');
-                    setTimeout(() => {
-                        this.classList.remove('animate-bounce-gentle');
-                        this.style.transform = 'scale(1)';
-                    }, 600);
-                });
             });
 
-            // Enhanced favorite button functionality
-            const favoriteButtons = document.querySelectorAll('.favorite-btn');
+            // Eye Toggle
+            const passwordInput = form.querySelector('input[type="password"]');
+            const eyeToggleBtn = passwordInput.nextElementSibling;
 
-            favoriteButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const icon = this.querySelector('i');
-
-                    // Add scale animation
-                    this.style.transform = 'scale(1.2)';
-
-                    if (icon.classList.contains('far')) {
-                        icon.classList.remove('far');
-                        icon.classList.add('fas', 'text-red-500');
-
-                        // Add heart beat animation
-                        icon.style.animation = 'bounce-gentle 0.6s ease-in-out';
-                    } else {
-                        icon.classList.remove('fas', 'text-red-500');
-                        icon.classList.add('far');
-                        icon.style.animation = '';
-                    }
-
-                    // Reset scale
-                    setTimeout(() => {
-                        this.style.transform = 'scale(1)';
-                    }, 200);
-                });
+            eyeToggleBtn.addEventListener("click", () => {
+                const isPassword = passwordInput.type === "password";
+                passwordInput.type = isPassword ? "text" : "password";
+                eyeToggleBtn.innerHTML = isPassword ?
+                    `<svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-eye-off h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M17.94 17.94a10.94 10.94 0 0 1-5.94 1.94C5 19.88 2 12 2 12a21.05 21.05 0 0 1 4.29-6.29"/>
+                    <path d="M1 1l22 22"/>
+                </svg>` :
+                    `<svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-eye h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12Z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>`;
             });
-
-            // Enhanced bottom navigation with premium interactions
-            const navItems = document.querySelectorAll('.nav-item');
-
-            navItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    // Don't prevent default to allow navigation
-
-                    // Remove active class from all nav items
-                    navItems.forEach(nav => {
-                        nav.classList.remove('nav-item-active');
-                    });
-
-                    // Add active class to clicked item
-                    this.classList.add('nav-item-active');
-
-                    // Add ripple effect
-                    const ripple = document.createElement('div');
-                    ripple.style.position = 'absolute';
-                    ripple.style.borderRadius = '50%';
-                    ripple.style.background = 'rgba(249, 115, 22, 0.3)';
-                    ripple.style.transform = 'scale(0)';
-                    ripple.style.animation = 'ripple 0.6s linear';
-                    ripple.style.left = '50%';
-                    ripple.style.top = '50%';
-                    ripple.style.width = '60px';
-                    ripple.style.height = '60px';
-                    ripple.style.marginLeft = '-30px';
-                    ripple.style.marginTop = '-30px';
-
-                    this.appendChild(ripple);
-
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
-                });
-
-                // Add hover effects for desktop
-                item.addEventListener('mouseenter', function() {
-                    if (!this.classList.contains('nav-item-active')) {
-                        const icon = this.querySelector('.nav-icon');
-                        icon.style.transform = 'translateY(-2px) scale(1.05)';
-                    }
-                });
-
-                item.addEventListener('mouseleave', function() {
-                    if (!this.classList.contains('nav-item-active')) {
-                        const icon = this.querySelector('.nav-icon');
-                        icon.style.transform = 'translateY(0) scale(1)';
-                    }
-                });
-            });
-
-            // Enhanced search functionality with animations
-            const searchInput = document.getElementById('search-input');
-
-            searchInput.addEventListener('focus', function() {
-                this.parentElement.parentElement.style.transform = 'scale(1.02)';
-            });
-
-            searchInput.addEventListener('blur', function() {
-                this.parentElement.parentElement.style.transform = 'scale(1)';
-            });
-
-            // Stagger animation for product cards
-            const productCards = document.querySelectorAll('.product-card');
-            productCards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.1}s`;
-            });
-
-            // Add CSS for ripple animation
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes ripple {
-                    to {
-                        transform: scale(2);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
         });
     </script>
 </body>

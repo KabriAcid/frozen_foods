@@ -1,7 +1,9 @@
 <?php
 require_once '../config/database.php';
-require_once '../config/auth.php';
+require_once 'initialize.php';
 require_once 'util/util.php';
+require_once 'partials/headers.php';
+
 $user_id = $_SESSION['user_id'];
 $notifications = getAllNotifications($pdo, $user_id);
 
@@ -10,9 +12,7 @@ $unread_count = count(array_filter($notifications, function ($n) {
     return empty($n['read']) || $n['read'] == 0;
 }));
 
-require_once 'partials/headers.php';
 ?>
-
 
 <body class="bg-custom-gray min-h-screen">
     <div class="container mx-auto px-4 py-6">

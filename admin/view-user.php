@@ -456,11 +456,11 @@ $orders = $userOrders['orders'];
                     <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-                        <input type="text" name="subject" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500">
+                        <input type="text" name="subject" placeholder="Email subject" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                        <textarea name="message" rows="5" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500"></textarea>
+                        <textarea name="message" rows="5" placeholder="Your message body goes here..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500"></textarea>
                     </div>
                     <div class="flex justify-end gap-2">
                         <button type="button" onclick="closeEmailModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
@@ -484,7 +484,7 @@ $orders = $userOrders['orders'];
                 <p class="text-sm text-gray-600 mb-4">Are you sure you want to reset this user’s password? A temporary password will be emailed to them.</p>
                 <div class="flex justify-end gap-2">
                     <button onclick="closeResetModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
-                    <button id="confirmResetBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Confirm</button>
+                    <button id="confirmResetBtn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Confirm</button>
                 </div>
             </div>
         </div>
@@ -766,6 +766,37 @@ $orders = $userOrders['orders'];
             }, 300);
         }
 
+        document.getElementById("sendEmailForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const submitBtn = form.querySelector("button[type='submit']");
+            const original = submitBtn.innerHTML;
+
+            submitBtn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-4 h-4 mr-2"></i>Sending...`;
+            submitBtn.disabled = true;
+
+            try {
+                const formData = new FormData(form);
+                const res = await fetch('api/send-email.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    showToasted("Email sent successfully!", "success");
+                    closeEmailModal();
+                } else {
+                    showToasted(data.message || "Failed to send email", "error");
+                }
+            } catch (error) {
+                showToasted("Something went wrong while sending email", "error");
+            } finally {
+                submitBtn.innerHTML = original;
+                submitBtn.disabled = false;
+            }
+        });
+
         // Reset Modal
         const resetPasswordModal = document.getElementById('resetPasswordModal');
         const resetModalContent = document.getElementById('resetModalContent');
@@ -787,6 +818,37 @@ $orders = $userOrders['orders'];
             }, 300);
         }
 
+        document.getElementById("resetForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const submitBtn = form.querySelector("button[type='submit']");
+            const original = submitBtn.innerHTML;
+
+            submitBtn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-4 h-4 mr-2"></i>Resetting...`;
+            submitBtn.disabled = true;
+
+            try {
+                const formData = new FormData(form);
+                const res = await fetch('api/reset-password.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    showToasted("Password reset successfully!", "success");
+                    closeResetModal();
+                } else {
+                    showToasted(data.message || "Failed to reset password", "error");
+                }
+            } catch (error) {
+                showToasted("Something went wrong while resetting password", "error");
+            } finally {
+                submitBtn.innerHTML = original;
+                submitBtn.disabled = false;
+            }
+        });
+
         // Status Modal
         const statusToggleModal = document.getElementById('statusToggleModal');
         const statusModalContent = document.getElementById('statusModalContent');
@@ -807,7 +869,39 @@ $orders = $userOrders['orders'];
                 document.body.style.overflow = '';
             }, 300);
         }
+
+        document.getElementById("statusForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const submitBtn = form.querySelector("button[type='submit']");
+            const original = submitBtn.innerHTML;
+
+            submitBtn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-4 h-4 mr-2"></i>Updating...`;
+            submitBtn.disabled = true;
+
+            try {
+                const formData = new FormData(form);
+                const res = await fetch('api/toggle-status.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    showToasted("User status updated!", "success");
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToasted(data.message || "Failed to update status", "error");
+                }
+            } catch (error) {
+                showToasted("Something went wrong while updating status", "error");
+            } finally {
+                submitBtn.innerHTML = original;
+                submitBtn.disabled = false;
+            }
+        });
     </script>
+
 
 </body>
 

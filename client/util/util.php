@@ -162,7 +162,7 @@ function getUserStatistics($pdo, $user_id)
         $orders = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Total spent
-        $stmt2 = $pdo->prepare("SELECT SUM(total) as total_amount FROM orders WHERE user_id = ?");
+        $stmt2 = $pdo->prepare("SELECT SUM(total_amount) as total_amount FROM orders WHERE user_id = ?");
         $stmt2->execute([$user_id]);
         $spent = $stmt2->fetch(PDO::FETCH_ASSOC);
 

@@ -1,7 +1,8 @@
 <?php
 require __DIR__ . '/../config/database.php';
-require __DIR__ . '/../config/auth.php';
-require __DIR__ . '/util/utilities.php';
+                                    require __DIR__ . '/initialize.php';
+
+                                    require __DIR__ . '/util/utilities.php';
 require __DIR__ . '/partials/headers.php';
 
 // Get product ID from URL parameter

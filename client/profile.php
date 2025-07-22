@@ -1,11 +1,11 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../config/auth.php';
+require_once __DIR__ . '/initialize.php';
 require_once __DIR__ . '/util/util.php';
+require_once 'partials/headers.php';
 
 $user = getUserProfile($pdo, $user_id = 1);
 $userStats = getUserStatistics($pdo, $user_id = 1);
-require_once 'partials/headers.php';
 ?>
 
 <body class="bg-gray font-dm pb-24 overflow-x-hidden">

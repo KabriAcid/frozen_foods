@@ -5,10 +5,10 @@
 -- --------------------------------------------------------
 
 --
--- Table structure for table `admin_users`
+-- Table structure for table `admins`
 --
 
-CREATE TABLE `admin_users` (
+CREATE TABLE `admins` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `email` varchar(255) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
@@ -222,9 +222,9 @@ CREATE TABLE `user_addresses` (
 --
 
 --
--- Indexes for table `admin_users`
+-- Indexes for table `admins`
 --
-ALTER TABLE `admin_users`
+ALTER TABLE `admins`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -310,9 +310,9 @@ ALTER TABLE `user_addresses`
 --
 
 --
--- AUTO_INCREMENT for table `admin_users`
+-- AUTO_INCREMENT for table `admins`
 --
-ALTER TABLE `admin_users`
+ALTER TABLE `admins`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
