@@ -977,22 +977,3 @@ function getUserWallet(PDO $pdo, int $userId): array
 
 
 // Function for getting user activity
-function getUserActivity(PDO $pdo, int $userId, int $limit = 10): array
-{
-    try {
-        // Safely bind both user ID and limit
-        $stmt = $pdo->prepare("
-            SELECT * FROM user_activity 
-            WHERE user_id = :userId 
-            ORDER BY activity_time DESC 
-            LIMIT :limit
-        ");
-        $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        error_log("Error fetching user activity: " . $e->getMessage());
-        return [];
-    }
-}

@@ -20,8 +20,6 @@ if (!$user) {
 
 // Fetch user's recent orders
 $userOrders = getUserOrders($pdo, $user_id, 5);
-// Fetch user activity
-$userActivity = getUserActivity($pdo, $user_id, 10);
 // fetch user wallet balance
 $userWallet = getUserWallet($pdo, $user_id);
 
@@ -412,7 +410,7 @@ $orders = $userOrders['orders'];
                         <button type="button" id="cancelEditBtn" class="px-6 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium">
                             Cancel
                         </button>
-                        <button id="submitEditBtn" type="submit" form="editUserForm" class="px-6 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5 flex items-center">
+                        <button id="submitEditBtn" type="button" form="editUserForm" class="px-6 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5 flex items-center">
                             <i data-lucide="save" class="w-4 h-4 mr-2"></i>
                             Save Changes
                         </button>
@@ -468,7 +466,7 @@ $orders = $userOrders['orders'];
                     </div>
                     <div class="flex justify-end gap-2">
                         <button type="button" onclick="closeEmailModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
-                        <button type="submit" onclick="sendEmailBtn()" class="px-4 py-2 bg-orange-499 text-white rounded-lg hover:bg-orange-600">Send</button>
+                        <button type="submit" onclick="sendEmailBtn()" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">Send</button>
                     </div>
                 </form>
             </div>
@@ -517,12 +515,12 @@ $orders = $userOrders['orders'];
 
 
     <!-- Overlay for mobile sidebar -->
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
 
     <script src="js/script.js"></script>
-    <script src="js/confirmation-modal.js"></script>
-    <script src="js/loading-overlay.js"></script>
-    <script src="js/toast.js"></script>
+    <script src="../assets/js/confirmation-modal.js"></script>
+    <script src="../assets/js/loading-overlay.js"></script>
+    <script src="../assets/js/toast.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Modal elements
@@ -772,6 +770,7 @@ $orders = $userOrders['orders'];
 
         // Send Email Function
         async function sendEmailBtn() {
+            e.preventDefault();
             const form = document.getElementById('sendEmailForm');
             const overlay = document.getElementById('overlay');
 
@@ -780,6 +779,8 @@ $orders = $userOrders['orders'];
             const userId = formData.get('user_id');
             const subject = formData.get('subject').trim();
             const message = formData.get('message').trim();
+
+            console.log('Sending email to user ID:', userId);
 
             // Simple validation
             if (!subject || !message) {

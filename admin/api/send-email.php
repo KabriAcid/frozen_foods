@@ -1,7 +1,6 @@
 <?php
-require __DIR__ . '/../config/database.php';
-require __DIR__ . '/../mail/mail.php';
-require __DIR__ . '/../mail/sendMail.php';
+require __DIR__ . '/../../config/database.php';
+require __DIR__ . '/../../helpers/sendMail.php';
 
 header('Content-Type: application/json');
 
@@ -26,7 +25,7 @@ try {
     }
 
     // Fetch user's email
-    $stmt = $pdo->prepare("SELECT email, full_name FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT email, first_name FROM users WHERE id = ?");
     $stmt->execute([$userId]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -36,7 +35,7 @@ try {
     }
 
     // Send email using reusable sendMail function
-    $emailSent = sendMail($user['email'], $user['full_name'], $subject, $message);
+    $emailSent = sendMail($user['email'], $user['first_name'], $subject, $message);
 
     if ($emailSent) {
         echo json_encode(['success' => true, 'message' => 'Email sent successfully.']);

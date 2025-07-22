@@ -80,10 +80,10 @@ $userStats = getAllUsersStats($pdo);
                                 <option>Inactive</option>
                                 <option>Premium</option>
                             </select>
-                            <button class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors">
+                            <!-- <button class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors">
                                 <i data-lucide="user-plus" class="w-4 h-4 mr-2 inline"></i>
                                 Add User
-                            </button>
+                            </button> -->
                         </div>
                     </div>
                 </div>
