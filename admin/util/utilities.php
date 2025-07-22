@@ -946,6 +946,34 @@ function getUserOrders(PDO $pdo, int $userId, int $limit = 5): array
     }
 }
 
+function getUserWallet(PDO $pdo, int $userId): array
+{
+    try {
+        // Fetch user wallet balance
+        $stmt = $pdo->prepare("SELECT balance FROM wallets WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $wallet = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($wallet) {
+            return [
+                'user_id' => $userId,
+                'balance' => (float) $wallet['balance']
+            ];
+        } else {
+            return [
+                'user_id' => $userId,
+                'balance' => 0.0
+            ];
+        }
+    } catch (PDOException $e) {
+        error_log("Error fetching user wallet: " . $e->getMessage());
+        return [
+            'user_id' => $userId,
+            'balance' => 0.0
+        ];
+    }
+}
+
 
 
 // Function for getting user activity

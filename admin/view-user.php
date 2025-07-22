@@ -22,6 +22,8 @@ if (!$user) {
 $userOrders = getUserOrders($pdo, $user_id, 5);
 // Fetch user activity
 $userActivity = getUserActivity($pdo, $user_id, 10);
+// fetch user wallet balance
+$userWallet = getUserWallet($pdo, $user_id);
 
 $orders = $userOrders['orders'];
 ?>
@@ -112,6 +114,33 @@ $orders = $userOrders['orders'];
                 <div class="lg:col-span-2 space-y-6">
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Wallet Balance -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Wallet Balance</p>
+                                    <p class="text-2xl font-bold text-orange-600">₦<?= number_format((float)$userWallet['balance'], 2) ?></p>
+                                </div>
+                                <div class="bg-orange-50 p-3 rounded-lg">
+                                    <i data-lucide="wallet" class="w-6 h-6 text-orange-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Spent -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Total Spent</p>
+                                    <p class="text-2xl font-bold text-gray-500">₦<?= number_format((float)$userOrders['total_spent'], 2) ?></p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    <i data-lucide="dollar-sign" class="w-6 h-6 text-gray-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Orders -->
                         <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -123,33 +152,8 @@ $orders = $userOrders['orders'];
                                 </div>
                             </div>
                         </div>
-
-                        <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-gray-600">Total Spent</p>
-                                    <p class="text-2xl font-bold text-green-600">₦<?= number_format((float)$userOrders['total_spent'], 2) ?></p>
-                                </div>
-                                <div class="bg-green-50 p-3 rounded-lg">
-                                    <i data-lucide="dollar-sign" class="w-6 h-6 text-green-600"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-gray-600">Avg. Order Value</p>
-                                    <p class="text-2xl font-bold text-purple-600">
-                                        ₦<?= $userOrders['order_count'] > 0 ? number_format((float)$userOrders['total_spent'] / (int)$userOrders['order_count'], 2) : '0.00' ?>
-                                    </p>
-                                </div>
-                                <div class="bg-purple-50 p-3 rounded-lg">
-                                    <i data-lucide="trending-up" class="w-6 h-6 text-purple-600"></i>
-                                </div>
-                            </div>
-                        </div>
                     </div>
+
 
                     <!-- Recent Orders -->
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -260,7 +264,7 @@ $orders = $userOrders['orders'];
                                 </p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-500">Verified</p>
+                                <p class="text-sm text-gray-500">Verification status</p>
                                 <p class="text-sm font-medium <?= $user['verified'] ? 'text-green-600' : 'text-red-600' ?>">
                                     <?= $user['verified'] ? 'Verified' : 'Not Verified' ?>
                                 </p>
@@ -464,7 +468,7 @@ $orders = $userOrders['orders'];
                     </div>
                     <div class="flex justify-end gap-2">
                         <button type="button" onclick="closeEmailModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">Send</button>
+                        <button type="submit" onclick="sendEmailBtn()" class="px-4 py-2 bg-orange-499 text-white rounded-lg hover:bg-orange-600">Send</button>
                     </div>
                 </form>
             </div>
@@ -743,8 +747,7 @@ $orders = $userOrders['orders'];
                 lucide.createIcons();
             }
         });
-    </script>
-    <script>
+
         // Email Modal
         const sendEmailModal = document.getElementById('sendEmailModal');
         const emailModalContent = document.getElementById('emailModalContent');
@@ -766,36 +769,58 @@ $orders = $userOrders['orders'];
             }, 300);
         }
 
-        document.getElementById("sendEmailForm").addEventListener("submit", async function(e) {
-            e.preventDefault();
-            const form = e.target;
-            const submitBtn = form.querySelector("button[type='submit']");
-            const original = submitBtn.innerHTML;
 
-            submitBtn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-4 h-4 mr-2"></i>Sending...`;
-            submitBtn.disabled = true;
+        // Send Email Function
+        async function sendEmailBtn() {
+            const form = document.getElementById('sendEmailForm');
+            const overlay = document.getElementById('overlay');
+
+            // Collect form data
+            const formData = new FormData(form);
+            const userId = formData.get('user_id');
+            const subject = formData.get('subject').trim();
+            const message = formData.get('message').trim();
+
+            // Simple validation
+            if (!subject || !message) {
+                showToasted("Subject and message are required.", "error");
+                return;
+            }
+
+            // Show overlay
+            overlay.classList.remove('hidden');
 
             try {
-                const formData = new FormData(form);
-                const res = await fetch('api/send-email.php', {
+                const response = await fetch('api/send-email.php', {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        subject: subject,
+                        message: message
+                    })
                 });
-                const data = await res.json();
 
-                if (data.success) {
-                    showToasted("Email sent successfully!", "success");
+                const result = await response.json();
+
+                if (result.success) {
+                    showToasted(result.message || 'Email sent successfully.', 'success');
                     closeEmailModal();
+                    form.reset();
                 } else {
-                    showToasted(data.message || "Failed to send email", "error");
+                    showToasted(result.message || 'Failed to send email.', 'error');
                 }
             } catch (error) {
-                showToasted("Something went wrong while sending email", "error");
+                console.error('Error sending email:', error);
+                showToasted('An error occurred while sending the email.', 'error');
             } finally {
-                submitBtn.innerHTML = original;
-                submitBtn.disabled = false;
+                // Hide overlay
+                overlay.classList.add('hidden');
             }
-        });
+        }
+
 
         // Reset Modal
         const resetPasswordModal = document.getElementById('resetPasswordModal');

@@ -1,0 +1,3 @@
+-- USERS --
+- Updated users last login in the login logic page.
+- Verified status not functioning properly.
