@@ -1,5 +1,4 @@
 <?php
-require_once '../config/database.php';
 require_once 'initialize.php';
 require_once 'util/util.php';
 require_once 'partials/headers.php';

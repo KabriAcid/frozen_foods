@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/initialize.php';
 require_once __DIR__ . '/util/util.php';
 require_once 'partials/headers.php';

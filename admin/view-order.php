@@ -1,18 +1,9 @@
 <?php
-require __DIR__ . '/../config/database.php';
 require __DIR__ . '/initialize.php';
 require __DIR__ . '/util/utilities.php';
 require __DIR__ . '/partials/headers.php';
 
-// Get order ID from URL parameter
-$orderNumber = isset($_GET['order_number']) ? (int)$_GET['order_number'] : 0;
-
-if (!$orderNumber) {
-    header('Location: orders.php');
-    exit;
-}
-
-// Get order details
+$orderNumber = $_GET['order_number'] ?? '';
 $order = getOrderByNumber($pdo, $orderNumber);
 if (!$order) {
     header('Location: orders.php');
@@ -26,7 +17,6 @@ $product = getProductById($pdo, $order['product_id']);
 
 <body class="bg-gray-50 font-sans">
     <?php require __DIR__ . '/partials/sidebar.php'; ?>
-
     <!-- Main Content -->
     <div class="main-content lg:ml-64">
         <!-- Top Navigation -->

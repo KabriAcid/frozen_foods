@@ -1,5 +1,5 @@
 <?php
-require_once '../config/database.php';
+require __DIR__ . '/initialize.php';
 require_once 'util/util.php';
 
 // Get product ID from URL

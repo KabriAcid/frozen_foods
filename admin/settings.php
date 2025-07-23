@@ -240,15 +240,6 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
                                 <input type="password" name="confirm_password" class="settings-input-focus w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-200">
                             </div>
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="font-medium text-gray-900">Two-Factor Authentication</h4>
-                                    <p class="text-sm text-gray-500">Add an extra layer of security to your account</p>
-                                </div>
-                                <button type="button" class="settings-btn-hover bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-all duration-200">
-                                    Enable 2FA
-                                </button>
-                            </div>
                             <div class="flex justify-end">
                                 <button type="submit" class="settings-btn-hover bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-all duration-200 flex items-center">
                                     <span class="settings-btn-text">Update Password</span>

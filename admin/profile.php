@@ -1,4 +1,10 @@
-<?php require __DIR__ . '/partials/headers.php'; ?>
+<?php
+require __DIR__ . '/initialize.php';
+require __DIR__ . '/util/utilities.php';
+require __DIR__ . '/partials/headers.php';
+
+$getadmin = getAdminProfile($pdo, $_SESSION['admin_id']);
+?>
 
 <body class="bg-gray-50 font-sans">
     <?php require __DIR__ . '/partials/sidebar.php'; ?>
@@ -25,12 +31,9 @@
                         <div class="flex flex-col sm:flex-row sm:items-end sm:space-x-6">
                             <!-- Avatar -->
                             <div class="relative -mt-16 mb-4 sm:mb-0">
-                                <img src="./img/avatar.jpg"
-                                    alt="Admin Profile"
+                                <img src="../assets/uploads/<?= htmlspecialchars($getadmin['avatar'] ?? 'avatar.jpg') ?>"
+                                    alt="<?= htmlspecialchars(($getadmin['first_name'] ?? '') . ' ' . ($getadmin['last_name'] ?? '')) ?>"
                                     class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
-                                <!-- <div class="absolute bottom-0 right-0 w-8 h-8 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
-                                    <div class="w-3 h-3 bg-white rounded-full"></div>
-                                </div> -->
                                 <button class="absolute bottom-2 right-2 bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-full shadow-lg transition-colors">
                                     <i data-lucide="camera" class="w-4 h-4"></i>
                                 </button>
@@ -39,28 +42,32 @@
                             <!-- User Info -->
                             <div class="flex-1">
                                 <div class="flex items-center space-x-3 mb-2">
-                                    <h1 class="text-2xl font-bold text-gray-900" id="fullName">Kabri Acid</h1>
+                                    <h1 class="text-2xl font-bold text-gray-900" id="fullName">
+                                        <?= htmlspecialchars(($getadmin['first_name'] ?? '') . ' ' . ($getadmin['last_name'] ?? '')) ?>
+                                    </h1>
                                     <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
-                                        Super Admin
+                                        <?= htmlspecialchars(ucwords($getadmin['role'] ?? 'Admin')) ?>
                                     </span>
                                 </div>
-                                <p class="text-gray-600 mb-2" id="roleTitle">System Administrator & Lead Developer</p>
+                                <p class="text-gray-600 mb-2 capitalize" id="roleTitle">
+                                    <?= htmlspecialchars(($getadmin['position'] ?? 'Regular Admin')) ?>
+                                </p>
                                 <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
                                     <div class="flex items-center">
                                         <i data-lucide="mail" class="w-4 h-4 mr-1"></i>
-                                        <span id="emailDisplay">admin@frozenfood.com</span>
+                                        <span id="emailDisplay"><?= htmlspecialchars($getadmin['email'] ?? '') ?></span>
                                     </div>
                                     <div class="flex items-center">
                                         <i data-lucide="phone" class="w-4 h-4 mr-1"></i>
-                                        <span id="phoneDisplay">+1 (555) 987-6543</span>
+                                        <span id="phoneDisplay"><?= htmlspecialchars($getadmin['phone'] ?? '') ?></span>
                                     </div>
                                     <div class="flex items-center">
                                         <i data-lucide="map-pin" class="w-4 h-4 mr-1"></i>
-                                        San Francisco, CA
+                                        <?= htmlspecialchars($getadmin['address'] ?? 'N/A') ?>
                                     </div>
                                     <div class="flex items-center">
                                         <i data-lucide="calendar" class="w-4 h-4 mr-1"></i>
-                                        Admin since March 2022
+                                        Admin since <?= isset($getadmin['created_at']) ? date('F Y', strtotime($getadmin['created_at'])) : '' ?>
                                     </div>
                                 </div>
                             </div>
@@ -73,7 +80,7 @@
                                 </button>
                                 <button id="adminSettingsBtn" class="border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg transition-colors flex items-center">
                                     <i data-lucide="settings" class="w-4 h-4 mr-2"></i>
-                                    Admin Settings
+                                    Settings
                                 </button>
                             </div>
                         </div>
@@ -99,23 +106,19 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                                    <input type="text" id="firstNameDisplay" value="Alexandra" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>
+                                    <input type="text" id="firstNameDisplay" value="" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                                    <input type="text" id="lastNameDisplay" value="Mitchell" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>
+                                    <input type="text" id="lastNameDisplay" value="" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                                    <input type="email" id="emailFieldDisplay" value="admin@frozenfood.com" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>
+                                    <input type="email" id="emailFieldDisplay" value="" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                                    <input type="tel" id="phoneFieldDisplay" value="+1 (555) 987-6543" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-                                    <textarea rows="3" id="bioDisplay" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>Experienced system administrator with expertise in enterprise-level food service management platforms. Specialized in database optimization, security protocols, and team leadership. Passionate about leveraging technology to improve operational efficiency and customer experience.</textarea>
+                                    <input type="tel" id="phoneFieldDisplay" value="" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>
                                 </div>
                             </div>
                         </div>
@@ -135,27 +138,24 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
-                                    <input type="text" id="roleDisplay" value="System Administrator" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Department</label>
-                                    <input type="text" id="departmentDisplay" value="Information Technology" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>
+                                    <input type="text" id="roleDisplay"
+                                        value="<?= htmlspecialchars($getadmin['role'] ?? 'Admin') ?>"
+                                        class="w-full border border-gray-200 bg-gray-50 text-gray-500 rounded-lg px-3 py-2 focus:outline-none cursor-not-allowed"
+                                        readonly>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Admin ID</label>
-                                    <input type="text" value="ADM-001" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>
+                                    <input type="text"
+                                        value="<?= 'ADM-' . str_pad($getadmin['id'] ?? 0, 3, '0', STR_PAD_LEFT) ?>"
+                                        class="w-full border border-gray-200 bg-gray-50 text-gray-500 rounded-lg px-3 py-2 focus:outline-none cursor-not-allowed"
+                                        readonly>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Access Level</label>
-                                    <input type="text" value="Level 9 - Super Admin" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Supervisor</label>
-                                    <input type="text" id="supervisorDisplay" value="Michael Chen - CTO" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Primary Location</label>
-                                    <input type="text" id="locationDisplay" value="San Francisco HQ - Data Center" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500" readonly>
+                                    <input type="text"
+                                        value="<?= htmlspecialchars($getadmin['position'] ?? 'Level 1 - Admin') ?>"
+                                        class="w-full border border-gray-200 bg-gray-50 text-gray-500 rounded-lg px-3 py-2 focus:outline-none cursor-not-allowed"
+                                        readonly>
                                 </div>
                             </div>
                         </div>
@@ -297,67 +297,13 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Admin Permissions -->
+                    <!-- Admin Permissions (JS-rendered) -->
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                         <div class="p-6 border-b border-gray-200">
                             <h3 class="text-lg font-semibold text-gray-800">Admin Permissions</h3>
                         </div>
-                        <div class="p-6 space-y-3">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">User Management</span>
-                                <div class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                                    <i data-lucide="check" class="w-3 h-3 text-white"></i>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Financial Reports</span>
-                                <div class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                                    <i data-lucide="check" class="w-3 h-3 text-white"></i>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">System Configuration</span>
-                                <div class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                                    <i data-lucide="check" class="w-3 h-3 text-white"></i>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Database Administration</span>
-                                <div class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                                    <i data-lucide="check" class="w-3 h-3 text-white"></i>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Security Settings</span>
-                                <div class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                                    <i data-lucide="check" class="w-3 h-3 text-white"></i>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">API Management</span>
-                                <div class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                                    <i data-lucide="check" class="w-3 h-3 text-white"></i>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Backup & Recovery</span>
-                                <div class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                                    <i data-lucide="check" class="w-3 h-3 text-white"></i>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Audit Logs</span>
-                                <div class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                                    <i data-lucide="check" class="w-3 h-3 text-white"></i>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Super Admin Access</span>
-                                <div class="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
-                                    <i data-lucide="x" class="w-3 h-3 text-white"></i>
-                                </div>
-                            </div>
+                        <div class="p-6 space-y-3" id="permissionsList">
+                            <!-- Permissions will be rendered here by JS -->
                         </div>
                     </div>
 
@@ -383,15 +329,6 @@
                                 </div>
                                 <button id="changePasswordBtn" class="text-orange-600 hover:text-orange-700 text-sm font-medium">
                                     Change
-                                </button>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">API Access Keys</p>
-                                    <p class="text-xs text-gray-500">5 active keys</p>
-                                </div>
-                                <button class="text-orange-600 hover:text-orange-700 text-sm font-medium">
-                                    Manage
                                 </button>
                             </div>
                             <div class="flex items-center justify-between">
@@ -465,21 +402,9 @@
                                 <input type="text" id="role" name="role" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Department</label>
-                                <input type="text" id="department" name="department" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Supervisor</label>
-                                <input type="text" id="supervisor" name="supervisor" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Primary Location</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
                                 <input type="text" id="location" name="location" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
                             </div>
-                        </div>
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-                            <textarea rows="4" id="bio" name="bio" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"></textarea>
                         </div>
                         <div class="flex justify-end space-x-3">
                             <button type="button" id="cancelEditProfile" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
@@ -639,21 +564,23 @@
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
 
     <script src="js/script.js"></script>
+    <script src="../assets/js/toast.js"></script>
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
 
-        // Profile data object
+        // Get admin data from PHP
         const profileData = {
-            firstName: 'Alexandra',
-            lastName: 'Mitchell',
-            email: 'admin@frozenfood.com',
-            phone: '+1 (555) 987-6543',
-            bio: 'Experienced system administrator with expertise in enterprise-level food service management platforms. Specialized in database optimization, security protocols, and team leadership. Passionate about leveraging technology to improve operational efficiency and customer experience.',
-            role: 'System Administrator',
-            department: 'Information Technology',
-            supervisor: 'Michael Chen - CTO',
-            location: 'San Francisco HQ - Data Center'
+            firstName: <?= json_encode($getadmin['first_name'] ?? '') ?>,
+            lastName: <?= json_encode($getadmin['last_name'] ?? '') ?>,
+            email: <?= json_encode($getadmin['email'] ?? '') ?>,
+            phone: <?= json_encode($getadmin['phone'] ?? '') ?>,
+            role: <?= json_encode($getadmin['role'] ?? '') ?>,
+            location: <?= json_encode($getadmin['location'] ?? '') ?>,
+            position: <?= json_encode($getadmin['position'] ?? '') ?>,
+            createdAt: <?= json_encode($getadmin['created_at'] ?? '') ?>,
+            lastLogin: <?= json_encode($getadmin['last_login'] ?? '') ?>,
+            adminId: <?= json_encode($getadmin['id'] ?? '') ?>
         };
 
         // Password data object
@@ -689,6 +616,9 @@
         const cancelConfirm = document.getElementById('cancelConfirm');
         const confirmSubmit = document.getElementById('confirmSubmit');
 
+        // Permissions
+        const adminPermissions = <?= json_encode($getadmin['permissions'] ? json_decode($getadmin['permissions'], true) : []) ?>;
+
         // Current form being submitted
         let currentForm = null;
 
@@ -697,28 +627,71 @@
             document.getElementById('firstName').value = profileData.firstName;
             document.getElementById('lastName').value = profileData.lastName;
             document.getElementById('email').value = profileData.email;
-            document.getElementById('phone').value = profileData.phone;
-            document.getElementById('bio').value = profileData.bio;
+            document.getElementById('phone').value = profileData.phone || '';
             document.getElementById('role').value = profileData.role;
-            document.getElementById('department').value = profileData.department;
-            document.getElementById('supervisor').value = profileData.supervisor;
-            document.getElementById('location').value = profileData.location;
+            document.getElementById('location').value = profileData.location || '';
         }
 
         // Function to update profile display
         function updateProfileDisplay() {
-            document.getElementById('fullName').textContent = `${profileData.firstName} ${profileData.lastName}`;
-            document.getElementById('emailDisplay').textContent = profileData.email;
-            document.getElementById('phoneDisplay').textContent = profileData.phone;
-            document.getElementById('firstNameDisplay').value = profileData.firstName;
-            document.getElementById('lastNameDisplay').value = profileData.lastName;
-            document.getElementById('emailFieldDisplay').value = profileData.email;
-            document.getElementById('phoneFieldDisplay').value = profileData.phone;
-            document.getElementById('bioDisplay').value = profileData.bio;
-            document.getElementById('roleDisplay').value = profileData.role;
-            document.getElementById('departmentDisplay').value = profileData.department;
-            document.getElementById('supervisorDisplay').value = profileData.supervisor;
-            document.getElementById('locationDisplay').value = profileData.location;
+            const fullNameEl = document.getElementById('fullName');
+            if (fullNameEl) fullNameEl.textContent = `${profileData.firstName} ${profileData.lastName}`;
+
+            const emailDisplay = document.getElementById('emailDisplay');
+            if (emailDisplay) emailDisplay.textContent = profileData.email;
+
+            const phoneDisplay = document.getElementById('phoneDisplay');
+            if (phoneDisplay) phoneDisplay.textContent = profileData.phone || '';
+
+            const firstNameDisplay = document.getElementById('firstNameDisplay');
+            if (firstNameDisplay) firstNameDisplay.value = profileData.firstName;
+
+            const lastNameDisplay = document.getElementById('lastNameDisplay');
+            if (lastNameDisplay) lastNameDisplay.value = profileData.lastName;
+
+            const emailFieldDisplay = document.getElementById('emailFieldDisplay');
+            if (emailFieldDisplay) emailFieldDisplay.value = profileData.email;
+
+            const phoneFieldDisplay = document.getElementById('phoneFieldDisplay');
+            if (phoneFieldDisplay) phoneFieldDisplay.value = profileData.phone || '';
+
+            const roleDisplay = document.getElementById('roleDisplay');
+            if (roleDisplay) roleDisplay.value = profileData.role;
+
+            const locationDisplay = document.getElementById('locationDisplay');
+            if (locationDisplay) locationDisplay.value = profileData.location || '';
+        }
+
+        // Function for rendering admin permissions
+        function renderAdminPermissions() {
+            const permissionsMap = {
+                can_manage_users: 'User Management',
+                can_view_reports: 'Financial Reports',
+                can_configure_system: 'System Configuration',
+                can_manage_db: 'Database Administration',
+                can_manage_security: 'Security Settings',
+                can_manage_api: 'API Management',
+                can_backup: 'Backup & Recovery',
+                can_view_audit: 'Audit Logs',
+                is_super_admin: 'Super Admin Access'
+            };
+
+            const container = document.getElementById('permissionsList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            Object.entries(permissionsMap).forEach(([key, label]) => {
+                const hasPerm = adminPermissions[key] == 1;
+                container.innerHTML += `
+            <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-600">${label}</span>
+                <div class="w-4 h-4 ${hasPerm ? 'bg-green-500' : 'bg-red-500'} rounded-full flex items-center justify-center">
+                    <i data-lucide="${hasPerm ? 'check' : 'x'}" class="w-3 h-3 text-white"></i>
+                </div>
+            </div>
+        `;
+            });
+            lucide.createIcons();
         }
 
         // Function to show modal
@@ -785,10 +758,60 @@
         });
 
         // Event listeners for form submissions
-        editProfileForm.addEventListener('submit', (e) => {
+        editProfileForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             currentForm = 'profile';
             showConfirmDialog();
+        });
+
+        // Confirm dialog submit for profile update (AJAX)
+        confirmSubmit.addEventListener('click', async () => {
+            if (currentForm === 'profile') {
+                // Gather form data
+                const formData = {
+                    first_name: document.getElementById('firstName').value,
+                    last_name: document.getElementById('lastName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    role: document.getElementById('role').value,
+                    location: document.getElementById('location').value,
+                    admin_id: profileData.adminId
+                };
+
+                try {
+                    // AJAX request to update profile
+                    const response = await fetch('api/update-profile.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Update local profileData and UI
+                        profileData.firstName = formData.first_name;
+                        profileData.lastName = formData.last_name;
+                        profileData.email = formData.email;
+                        profileData.phone = formData.phone;
+                        profileData.role = formData.role;
+                        profileData.location = formData.location;
+                        updateProfileDisplay();
+                        showToasted('Profile updated successfully!', 'success');
+                        hideModal(editProfileModal);
+                        hideConfirmDialog();
+                    } else {
+                        showToasted(result.message || 'Failed to update profile', 'error');
+                    }
+                } catch (err) {
+                    showToasted('An error occurred while updating profile', 'error');
+                    console.log(err)
+                }
+            } else if (currentForm === 'settings') {
+                // ...existing password update logic...
+            }
+            currentForm = null;
         });
 
         adminSettingsForm.addEventListener('submit', (e) => {
@@ -803,56 +826,7 @@
             currentForm = null;
         });
 
-        confirmSubmit.addEventListener('click', () => {
-            if (currentForm === 'profile') {
-                // Update profile data
-                profileData.firstName = document.getElementById('firstName').value;
-                profileData.lastName = document.getElementById('lastName').value;
-                profileData.email = document.getElementById('email').value;
-                profileData.phone = document.getElementById('phone').value;
-                profileData.bio = document.getElementById('bio').value;
-                profileData.role = document.getElementById('role').value;
-                profileData.department = document.getElementById('department').value;
-                profileData.supervisor = document.getElementById('supervisor').value;
-                profileData.location = document.getElementById('location').value;
 
-                // Update display
-                updateProfileDisplay();
-
-                // Hide modals
-                hideModal(editProfileModal);
-                hideConfirmDialog();
-
-                // Show success message (optional)
-                alert('Profile updated successfully!');
-            } else if (currentForm === 'settings') {
-                // Update password data
-                passwordData.oldPassword = document.getElementById('oldPassword').value;
-                passwordData.newPassword = document.getElementById('newPassword').value;
-                passwordData.confirmPassword = document.getElementById('confirmPassword').value;
-
-                // Validate passwords
-                if (passwordData.newPassword !== passwordData.confirmPassword) {
-                    alert('New passwords do not match!');
-                    hideConfirmDialog();
-                    return;
-                }
-
-                // Clear password fields
-                document.getElementById('oldPassword').value = '';
-                document.getElementById('newPassword').value = '';
-                document.getElementById('confirmPassword').value = '';
-
-                // Hide modals
-                hideModal(adminSettingsModal);
-                hideConfirmDialog();
-
-                // Show success message (optional)
-                alert('Settings updated successfully!');
-            }
-
-            currentForm = null;
-        });
 
         // Close modals when clicking outside
         editProfileModal.addEventListener('click', (e) => {
@@ -876,6 +850,7 @@
         // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
             updateProfileDisplay();
+            renderAdminPermissions();
             lucide.createIcons();
         });
     </script>

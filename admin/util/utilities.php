@@ -51,7 +51,23 @@ function getDashboardStats($pdo)
     }
 }
 
+function getAdminProfile($pdo, $admin_id){
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM admins WHERE id = ?");
+        $stmt->execute([$admin_id]);
+        $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        if (!$admin) {
+            header("Location: logout.php");
+            exit;
+        }
+
+        return $admin;
+    } catch (PDOException $th) {
+        error_log("[ADMIN FETCH ERRO]: Couldn't fetch admin data");
+        return [];
+    }
+}
 function getRecentOrders($pdo, $limit = 5)
 {
     try {

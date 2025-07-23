@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/../../config/database.php';
+require __DIR__ . '/initialize.php';
 require __DIR__ . '/../../helpers/sendMail.php';
 
 header('Content-Type: application/json');
