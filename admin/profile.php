@@ -41,10 +41,10 @@ $pendingTasks = $overview['pending_tasks'];
                         <div class="flex flex-col sm:flex-row sm:items-end sm:space-x-6">
                             <!-- Avatar -->
                             <div class="relative -mt-16 mb-4 sm:mb-0">
-                                <img src="../assets/uploads/<?= htmlspecialchars($getadmin['avatar'] ?? 'avatar.jpg') ?>"
+                                <img id="avatarHeader" src="../assets/uploads/<?= htmlspecialchars($getadmin['avatar'] ?? 'avatar.jpg') ?>"
                                     alt="<?= htmlspecialchars(($getadmin['first_name'] ?? '') . ' ' . ($getadmin['last_name'] ?? '')) ?>"
                                     class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
-                                <button class="absolute bottom-2 right-2 bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-full shadow-lg transition-colors">
+                                <button id="avatarButton" class="absolute bottom-2 right-2 bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-full shadow-lg transition-colors">
                                     <i data-lucide="camera" class="w-4 h-4"></i>
                                 </button>
                             </div>
@@ -55,7 +55,7 @@ $pendingTasks = $overview['pending_tasks'];
                                     <h1 class="text-2xl font-bold text-gray-900" id="fullName">
                                         <?= htmlspecialchars(($getadmin['first_name'] ?? '') . ' ' . ($getadmin['last_name'] ?? '')) ?>
                                     </h1>
-                                    <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
+                                    <span id="roleHeader" class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
                                         <?= htmlspecialchars(ucwords($getadmin['role'] ?? 'Admin')) ?>
                                     </span>
                                 </div>
@@ -538,6 +538,17 @@ $pendingTasks = $overview['pending_tasks'];
     <!-- Overlay for mobile sidebar -->
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
 
+    <!-- Overlay Loader -->
+    <div id="overlayLoader" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-[9999] hidden">
+        <div class="flex flex-col items-center">
+            <svg class="animate-spin h-10 w-10 text-orange-500 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <span class="text-white text-sm font-medium">Processing...</span>
+        </div>
+    </div>
+
     <script src="js/script.js"></script>
     <script src="../assets/js/toast.js"></script>
     <script>
@@ -653,6 +664,14 @@ $pendingTasks = $overview['pending_tasks'];
 
             const locationDisplay = document.getElementById('locationDisplay');
             if (locationDisplay) locationDisplay.value = profileData.location || '';
+
+            // Update header role
+            const roleHeader = document.getElementById('roleHeader');
+            if (roleHeader) roleHeader.textContent = profileData.role;
+
+            // Update avatar if you allow avatar changes
+            const avatarHeader = document.getElementById('avatarHeader');
+            if (avatarHeader && profileData.avatar) avatarHeader.src = '../assets/uploads/' + profileData.avatar;
         }
 
         // Function for rendering admin permissions
@@ -721,6 +740,14 @@ $pendingTasks = $overview['pending_tasks'];
             if (diff === 0) return 'today';
             if (diff === 1) return 'yesterday';
             return `${diff} days ago`;
+        }
+
+        function showOverlayLoader() {
+            document.getElementById('overlayLoader').classList.remove('hidden');
+        }
+
+        function hideOverlayLoader() {
+            document.getElementById('overlayLoader').classList.add('hidden');
         }
 
         // Function to show modal
@@ -827,6 +854,7 @@ $pendingTasks = $overview['pending_tasks'];
                         profileData.phone = formData.phone;
                         profileData.role = formData.role;
                         profileData.location = formData.location;
+
                         updateProfileDisplay();
                         showToasted('Profile updated successfully!', 'success');
                         hideModal(editProfileModal);
@@ -859,6 +887,17 @@ $pendingTasks = $overview['pending_tasks'];
                     const result = await response.json();
 
                     if (result.success) {
+                        // Update local profileData with new settings
+                        profileData.mfaEnabled = settingsData.mfa_enabled;
+                        profileData.loginNotifications = settingsData.login_notifications;
+                        profileData.sessionTimeout = settingsData.session_timeout;
+                        profileData.systemAlerts = settingsData.system_alerts;
+                        profileData.userActivity = settingsData.user_activity;
+
+                        // Update UI immediately
+                        updateSecuritySection();
+                        populateAdminSettingsForm();
+
                         showToasted('Settings updated successfully!', 'success');
                         hideModal(adminSettingsModal);
                         hideConfirmDialog();
@@ -913,6 +952,77 @@ $pendingTasks = $overview['pending_tasks'];
             updateProfileDisplay();
             renderAdminPermissions();
             lucide.createIcons();
+        });
+
+        // 1. Create a hidden file input for avatar upload
+        const avatarInput = document.createElement('input');
+        avatarInput.type = 'file';
+        avatarInput.accept = 'image/*';
+        avatarInput.style.display = 'none';
+        document.body.appendChild(avatarInput);
+
+        // 2. Handle camera icon click to trigger file input
+        const avatarButton = document.getElementById('avatarButton');
+        if (avatarButton) {
+            avatarButton.addEventListener('click', () => {
+                avatarInput.value = ''; // Reset previous selection
+                avatarInput.click();
+            });
+        }
+
+        // 3. Handle file selection and upload via AJAX
+        avatarInput.addEventListener('change', async function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            // Validate file type (image)
+            if (!file.type.match(/^image\/(jpeg|png|gif|webp)$/)) {
+                showToasted('Please select a valid image file (jpg, png, gif, webp)', 'error');
+                return;
+            }
+
+            // Optionally: Validate file size (e.g., max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                showToasted('Image size should not exceed 2MB', 'error');
+                return;
+            }
+
+            // Prepare FormData
+            const formData = new FormData();
+            formData.append('avatar', file);
+            formData.append('admin_id', profileData.adminId);
+
+            showOverlayLoader();
+
+            try {
+                const response = await fetch('api/upload-avatar.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.success && result.avatar) {
+                    // Update avatar in profileData and UI
+                    profileData.avatar = result.avatar;
+                    const avatarHeader = document.getElementById('avatarHeader');
+                    setTimeout(() => {
+                        if (avatarHeader) {
+                            // Add cache buster to force reload
+                            avatarHeader.src = '../assets/uploads/' + result.avatar + '?t=' + Date.now();
+                        }
+                        showToasted('Profile photo updated!', 'success');
+                        hideOverlayLoader();
+                    }, timeout = 2000);
+                } else {
+                    showToasted(result.message || 'Failed to upload image', 'error');
+                    hideOverlayLoader();
+
+                }
+            } catch (err) {
+                showToasted('An error occurred while uploading image', 'error');
+                console.log(err);
+                hideOverlayLoader();
+            }
         });
     </script>
 </body>

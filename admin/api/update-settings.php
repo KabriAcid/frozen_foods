@@ -25,7 +25,7 @@ $userActivity = !empty($input['user_activity']) ? 1 : 0;
 
 try {
     $stmt = $pdo->prepare(
-        "UPDATE admin SET 
+        "UPDATE admins SET 
             mfa_enabled = :mfa_enabled,
             login_notifications = :login_notifications,
             session_timeout = :session_timeout,
