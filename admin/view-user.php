@@ -63,44 +63,52 @@ $orders = $userOrders['orders'];
             </div>
 
             <!-- User Profile Header -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-8 overflow-hidden">
-                <!-- Cover Background -->
-                <div class="h-32 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600"></div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+                <div class="relative">
+                    <!-- Cover Photo -->
+                    <div class="h-48 bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 rounded-t-lg relative overflow-hidden">
+                        <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                        <button class="absolute top-4 right-4 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-lg transition-all duration-200 backdrop-blur-sm">
+                            <i data-lucide="camera" class="w-5 h-5"></i>
+                        </button>
+                    </div>
 
-                <!-- Profile Content -->
-                <div class="relative px-6 pb-6">
-                    <!-- Avatar -->
-                    <div class="flex items-end justify-between -mt-16">
-                        <div class="flex items-end space-x-6">
-                            <img src="../assets/uploads/<?= htmlspecialchars($user['avatar']) ?>"
-                                alt="User Avatar"
-                                class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover bg-white">
-                            <div class="pb-2">
-                                <h1 class="text-2xl font-bold text-gray-900"><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></h1>
-                                <p class="text-gray-600 capitalize"><?= htmlspecialchars($user['role']) ?></p>
-                                <div class="flex items-center mt-2 space-x-4">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <?= $user['status'] === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' ?>">
-                                        <i data-lucide="<?= $user['status'] === 'Active' ? 'check-circle' : 'clock' ?>" class="w-4 h-4 mr-1"></i>
-                                        <?= htmlspecialchars($user['status']) ?>
-                                    </span>
-                                    <span class="text-sm text-gray-500">
-                                        <i data-lucide="calendar" class="w-4 h-4 inline mr-1"></i>
-                                        Joined <?= date('M d, Y', strtotime($user['created_at'])) ?>
+                    <!-- Profile Info -->
+                    <div class="relative px-6 py-4 pb-6">
+                        <div class="flex flex-col sm:flex-row sm:items-end sm:space-x-6">
+                            <!-- Avatar -->
+                            <div class="relative -mt-16 mb-4 sm:mb-0">
+                                <img src="../assets/uploads/<?= htmlspecialchars($user['avatar']) ?>"
+                                    alt="<?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?>"
+                                    class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
+                            </div>
+
+                            <!-- User Info -->
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <h1 class="text-2xl font-bold text-gray-900" id="fullName">
+                                        <?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?>
+                                    </h1>
+                                    <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
+                                        <?= htmlspecialchars(ucwords($user['role'])) ?>
                                     </span>
                                 </div>
+                                <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                                    <div class="flex items-center">
+                                        <i data-lucide="calendar" class="w-4 h-4 mr-1"></i>
+                                        Admin since <?= date('M Y', strtotime($user['created_at'])) ?>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Action Buttons -->
-                        <div class="flex items-center space-x-3 pb-2">
-                            <button onclick="openEditUserModal()" class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-all duration-200 flex items-center shadow-sm hover:shadow-md">
-                                <i data-lucide="edit" class="w-4 h-4 mr-2"></i>
-                                Edit User
-                            </button>
-                            <button onclick="openDeleteConfirmModal()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-200 flex items-center shadow-sm hover:shadow-md">
-                                <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>
-                                Delete
-                            </button>
+                            <!-- Action Buttons -->
+                            <div class="flex items-center space-x-3 mt-4 sm:mt-0">
+                                <button id="editProfileBtn" onclick="openEditUserModal()" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center shadow-sm">
+                                    <i data-lucide="edit" class="w-4 h-4 mr-2"></i>
+                                    Edit Profile
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -641,7 +649,7 @@ $orders = $userOrders['orders'];
             // Edit form submission
             editUserForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
+
                 const formData = new FormData(editUserForm);
                 const submitBtn = document.getElementById('submitEditBtn');
                 const originalText = submitBtn.innerHTML;

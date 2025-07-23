@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 /**
  * Fetch admin dashboard statistics: total orders, total revenue, active users, total products
  * @param PDO $pdo
@@ -48,6 +51,52 @@ function getDashboardStats($pdo)
     }
 }
 
+
+function getRecentOrders($pdo, $limit = 5)
+{
+    try {
+        $limit = (int)$limit;
+        $stmt = $pdo->prepare("SELECT * FROM orders ORDER BY created_at DESC LIMIT $limit");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching recent orders: " . $e->getMessage());
+        return [];
+    }
+}
+
+function getTopProducts($pdo, $limit = 3)
+{
+    try {
+        $limit = (int)$limit;
+        if ($limit <= 0) {
+            return [];
+        }
+        // Get all products
+        $stmt = $pdo->prepare("SELECT id, name, image FROM products ORDER BY id DESC LIMIT ?");
+        $stmt->bindValue(1, (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // For each product, get orders_count and total_revenue
+        foreach ($products as &$product) {
+            $orderStmt = $pdo->prepare("SELECT COUNT(*) AS orders_count, SUM(quantity * unit_price) AS total_revenue 
+                                        FROM order_items 
+                                        WHERE product_id = ?
+                                        ");
+            $orderStmt->execute([$product['id']]);
+            $orderStats = $orderStmt->fetch(PDO::FETCH_ASSOC);
+            $product['orders_count'] = (int)($orderStats['orders_count'] ?? 0);
+            $product['total_revenue'] = (float)($orderStats['total_revenue'] ?? 0);
+        }
+        unset($product);
+
+        return $products;
+    } catch (PDOException $e) {
+        error_log("Error fetching top products: " . $e->getMessage());
+        return [];
+    }
+}
 function getUsersData(PDO $pdo): array
 {
     try {
@@ -125,43 +174,6 @@ function getAllUsersStats(PDO $pdo): array
     }
 }
 
-
-function getRecentOrders($pdo, $limit = 5){
-    try {
-        $limit = (int)$limit;
-        $stmt = $pdo->prepare("SELECT * FROM orders ORDER BY created_at DESC LIMIT $limit");
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        error_log("Error fetching recent orders: " . $e->getMessage());
-        return [];
-    }
-}
-
-function getTopProducts($pdo, $limit = 3)
-{
-    try {
-        // Get all products
-        $stmt = $pdo->prepare("SELECT id, name, image FROM products ORDER BY id DESC LIMIT $limit");
-        $stmt->execute();
-        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // For each product, get orders_count and total_revenue
-        foreach ($products as &$product) {
-            $orderStmt = $pdo->prepare("SELECT COUNT(*) AS orders_count, SUM(total_amount) AS total_revenue FROM orders WHERE product_id = ?");
-            $orderStmt->execute([$product['id']]);
-            $orderStats = $orderStmt->fetch(PDO::FETCH_ASSOC);
-            $product['orders_count'] = (int)($orderStats['orders_count'] ?? 0);
-            $product['total_revenue'] = (float)($orderStats['total_revenue'] ?? 0);
-        }
-        unset($product);
-
-        return $products;
-    } catch (PDOException $e) {
-        error_log("Error fetching top products: " . $e->getMessage());
-        return [];
-    }
-}
 
 /**
  * Fetch total orders count

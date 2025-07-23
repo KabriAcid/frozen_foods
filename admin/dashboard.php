@@ -165,6 +165,9 @@ $topProducts = getTopProducts($pdo, 3);
                             <?php if (empty($topProducts)): ?>
                                 <div class="text-center text-gray-500 py-8">No top products found.</div>
                             <?php else: ?>
+                                <?php
+                                $maxOrders = max(array_column($topProducts, 'orders_count'));
+                                ?>
                                 <?php foreach ($topProducts as $product): ?>
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center space-x-3">
@@ -177,7 +180,13 @@ $topProducts = getTopProducts($pdo, 3);
                                         <div class="text-right">
                                             <p class="font-semibold text-gray-900">₦<?php echo number_format($product['total_revenue'] ?? 0, 2); ?></p>
                                             <div class="w-20 bg-gray-200 rounded-full h-2 mt-1">
-                                                <div class="bg-orange-500 h-2 rounded-full" style="width: <?php echo min(100, ($product['orders_count'] / max(array_column($topProducts, 'orders_count'))) * 100); ?>%"></div>
+                                                <?php
+                                                $width = 0;
+                                                if ($maxOrders > 0) {
+                                                    $width = min(100, ($product['orders_count'] / $maxOrders) * 100);
+                                                }
+                                                ?>
+                                                <div class="bg-orange-500 h-2 rounded-full" style="width: <?php echo $width; ?>%"></div>
                                             </div>
                                         </div>
                                     </div>
