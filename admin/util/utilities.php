@@ -1021,3 +1021,46 @@ function logAdminActivity($pdo, $adminId, $action, $details = '') {
     $stmt = $pdo->prepare("INSERT INTO admin_activity_log (admin_id, action, details, created_at) VALUES (?, ?, ?, NOW())");
     $stmt->execute([$adminId, $action, $details]);
 }
+
+/**
+ * Get system overview statistics for the admin dashboard.
+ * Returns an associative array with keys:
+ * - total_users
+ * - orders_today
+ * - products_live
+ * - revenue_today
+ * - system_uptime
+ * - pending_tasks
+ */
+function getSystemOverview(PDO $pdo): array
+{
+    try {
+        $totalUsers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn() ?: 0;
+        $ordersToday = $pdo->query("SELECT COUNT(*) FROM orders WHERE DATE(created_at) = CURDATE()")->fetchColumn() ?: 0;
+        $productsLive = $pdo->query("SELECT COUNT(*) FROM products WHERE status = 'active'")->fetchColumn() ?: 0;
+        $revenueToday = $pdo->query("SELECT SUM(total_amount) FROM orders WHERE DATE(created_at) = CURDATE()")->fetchColumn();
+        $revenueToday = $revenueToday !== null ? $revenueToday : 0;
+        // You can replace this with a real uptime calculation if available
+        $systemUptime = '99.9%';
+        $pendingTasks = $pdo->query("SELECT COUNT(*) FROM tasks WHERE status = 'pending'")->fetchColumn() ?: 0;
+
+        return [
+            'total_users'   => (int)$totalUsers,
+            'orders_today'  => (int)$ordersToday,
+            'products_live' => (int)$productsLive,
+            'revenue_today' => (float)$revenueToday,
+            'system_uptime' => $systemUptime,
+            'pending_tasks' => (int)$pendingTasks,
+        ];
+    } catch (PDOException $e) {
+        error_log("Error fetching system overview: " . $e->getMessage());
+        return [
+            'total_users'   => 0,
+            'orders_today'  => 0,
+            'products_live' => 0,
+            'revenue_today' => 0.0,
+            'system_uptime' => 'N/A',
+            'pending_tasks' => 0,
+        ];
+    }
+}

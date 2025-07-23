@@ -5,6 +5,15 @@ require __DIR__ . '/partials/headers.php';
 
 $getadmin = getAdminProfile($pdo, $_SESSION['admin_id']);
 $recentActivities = getAdminActivityLog($pdo, $_SESSION['admin_id']);
+
+// system overview variables
+$overview = getSystemOverview($pdo);
+$totalUsers = $overview['total_users'];
+$ordersToday = $overview['orders_today'];
+$productsLive = $overview['products_live'];
+$revenueToday = $overview['revenue_today'];
+$systemUptime = $overview['system_uptime'];
+$pendingTasks = $overview['pending_tasks'];
 ?>
 
 <body class="bg-gray-50 font-sans">
@@ -212,7 +221,7 @@ $recentActivities = getAdminActivityLog($pdo, $_SESSION['admin_id']);
                                     </div>
                                     <span class="text-sm text-gray-600">Total Users</span>
                                 </div>
-                                <span class="text-lg font-semibold text-gray-900">2,847</span>
+                                <span class="text-lg font-semibold text-gray-900"><?= number_format($totalUsers ?? 0) ?></span>
                             </div>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
@@ -221,7 +230,7 @@ $recentActivities = getAdminActivityLog($pdo, $_SESSION['admin_id']);
                                     </div>
                                     <span class="text-sm text-gray-600">Orders Today</span>
                                 </div>
-                                <span class="text-lg font-semibold text-gray-900">156</span>
+                                <span class="text-lg font-semibold text-gray-900"><?= number_format($ordersToday ?? 0) ?></span>
                             </div>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
@@ -230,7 +239,7 @@ $recentActivities = getAdminActivityLog($pdo, $_SESSION['admin_id']);
                                     </div>
                                     <span class="text-sm text-gray-600">Products Live</span>
                                 </div>
-                                <span class="text-lg font-semibold text-gray-900">892</span>
+                                <span class="text-lg font-semibold text-gray-900"><?= number_format($productsLive ?? 0) ?></span>
                             </div>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
@@ -239,7 +248,7 @@ $recentActivities = getAdminActivityLog($pdo, $_SESSION['admin_id']);
                                     </div>
                                     <span class="text-sm text-gray-600">Revenue Today</span>
                                 </div>
-                                <span class="text-lg font-semibold text-gray-900">$12.4K</span>
+                                <span class="text-lg font-semibold text-gray-900">₦<?= number_format($revenueToday ?? 0, 2) ?></span>
                             </div>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
@@ -248,7 +257,7 @@ $recentActivities = getAdminActivityLog($pdo, $_SESSION['admin_id']);
                                     </div>
                                     <span class="text-sm text-gray-600">System Uptime</span>
                                 </div>
-                                <span class="text-lg font-semibold text-gray-900">99.9%</span>
+                                <span class="text-lg font-semibold text-gray-900"><?= htmlspecialchars($systemUptime ?? '99.9%') ?></span>
                             </div>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
@@ -257,7 +266,7 @@ $recentActivities = getAdminActivityLog($pdo, $_SESSION['admin_id']);
                                     </div>
                                     <span class="text-sm text-gray-600">Pending Tasks</span>
                                 </div>
-                                <span class="text-lg font-semibold text-gray-900">8</span>
+                                <span class="text-lg font-semibold text-gray-900"><?= number_format($pendingTasks ?? 0) ?></span>
                             </div>
                         </div>
                     </div>
