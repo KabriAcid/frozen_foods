@@ -80,7 +80,7 @@ require __DIR__ . '/../components/header.php';
         document.addEventListener("DOMContentLoaded", () => {
             const form = document.querySelector("form");
 
-            form.addEventListener("submit", (e) => {
+            form.addEventListener("submit", async (e) => {
                 e.preventDefault(); // Prevent default form submission
 
                 const email = form.querySelector('input[type="email"]').value;
@@ -88,8 +88,9 @@ require __DIR__ . '/../components/header.php';
 
                 const overlay = document.getElementById("overlay");
                 overlay.classList.remove("hidden"); // Show overlay
-                // AJAX request
-                fetch("api/api_login.php", {
+
+                try {
+                    const response = await fetch("api/api_login.php", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -98,26 +99,33 @@ require __DIR__ . '/../components/header.php';
                             email,
                             password
                         }),
-                    })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        overlay.classList.add("hidden"); // Hide overlay after response
-                        if (data.success) {
-                            // Redirect to dashboard
-                            showToasted(data.message, 'success');
-                            setTimeout(() => {
-                                window.location.href = "dashboard.php";
-                            }, timeout = 2000);
-                        } else {
-                            // Show error message
-                            showToasted(data.message, 'error');
-                        }
-                    })
-                    .catch((error) => {
-                        overlay.classList.add("hidden"); // Hide overlay on error
-                        showToasted("An error occurred. Please try again.", 'error');
-                        console.error("Error:", error);
                     });
+
+                    // Check if response is JSON
+                    const contentType = response.headers.get("content-type");
+                    let data;
+                    if (contentType && contentType.includes("application/json")) {
+                        data = await response.json();
+                    } else {
+                        const text = await response.text();
+                        throw new Error(text);
+                    }
+
+                    overlay.classList.add("hidden"); // Hide overlay after response
+
+                    if (data.success) {
+                        showToasted(data.message, 'success');
+                        setTimeout(() => {
+                            window.location.href = "dashboard.php";
+                        }, 2000);
+                    } else {
+                        showToasted(data.message, 'error');
+                    }
+                } catch (error) {
+                    overlay.classList.add("hidden");
+                    showToasted("An error occurred. Please try again.", 'error');
+                    console.error("Error:", error);
+                }
             });
 
             // Eye Toggle
