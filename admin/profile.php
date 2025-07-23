@@ -378,7 +378,7 @@ $pendingTasks = $overview['pending_tasks'];
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
-                                <input type="text" id="location" name="location" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                                <input type="text" id="address" name="address" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
                             </div>
                         </div>
                         <div class="flex justify-end space-x-3">
@@ -562,7 +562,7 @@ $pendingTasks = $overview['pending_tasks'];
             email: <?= json_encode($getadmin['email'] ?? '') ?>,
             phone: <?= json_encode($getadmin['phone'] ?? '') ?>,
             role: <?= json_encode($getadmin['role'] ?? '') ?>,
-            location: <?= json_encode($getadmin['location'] ?? '') ?>,
+            address: <?= json_encode($getadmin['address'] ?? '') ?>,
             position: <?= json_encode($getadmin['position'] ?? '') ?>,
             createdAt: <?= json_encode($getadmin['created_at'] ?? '') ?>,
             lastLogin: <?= json_encode($getadmin['last_login'] ?? '') ?>,
@@ -618,7 +618,7 @@ $pendingTasks = $overview['pending_tasks'];
             document.getElementById('email').value = profileData.email;
             document.getElementById('phone').value = profileData.phone || '';
             document.getElementById('role').value = profileData.role;
-            document.getElementById('location').value = profileData.location || '';
+            document.getElementById('address').value = profileData.address || '';
         }
 
         function populateAdminSettingsForm() {
@@ -662,8 +662,8 @@ $pendingTasks = $overview['pending_tasks'];
             const roleDisplay = document.getElementById('roleDisplay');
             if (roleDisplay) roleDisplay.value = profileData.role;
 
-            const locationDisplay = document.getElementById('locationDisplay');
-            if (locationDisplay) locationDisplay.value = profileData.location || '';
+            const addressDisplay = document.getElementById('addressDisplay');
+            if (addressDisplay) addressDisplay.value = profileData.address || '';
 
             // Update header role
             const roleHeader = document.getElementById('roleHeader');
@@ -831,7 +831,7 @@ $pendingTasks = $overview['pending_tasks'];
                     email: document.getElementById('email').value,
                     phone: document.getElementById('phone').value,
                     role: document.getElementById('role').value,
-                    location: document.getElementById('location').value,
+                    address: document.getElementById('address').value,
                     admin_id: profileData.adminId
                 };
 
@@ -853,7 +853,7 @@ $pendingTasks = $overview['pending_tasks'];
                         profileData.email = formData.email;
                         profileData.phone = formData.phone;
                         profileData.role = formData.role;
-                        profileData.location = formData.location;
+                        profileData.address = formData.address;
 
                         updateProfileDisplay();
                         showToasted('Profile updated successfully!', 'success');
@@ -950,6 +950,7 @@ $pendingTasks = $overview['pending_tasks'];
         document.addEventListener('DOMContentLoaded', () => {
             updateSecuritySection();
             updateProfileDisplay();
+            updateNavbarProfile();
             renderAdminPermissions();
             lucide.createIcons();
         });
@@ -1024,6 +1025,33 @@ $pendingTasks = $overview['pending_tasks'];
                 hideOverlayLoader();
             }
         });
+
+        function updateNavbarProfile() {
+            // Avatar in navbar
+            const navbarAvatar = document.getElementById('navbarAvatar');
+            if (navbarAvatar && profileData.avatar)
+                navbarAvatar.src = '../assets/uploads/' + profileData.avatar + '?t=' + Date.now();
+
+            // Name in navbar
+            const navbarName = document.getElementById('navbarName');
+            if (navbarName)
+                navbarName.textContent = `${profileData.firstName} ${profileData.lastName}`;
+
+            // Avatar in dropdown
+            const navbarDropdownAvatar = document.getElementById('navbarDropdownAvatar');
+            if (navbarDropdownAvatar && profileData.avatar)
+                navbarDropdownAvatar.src = '../assets/uploads/' + profileData.avatar + '?t=' + Date.now();
+
+            // Name in dropdown
+            const navbarDropdownName = document.getElementById('navbarDropdownName');
+            if (navbarDropdownName)
+                navbarDropdownName.textContent = `${profileData.firstName} ${profileData.lastName}`;
+
+            // Email in dropdown
+            const navbarDropdownEmail = document.getElementById('navbarDropdownEmail');
+            if (navbarDropdownEmail)
+                navbarDropdownEmail.textContent = profileData.email;
+        }
     </script>
 </body>
 

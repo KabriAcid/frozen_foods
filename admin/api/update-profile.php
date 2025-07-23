@@ -35,7 +35,7 @@ $lastName = trim($input['last_name']);
 $email = trim($input['email']);
 $phone = isset($input['phone']) ? trim($input['phone']) : null;
 $role = isset($input['role']) ? trim($input['role']) : null;
-$location = isset($input['location']) ? trim($input['location']) : null;
+$address = isset($input['address']) ? trim($input['address']) : null;
 
 // Validate email
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -54,7 +54,7 @@ try {
             email = :email,
             phone = :phone,
             role = :role,
-            address = :location
+            address = :address
         WHERE id = :admin_id"
     );
     $stmt->execute([
@@ -63,7 +63,7 @@ try {
         ':email'      => $email,
         ':phone'      => $phone,
         ':role'       => $role,
-        ':location'   => $location,
+        ':address'   => $address,
         ':admin_id'   => $adminId
     ]);
 

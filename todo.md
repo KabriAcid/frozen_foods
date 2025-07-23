@@ -5,3 +5,6 @@
 - Create an activity branch to insert activities log where necessary
 - Create a consistency branch for consistency.
 - Pending tasks functionlity
+- Make the role a select form in the admin
+- Add breadcrumbs in necessary files.
+- Fix the security old password validation

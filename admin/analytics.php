@@ -214,6 +214,7 @@ $analytics = getAnalyticsData($pdo);
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
 
     <script src="js/script.js"></script>
+    <script src="js/analytics.js"></script>
     <script>
         function animateCounter(id, targetValue, prefix = "₦", duration = 2000) {
             const el = document.getElementById(id);
