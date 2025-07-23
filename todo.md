@@ -4,3 +4,4 @@
 - Email sending functionality failed.
 - Create an activity branch to insert activities log where necessary
 - Create a consistency branch for consistency.
+- Pending tasks functionlity

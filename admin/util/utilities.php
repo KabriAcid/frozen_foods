@@ -1035,14 +1035,19 @@ function logAdminActivity($pdo, $adminId, $action, $details = '') {
 function getSystemOverview(PDO $pdo): array
 {
     try {
-        $totalUsers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn() ?: 0;
+        $totalUsers = $pdo->query("SELECT COUNT(*) FROM users WHERE DATE(created_at) = CURDATE()")->fetchColumn() ?: 0;
         $ordersToday = $pdo->query("SELECT COUNT(*) FROM orders WHERE DATE(created_at) = CURDATE()")->fetchColumn() ?: 0;
-        $productsLive = $pdo->query("SELECT COUNT(*) FROM products WHERE status = 'active'")->fetchColumn() ?: 0;
+        // FIX: Correct query for active products
+        $productsLive = $pdo->query("SELECT COUNT(*) FROM products WHERE is_active = 1")->fetchColumn() ?: 0;
         $revenueToday = $pdo->query("SELECT SUM(total_amount) FROM orders WHERE DATE(created_at) = CURDATE()")->fetchColumn();
         $revenueToday = $revenueToday !== null ? $revenueToday : 0;
         // You can replace this with a real uptime calculation if available
         $systemUptime = '99.9%';
-        $pendingTasks = $pdo->query("SELECT COUNT(*) FROM tasks WHERE status = 'pending'")->fetchColumn() ?: 0;
+        // Add pending tasks if you have a tasks table
+        $pendingTasks = 0;
+        if ($pdo->query("SHOW TABLES LIKE 'tasks'")->fetch()) {
+            $pendingTasks = $pdo->query("SELECT COUNT(*) FROM tasks WHERE status = 'pending'")->fetchColumn() ?: 0;
+        }
 
         return [
             'total_users'   => (int)$totalUsers,

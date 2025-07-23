@@ -219,7 +219,7 @@ $pendingTasks = $overview['pending_tasks'];
                                     <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                                         <i data-lucide="users" class="w-4 h-4 text-blue-600"></i>
                                     </div>
-                                    <span class="text-sm text-gray-600">Total Users</span>
+                                    <span class="text-sm text-gray-600">Registered Today</span>
                                 </div>
                                 <span class="text-lg font-semibold text-gray-900"><?= number_format($totalUsers ?? 0) ?></span>
                             </div>
@@ -291,14 +291,14 @@ $pendingTasks = $overview['pending_tasks'];
                                     <p class="text-sm font-medium text-gray-900">Multi-Factor Authentication</p>
                                     <p class="text-xs text-gray-500">Enhanced security enabled</p>
                                 </div>
-                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium">
-                                    Active
-                                </span>
+                                <span id="mfaStatus" class="px-3 py-1 rounded-full text-xs font-medium"></span>
                             </div>
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm font-medium text-gray-900">Admin Password</p>
-                                    <p class="text-xs text-gray-500">Last changed 15 days ago</p>
+                                    <p class="text-xs text-gray-500">
+                                        Last changed <span id="passwordChanged"></span>
+                                    </p>
                                 </div>
                                 <button id="changePasswordBtn" class="text-orange-600 hover:text-orange-700 text-sm font-medium">
                                     Change
@@ -307,7 +307,9 @@ $pendingTasks = $overview['pending_tasks'];
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm font-medium text-gray-900">Active Sessions</p>
-                                    <p class="text-xs text-gray-500">2 devices logged in</p>
+                                    <p class="text-xs text-gray-500">
+                                        <span id="activeSessions"></span> devices logged in
+                                    </p>
                                 </div>
                                 <button class="text-orange-600 hover:text-orange-700 text-sm font-medium">
                                     Review
@@ -553,7 +555,10 @@ $pendingTasks = $overview['pending_tasks'];
             position: <?= json_encode($getadmin['position'] ?? '') ?>,
             createdAt: <?= json_encode($getadmin['created_at'] ?? '') ?>,
             lastLogin: <?= json_encode($getadmin['last_login'] ?? '') ?>,
-            adminId: <?= json_encode($getadmin['id'] ?? '') ?>
+            adminId: <?= json_encode($getadmin['id'] ?? '') ?>,
+            mfaEnabled: <?= json_encode($getadmin['mfa_enabled'] ?? 0) ?>,
+            passwordLastChanged: <?= json_encode($getadmin['password_last_changed'] ?? '') ?>,
+            activeSessions: <?= json_encode($getadmin['active_sessions'] ?? 1) ?>,
         };
 
         // Password data object
@@ -603,6 +608,21 @@ $pendingTasks = $overview['pending_tasks'];
             document.getElementById('phone').value = profileData.phone || '';
             document.getElementById('role').value = profileData.role;
             document.getElementById('location').value = profileData.location || '';
+        }
+
+        function populateAdminSettingsForm() {
+            // Two-Factor Authentication
+            document.getElementById('twoFactor').checked = !!profileData.mfaEnabled;
+
+            // Login Notifications (example, adjust as needed)
+            document.getElementById('loginNotifications').checked = !!profileData.loginNotifications;
+
+            // Session Timeout (default to 60 if not set)
+            document.getElementById('sessionTimeout').value = profileData.sessionTimeout || '60';
+
+            // Notification Preferences (example, adjust as needed)
+            document.getElementById('systemAlerts').checked = !!profileData.systemAlerts;
+            document.getElementById('userActivity').checked = !!profileData.userActivity;
         }
 
         // Function to update profile display
@@ -667,6 +687,42 @@ $pendingTasks = $overview['pending_tasks'];
             lucide.createIcons();
         }
 
+        function updateSecuritySection() {
+            // MFA Status
+            const mfaStatus = document.getElementById('mfaStatus');
+            if (mfaStatus) {
+                if (profileData.mfaEnabled == 1) {
+                    mfaStatus.textContent = 'Active';
+                    mfaStatus.className = 'bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium';
+                } else {
+                    mfaStatus.textContent = 'Inactive';
+                    mfaStatus.className = 'bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-medium';
+                }
+            }
+            // Password last changed
+            const passwordChanged = document.getElementById('passwordChanged');
+            if (passwordChanged) {
+                passwordChanged.textContent = profileData.passwordLastChanged ?
+                    timeAgo(profileData.passwordLastChanged) :
+                    'Unknown';
+            }
+            // Active sessions
+            const activeSessions = document.getElementById('activeSessions');
+            if (activeSessions) {
+                activeSessions.textContent = profileData.activeSessions || 1;
+            }
+        }
+
+        // Helper: time ago formatting
+        function timeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+            if (diff === 0) return 'today';
+            if (diff === 1) return 'yesterday';
+            return `${diff} days ago`;
+        }
+
         // Function to show modal
         function showModal(modal) {
             modal.classList.remove('hidden');
@@ -706,6 +762,7 @@ $pendingTasks = $overview['pending_tasks'];
         });
 
         adminSettingsBtn.addEventListener('click', () => {
+            populateAdminSettingsForm();
             showModal(adminSettingsModal);
         });
 
@@ -782,7 +839,37 @@ $pendingTasks = $overview['pending_tasks'];
                     console.log(err)
                 }
             } else if (currentForm === 'settings') {
-                // ...existing password update logic...
+                const settingsData = {
+                    mfa_enabled: document.getElementById('twoFactor').checked ? 1 : 0,
+                    login_notifications: document.getElementById('loginNotifications').checked ? 1 : 0,
+                    session_timeout: document.getElementById('sessionTimeout').value,
+                    system_alerts: document.getElementById('systemAlerts').checked ? 1 : 0,
+                    user_activity: document.getElementById('userActivity').checked ? 1 : 0,
+                    admin_id: profileData.adminId
+                };
+
+                try {
+                    const response = await fetch('api/update-settings.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(settingsData)
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showToasted('Settings updated successfully!', 'success');
+                        hideModal(adminSettingsModal);
+                        hideConfirmDialog();
+                    } else {
+                        showToasted(result.message || 'Failed to update settings', 'error');
+                    }
+                } catch (err) {
+                    showToasted('An error occurred while updating settings', 'error');
+                    console.log(err);
+                }
+                currentForm = null;
             }
             currentForm = null;
         });
@@ -822,6 +909,7 @@ $pendingTasks = $overview['pending_tasks'];
 
         // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
+            updateSecuritySection();
             updateProfileDisplay();
             renderAdminPermissions();
             lucide.createIcons();
