@@ -641,10 +641,11 @@ $orders = $userOrders['orders'];
             // Edit form submission
             editUserForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-
+                
                 const formData = new FormData(editUserForm);
                 const submitBtn = document.getElementById('submitEditBtn');
                 const originalText = submitBtn.innerHTML;
+                submitBtn.addEventListener('click', alert('Submitting edit form'));
 
                 // Show loading state
                 submitBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Saving...';

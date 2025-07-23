@@ -441,11 +441,10 @@
             });
         }
 
-        // Handle form submission
-        function handleSettingsFormSubmit(e) {
+        // Handle form submission with async/await and section-specific payloads
+        async function handleSettingsFormSubmit(e) {
             e.preventDefault();
             const form = e.target;
-            const formData = new FormData(form);
             const button = form.querySelector('button[type="submit"]');
             const btnText = button.querySelector('.settings-btn-text');
             const btnLoading = button.querySelector('.settings-btn-loading');
@@ -456,57 +455,46 @@
             else if (form.id === 'notificationsSettingsForm') section = 'notifications';
             else if (form.id === 'securitySettingsForm') section = 'security';
 
-            // Show loading state
             setSettingsLoadingState(button, btnText, btnLoading, true);
 
-            // Prepare data
-            const data = {
-                section: section
-            };
-
-            // Convert FormData to object
+            // Prepare payload for only the relevant section
+            const formData = new FormData(form);
+            let payload = {};
             for (let [key, value] of formData.entries()) {
-                data[key] = value;
+                payload[key] = value;
             }
-
-            // Handle checkboxes for notifications
+            // For notification checkboxes, ensure boolean values
             if (section === 'notifications') {
                 const checkboxes = form.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(function(checkbox) {
-                    data[checkbox.name] = checkbox.checked;
+                checkboxes.forEach(checkbox => {
+                    payload[checkbox.name] = checkbox.checked;
                 });
             }
 
-            // Send AJAX request
-            fetch('api/settings-handler.php', {
+            try {
+                const response = await fetch('api/settings-handler.php', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(data)
-                })
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(result) {
-                    if (result.success) {
-                        showToasted(result.message, 'success');
-
-                        // Reset password fields if this was security form
-                        if (section === 'security') {
-                            form.reset();
-                        }
-                    } else {
-                        showToasted(result.message, 'error');
-                    }
-                })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                    showToasted('An error occurred while saving settings', 'error');
-                })
-                .finally(function() {
-                    setSettingsLoadingState(button, btnText, btnLoading, false);
+                    body: JSON.stringify({
+                        section,
+                        data: payload
+                    })
                 });
+                const result = await response.json();
+                if (result.success) {
+                    showToasted(result.message, 'success');
+                    if (section === 'security') form.reset();
+                } else {
+                    showToasted(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToasted('An error occurred while saving settings', 'error');
+            } finally {
+                setSettingsLoadingState(button, btnText, btnLoading, false);
+            }
         }
 
         // Loading state management
@@ -560,22 +548,32 @@
             }
         }
 
-        // Load settings from server
-        function loadSettingsFromServer() {
-            fetch('ajax/settings_handler.php', {
+        // Utility function to fetch settings from the server
+        async function fetchSettingsData() {
+            try {
+                const response = await fetch('api/settings-handler.php', {
                     method: 'GET'
-                })
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(result) {
-                    if (result.success) {
-                        populateSettingsData(result.settings);
-                    }
-                })
-                .catch(function(error) {
-                    console.error('Error loading settings:', error);
                 });
+                if (!response.ok) throw new Error('Network response was not ok');
+                const result = await response.json();
+                if (result.success) {
+                    return result.settings;
+                } else {
+                    throw new Error(result.message || 'Failed to load settings');
+                }
+            } catch (error) {
+                console.error('Error fetching settings:', error);
+                showToasted('Failed to load settings', 'error');
+                return null;
+            }
+        }
+
+        // Load settings from server and populate forms
+        async function loadSettingsFromServer() {
+            const settings = await fetchSettingsData();
+            if (settings) {
+                populateSettingsData(settings);
+            }
         }
 
         // Populate form data
@@ -583,9 +581,9 @@
             // Populate general form
             const generalForm = document.getElementById('generalSettingsForm');
             if (generalForm) {
-                Object.keys(settings).forEach(function(key) {
+                ['business_name', 'business_email', 'phone_number', 'business_address', 'timezone'].forEach(function(key) {
                     const input = generalForm.querySelector('[name="' + key + '"]');
-                    if (input) {
+                    if (input && settings[key] !== undefined) {
                         input.value = settings[key];
                     }
                 });
