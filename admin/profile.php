@@ -4,6 +4,7 @@ require __DIR__ . '/util/utilities.php';
 require __DIR__ . '/partials/headers.php';
 
 $getadmin = getAdminProfile($pdo, $_SESSION['admin_id']);
+$recentActivities = getAdminActivityLog($pdo, $_SESSION['admin_id']);
 ?>
 
 <body class="bg-gray-50 font-sans">
@@ -129,9 +130,11 @@ $getadmin = getAdminProfile($pdo, $_SESSION['admin_id']);
                         <div class="p-6 border-b border-gray-200">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-lg font-semibold text-gray-800">Administrative Information</h3>
-                                <button id="editAdminBtn" class="text-orange-600 hover:text-orange-700 text-sm font-medium">
-                                    Edit
-                                </button>
+                                <?php if ($getadmin['role'] == 'super'): ?>
+                                    <button id="editAdminBtn" class="text-orange-600 hover:text-orange-700 text-sm font-medium">
+                                        Edit
+                                    </button>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="p-6">
@@ -174,60 +177,21 @@ $getadmin = getAdminProfile($pdo, $_SESSION['admin_id']);
                         </div>
                         <div class="p-6">
                             <div class="space-y-4">
-                                <div class="flex items-start space-x-3">
-                                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <i data-lucide="check" class="w-4 h-4 text-green-600"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm text-gray-900">Approved 15 new vendor registrations</p>
-                                        <p class="text-xs text-gray-500">30 minutes ago</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <i data-lucide="shield" class="w-4 h-4 text-blue-600"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm text-gray-900">Updated security policies for user authentication</p>
-                                        <p class="text-xs text-gray-500">2 hours ago</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <i data-lucide="database" class="w-4 h-4 text-purple-600"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm text-gray-900">Performed system backup and maintenance</p>
-                                        <p class="text-xs text-gray-500">4 hours ago</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <i data-lucide="users" class="w-4 h-4 text-orange-600"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm text-gray-900">Bulk imported 250 customer records</p>
-                                        <p class="text-xs text-gray-500">6 hours ago</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <i data-lucide="bar-chart" class="w-4 h-4 text-indigo-600"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm text-gray-900">Generated quarterly business intelligence report</p>
-                                        <p class="text-xs text-gray-500">1 day ago</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <i data-lucide="alert-triangle" class="w-4 h-4 text-red-600"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm text-gray-900">Resolved critical system alert for payment gateway</p>
-                                        <p class="text-xs text-gray-500">1 day ago</p>
-                                    </div>
-                                </div>
+                                <?php if (empty($recentActivities)): ?>
+                                    <div class="text-gray-500 text-sm">No recent activity.</div>
+                                <?php else: ?>
+                                    <?php foreach ($recentActivities as $activity): ?>
+                                        <div class="flex items-start space-x-3">
+                                            <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                                <i data-lucide="activity" class="w-4 h-4 text-gray-600"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-sm text-gray-900"><?= htmlspecialchars($activity['details'] ?: $activity['action']) ?></p>
+                                                <p class="text-xs text-gray-500"><?= date('M d, H:i', strtotime($activity['created_at'])) ?></p>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

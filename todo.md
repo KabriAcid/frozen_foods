@@ -2,3 +2,5 @@
 - Updated users last login in the login logic page.
 - Verified status not functioning properly.
 - Email sending functionality failed.
+- Create an activity branch to insert activities log where necessary
+- Create a consistency branch for consistency.

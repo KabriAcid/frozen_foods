@@ -1002,6 +1002,22 @@ function getUserWallet(PDO $pdo, int $userId): array
     }
 }
 
+// function for getting admin activity log
+function getAdminActivityLog(PDO $pdo, int $adminId, int $limit = 10): array
+{
+    try {
+        $limit = (int)$limit; // Ensure it's an integer
+        $stmt = $pdo->prepare("SELECT * FROM admin_activity_log WHERE admin_id = ? ORDER BY created_at DESC LIMIT $limit");
+        $stmt->execute([$adminId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching admin activity log: " . $e->getMessage());
+        return [];
+    }
+}
 
-
-// Function for getting user activity
+// Function for login admin activity
+function logAdminActivity($pdo, $adminId, $action, $details = '') {
+    $stmt = $pdo->prepare("INSERT INTO admin_activity_log (admin_id, action, details, created_at) VALUES (?, ?, ?, NOW())");
+    $stmt->execute([$adminId, $action, $details]);
+}
