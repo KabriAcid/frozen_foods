@@ -8,3 +8,4 @@
 - Make the role a select form in the admin
 - Add breadcrumbs in necessary files.
 - Fix the security old password validation
+- A custom vector for 0 data found.

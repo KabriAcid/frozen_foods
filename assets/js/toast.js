@@ -8,8 +8,7 @@ function showToasted(message, type = "info", duration = 5000) {
 
   // Create toast container
   const toast = document.createElement("div");
-  toast.className = `toast-notification fixed top-4 right-4 z-[9999] max-w-sm w-full bg-white rounded-lg shadow-lg border-l-4 transform translate-x-full transition-all duration-300 ease-in-out`;
-
+toast.className = `toast-notification fixed top-4 right-4 z-[9999] bg-white rounded-lg shadow-lg border-l-4 transform translate-x-full transition-all duration-300 ease-in-out`;
   // Set border color based on type
   const borderColors = {
     success: "border-green-500",

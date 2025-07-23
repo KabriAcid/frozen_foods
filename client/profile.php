@@ -222,7 +222,6 @@ $userStats = getUserStatistics($pdo, $user_id = 1);
     </main>
     <!-- Bottom navigation include -->
     <?php include 'partials/bottom-nav.php'; ?>
-    <!-- Modals -->
     <!-- Sign Out Modal -->
     <div id="signOutModal" class="fixed inset-0 modal-overlay z-50 hidden">
         <div class="flex items-center justify-center min-h-screen px-4">
