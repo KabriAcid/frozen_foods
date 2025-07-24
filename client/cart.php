@@ -405,7 +405,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                             <div class="space-y-4 mb-6">
                                 <div class="flex justify-between items-center p-3 bg-white/50 rounded-lg">
                                     <span class="text-gray-700 font-medium">Subtotal</span>
-                                    <span id="subtotal" class="font-bold text-custom-dark text-lg">₦<?php echo number_format($subtotal); ?></span>
+                                    <span id="subtotal" class="font-bold text-custom-dark text-lg">₦<?php echo number_format($subtotal); ?>.00</span>
                                 </div>
                                 <div class="flex justify-between items-center p-3 bg-white/50 rounded-lg">
                                     <span class="text-gray-700 font-medium">Delivery Fee</span>

@@ -10,3 +10,4 @@
 - Fix the security old password validation
 - A custom vector for 0 data found.
 - Fixing the cart count in the product page
+- Fix the responsive of the cart page

@@ -183,8 +183,7 @@ $cartCount = isset($_SESSION['cart']) ? array_sum(array: array_column($_SESSION[
     increaseBtn.addEventListener('click', increaseQuantity);
 
     orderBtn.addEventListener('click', () => {
-      const totalPrice = (productData.price * currentQuantity).toFixed(2);
-      alert(`Order placed!\nProduct: ${productData.name}\nQuantity: ${currentQuantity}\nTotal: ₦${totalPrice}`);
+      window.location.href = "cart.php"
     });
 
     addCartBtn.addEventListener('click', async () => {
