@@ -2,31 +2,10 @@
 require_once 'util/util.php';
 require_once 'initialize.php';
 require_once 'partials/headers.php';
-// Sample cart data (in real app, this would come from session/database)
-$cart_items = [
-    [
-        'id' => 1,
-        'name' => 'Fresh Chicken Wings',
-        'price' => 2500,
-        'quantity' => 2,
-        'image' => 'https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=400'
-    ],
-    [
-        'id' => 2,
-        'name' => 'Atlantic Salmon',
-        'price' => 4500,
-        'quantity' => 1,
-        'image' => 'https://images.pexels.com/photos/725991/pexels-photo-725991.jpeg?auto=compress&cs=tinysrgb&w=400'
-    ],
-    [
-        'id' => 5,
-        'name' => 'Tuna Steaks',
-        'price' => 5200,
-        'quantity' => 1,
-        'image' => 'https://images.pexels.com/photos/725991/pexels-photo-725991.jpeg?auto=compress&cs=tinysrgb&w=400'
-    ]
-];
 
+// Get cart items from session (dynamic)
+$cart_items = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
+// var_dump($cart_items);
 // Calculate totals
 $subtotal = 0;
 foreach ($cart_items as $item) {
@@ -34,6 +13,7 @@ foreach ($cart_items as $item) {
 }
 $delivery_fee = $subtotal >= 10000 ? 0 : 500;
 $total = $subtotal + $delivery_fee;
+$cartCount = array_sum(array_column($cart_items, 'quantity'));
 ?>
 
 <body class="bg-custom-gray min-h-screen">
@@ -80,8 +60,8 @@ $total = $subtotal + $delivery_fee;
                             <!-- Cart Items List -->
                             <div id="cart-items" class="space-y-4">
                                 <?php foreach ($cart_items as $item): ?>
-                                    <div class="cart-item flex items-center space-x-4 p-4 border border-gray-200 rounded-lg" data-item-id="<?php echo $item['id']; ?>" data-price="<?php echo $item['price']; ?>">
-                                        <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>" class="w-16 h-16 object-cover rounded-lg">
+                                    <div class="cart-item flex items-center space-x-4 p-4 border border-gray-200 rounded-lg" data-item-id="<?php echo $item['product_id']; ?>" data-price="<?php echo $item['price']; ?>">
+                                        <img src="../assets/uploads/<?php echo $item['image']; ?>" alt="<?php echo $item['name']; ?>" class="w-16 h-16 object-cover rounded-lg">
                                         <div class="flex-1">
                                             <h3 class="font-semibold text-dark"><?php echo $item['name']; ?></h3>
                                             <p class="text-accent font-bold">₦<?php echo number_format($item['price']); ?></p>
@@ -97,7 +77,7 @@ $total = $subtotal + $delivery_fee;
                                         </div>
                                         <div class="text-right">
                                             <p class="item-total font-bold text-dark">₦<?php echo number_format($item['price'] * $item['quantity']); ?></p>
-                                            <button class="remove-item-btn text-red-600 hover:text-red-800 text-sm mt-1" data-item-id="<?php echo $item['id']; ?>">
+                                            <button class="remove-item-btn text-red-600 hover:text-red-800 text-sm mt-1" data-item-id="<?php echo $item['product_id']; ?>">
                                                 <i class="fas fa-times mr-1"></i>
                                                 Remove
                                             </button>
@@ -206,68 +186,90 @@ $total = $subtotal + $delivery_fee;
         function initializeCartActions() {
             // Quantity buttons
             document.querySelectorAll('.quantity-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', async function() {
                     const action = this.getAttribute('data-action');
                     const cartItem = this.closest('.cart-item');
+                    const itemId = cartItem.getAttribute('data-item-id');
+                    const price = parseInt(cartItem.getAttribute('data-price'));
                     const quantityDisplay = cartItem.querySelector('.quantity-display');
                     const itemTotal = cartItem.querySelector('.item-total');
-                    const price = parseInt(cartItem.getAttribute('data-price'));
 
                     let quantity = parseInt(quantityDisplay.textContent);
+                    quantity = action === 'increase' ? quantity + 1 : Math.max(1, quantity - 1);
 
-                    if (action === 'increase') {
-                        quantity++;
-                    } else if (action === 'decrease' && quantity > 1) {
-                        quantity--;
+                    const res = await fetch('api/update-cart.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id: itemId,
+                            quantity
+                        })
+                    });
+                    const result = await res.json();
+
+                    if (result.success) {
+                        quantityDisplay.textContent = quantity;
+                        itemTotal.textContent = '₦' + (price * quantity).toLocaleString();
+                        updateTotals();
+                    } else {
+                        showToasted(result.message || 'Failed to update cart', 'error');
                     }
-
-                    quantityDisplay.textContent = quantity;
-                    itemTotal.textContent = '₦' + (price * quantity).toLocaleString();
-
-                    updateTotals();
                 });
             });
 
-            // Remove item buttons
+
+            // Remove item
             document.querySelectorAll('.remove-item-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', async function() {
                     const itemId = this.getAttribute('data-item-id');
                     const cartItem = this.closest('.cart-item');
 
-                    if (confirm('Remove this item from cart?')) {
-                        cartItem.style.transform = 'scale(0.8)';
-                        cartItem.style.opacity = '0';
+                    if (!confirm('Remove this item from cart?')) return;
 
-                        setTimeout(() => {
-                            cartItem.remove();
-                            updateTotals();
-                            checkEmptyCart();
-                            showToasted('Item removed from cart', 'info');
-                        }, 300);
+                    const res = await fetch('api/remove-cart-item.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id: itemId
+                        })
+                    });
+
+                    const result = await res.json();
+                    if (result.success) {
+                        cartItem.remove();
+                        updateTotals();
+                        checkEmptyCart();
+                        showToasted('Item removed from cart', 'info');
+                    } else {
+                        showToasted('Failed to remove item', 'error');
                     }
                 });
             });
 
+
             // Clear cart button
-            document.getElementById('clear-cart-btn').addEventListener('click', function() {
-                if (confirm('Are you sure you want to clear your cart?')) {
-                    const cartItems = document.querySelectorAll('.cart-item');
-                    cartItems.forEach((item, index) => {
-                        setTimeout(() => {
-                            item.style.transform = 'scale(0.8)';
-                            item.style.opacity = '0';
-                            setTimeout(() => {
-                                item.remove();
-                                if (index === cartItems.length - 1) {
-                                    updateTotals();
-                                    checkEmptyCart();
-                                }
-                            }, 300);
-                        }, index * 100);
-                    });
+            document.getElementById('clear-cart-btn').addEventListener('click', async function() {
+                if (!confirm('Are you sure you want to clear your cart?')) return;
+
+                const res = await fetch('api/clear-cart.php', {
+                    method: 'POST'
+                });
+                const result = await res.json();
+
+                if (result.success) {
+                    document.querySelectorAll('.cart-item').forEach(item => item.remove());
+                    updateTotals();
+                    checkEmptyCart();
                     showToasted('Cart cleared', 'info');
+                } else {
+                    showToasted('Failed to clear cart', 'error');
                 }
             });
+
 
             // Promo code
             document.getElementById('apply-promo-btn').addEventListener('click', function() {

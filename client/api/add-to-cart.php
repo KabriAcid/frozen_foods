@@ -20,7 +20,7 @@ try {
         exit;
     }
 
-    $stmt = $pdo->prepare("SELECT id, name, price, image, in_stock FROM products WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT id, name, price, image, stock_quantity FROM products WHERE id = ?");
     $stmt->execute([$product_id]);
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -28,7 +28,7 @@ try {
         echo json_encode(['success' => false, 'message' => 'Product not found']);
         exit;
     }
-    if (isset($product['in_stock']) && !$product['in_stock']) {
+    if (isset($product['stock_quantity']) && !$product['stock_quantity']) {
         echo json_encode(['success' => false, 'message' => 'Product is out of stock']);
         exit;
     }
