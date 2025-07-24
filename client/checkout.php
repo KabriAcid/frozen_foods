@@ -68,7 +68,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                                     <div class="relative">
-                                        <input type="tel" id="phone" class="form-input w-full px-4 py-3 pl-16 rounded-xl focus:outline-none" placeholder="70-3949-5494" required>
+                                        <input type="tel" id="phone" class="form-input w-full px-4 py-3 pl-16 rounded-xl focus:outline-none" placeholder="70-3949-5494" required inputmode="numeric" maxlength="11">
                                         <div class="absolute left-4 top-1/2 transform -translate-y-1/2 flex items-center">
                                             <span class="text-red-500 text-lg mr-1">
                                                 <!-- nigerian flag image -->
@@ -176,7 +176,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
-                                    <input type="text" id="cardNumber" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="1234 - 5678 - 9012 - 3456" maxlength="19" required>
+                                    <input type="text" id="cardNumber" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="1234 - 5678 - 9012 - 3456" maxlength="19" required inputmode="numeric">
                                     <span class="error-message text-red-500 text-sm mt-1 hidden">Please enter a valid card number</span>
                                 </div>
                                 <div>
@@ -186,7 +186,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">CVC Code</label>
-                                    <input type="text" id="cardCVC" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="123" maxlength="3" required>
+                                    <input type="text" id="cardCVC" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="123" maxlength="3" required inputmode="numeric">
                                     <span class="error-message text-red-500 text-sm mt-1 hidden">Please enter CVC code</span>
                                     <p class="text-xs text-gray-500 mt-1">
                                         <i class="fas fa-info-circle mr-1"></i>3 digit code on the back of your card 3
@@ -393,41 +393,40 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
 
         // Save checkout data to database
         async function saveCheckoutData(data) {
-            try {
-                // Simulate API call to save checkout data
-                const response = await makeRequest(`${API_BASE}/posts`, 'POST', {
-                    title: 'Checkout Data',
-                    body: JSON.stringify(data),
-                    userId: 1
-                });
-
-                checkoutData = {
-                    ...data,
-                    id: response.id
-                };
-                return response;
-            } catch (error) {
-                throw new Error('Failed to save checkout data');
-            }
+            const response = await fetch('api/save-checkout.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message || 'Failed to save checkout data');
+            return result;
         }
 
-        // Process payment
-        async function processPayment(data) {
+        async function fetchCheckoutData() {
             try {
-                // Simulate payment processing
-                const response = await makeRequest(`${API_BASE}/posts`, 'POST', {
-                    title: 'Payment Data',
-                    body: JSON.stringify(data),
-                    userId: 1
+                const response = await fetch('api/get-checkout-data.php', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
                 });
+                const result = await response.json();
+                if (result.success && result.data) {
+                    const data = result.data;
+                    if (data.first_name) document.getElementById('firstName').value = data.first_name;
+                    if (data.last_name) document.getElementById('lastName').value = data.last_name;
+                    if (data.phone) document.getElementById('phone').value = data.phone;
+                    if (data.email) document.getElementById('email').value = data.email;
+                    if (data.city) document.getElementById('city').value = data.city;
+                    if (data.address) document.getElementById('address').value = data.address;
+                    if (data.postal_code) document.getElementById('postalCode').value = data.postal_code;
+                }
 
-                paymentData = {
-                    ...data,
-                    id: response.id
-                };
-                return response;
             } catch (error) {
-                throw new Error('Payment processing failed');
+                console.warn('Could not fetch checkout data', error);
             }
         }
 
@@ -543,7 +542,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
 
 
         // Step management
-        let currentStep = 1;
+        let currentStep = Number(localStorage.getItem('checkoutStep')) || 1;
         const totalSteps = 3;
 
         function updateStepIndicators(step) {
@@ -562,6 +561,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                     if (progressEl) progressEl.style.width = '0%';
                 }
             }
+            localStorage.setItem('checkoutStep', step);
         }
 
         function showStep(step) {
@@ -586,6 +586,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
 
             updateStepIndicators(step);
             currentStep = step;
+            localStorage.setItem('checkoutStep', step);
         }
 
         // Form validation logic for step 1 (personal + delivery info)
@@ -741,9 +742,6 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                         timestamp: new Date().toISOString()
                     };
 
-                    // Process payment
-                    await processPayment(paymentFormData);
-
                     // Success - move to confirmation
                     showStep(3);
                     showToasted('Payment processed successfully!', 'success');
@@ -802,7 +800,11 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
         });
 
         // Initialize
-        updateStepIndicators(1);
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCheckoutData();
+            updateStepIndicators(1);
+            showStep(currentStep);
+        });
     </script>
 </body>
 
