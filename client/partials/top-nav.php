@@ -52,7 +52,7 @@ switch ($currentPage) {
                 </svg>
             </div>
             <div class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-medium animate-bounce-gentle">
-                <span id="cartCount" class="text-white text-xs font-bold"><?php echo $cartCount; ?></span>
+                <span id="cartCount" class="cart-badge text-white text-xs font-bold"><?php echo $cartCount; ?></span>
             </div>
         </div>
     </a>

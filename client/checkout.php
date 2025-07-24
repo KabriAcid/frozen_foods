@@ -2,6 +2,9 @@
 require_once 'util/util.php';
 require_once 'initialize.php';
 require_once 'partials/headers.php';
+
+$cart_items = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
+$cartCount = array_sum(array_column($cart_items, 'quantity'));
 ?>
 
 <body class="font-dm bg-gray min-h-screen blob-bg">
@@ -277,66 +280,68 @@ require_once 'partials/headers.php';
                     <h3 class="text-lg font-semibold text-dark mb-6">Order Summary</h3>
 
                     <div class="space-y-4 mb-6">
-                        <div class="flex items-center space-x-4 p-3 bg-white bg-opacity-50 rounded-xl shadow-soft">
-                            <img src="https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&dpr=2" alt="Buffalo Chicken Wrap" class="w-16 h-16 rounded-lg object-cover">
-                            <div class="flex-1">
-                                <h4 class="font-semibold text-dark">Buffalo Chicken Wrap</h4>
-                                <div class="flex items-center justify-between mt-2">
-                                    <div class="flex items-center space-x-2">
-                                        <button class="w-6 h-6 rounded-full border border-slate-300 flex items-center justify-center text-gray-500 hover:bg-slate-100 transition-colors">-</button>
-                                        <span class="font-medium">1</span>
-                                        <button class="w-6 h-6 rounded-full border border-slate-300 flex items-center justify-center text-gray-500 hover:bg-slate-100 transition-colors">+</button>
+                        <?php if (!empty($cart_items)) : ?>
+                            <?php foreach ($cart_items as $item) : ?>
+                                <div class="flex items-center space-x-4 p-3 bg-white bg-opacity-50 rounded-xl shadow-soft">
+                                    <img src="../assets/uploads/<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="w-16 h-16 rounded-lg object-cover">
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-dark"><?= htmlspecialchars($item['name']) ?></h4>
+                                        <div class="flex items-center justify-between mt-2">
+                                            <!-- Quantity Adjusters -->
+                                            <div class="flex items-center space-x-2" data-id="<?= $item['product_id']; ?>">
+                                                <button class="qty-btn decrease w-6 h-6 rounded-full border border-slate-300 flex items-center justify-center text-gray-500 hover:bg-slate-100 transition-colors">-</button>
+                                                <span class="font-medium"><?= $item['quantity'] ?></span>
+                                                <button class="qty-btn increase w-6 h-6 rounded-full border border-slate-300 flex items-center justify-center text-gray-500 hover:bg-slate-100 transition-colors">+</button>
+                                            </div>
+                                            <span class="font-semibold text-dark">₦<?= number_format($item['price'] * $item['quantity'], 2) ?></span>
+                                        </div>
                                     </div>
-                                    <span class="font-semibold text-dark">$36.99</span>
+                                    <button class="remove-btn text-gray-100 hover:bg-red-600 transition-colors" data-id="<?= $item['product_id'] ?>">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </div>
-                            </div>
-                            <button class="text-secondary hover:text-red-600 transition-colors">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </div>
-
-                        <div class="flex items-center space-x-4 p-3 bg-white bg-opacity-50 rounded-xl shadow-soft">
-                            <img src="https://images.pexels.com/photos/1030945/pexels-photo-1030945.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&dpr=2" alt="Green Smoothie" class="w-16 h-16 rounded-lg object-cover">
-                            <div class="flex-1">
-                                <h4 class="font-semibold text-dark">Green Smoothie</h4>
-                                <div class="flex items-center justify-between mt-2">
-                                    <div class="flex items-center space-x-2">
-                                        <button class="w-6 h-6 rounded-full border border-slate-300 flex items-center justify-center text-gray-500 hover:bg-slate-100 transition-colors">-</button>
-                                        <span class="font-medium">1</span>
-                                        <button class="w-6 h-6 rounded-full border border-slate-300 flex items-center justify-center text-gray-500 hover:bg-slate-100 transition-colors">+</button>
-                                    </div>
-                                    <span class="font-semibold text-dark">$18.99</span>
-                                </div>
-                            </div>
-                            <button class="text-secondary hover:text-red-600 transition-colors">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </div>
+                            <?php endforeach; ?>
+                        <?php else : ?>
+                            <p class="text-center text-gray-500">Your cart is empty.</p>
+                        <?php endif; ?>
                     </div>
 
+
+                    <?php
+                    $subtotal = 0;
+                    foreach ($cart_items as $item) {
+                        $subtotal += $item['price'] * $item['quantity'];
+                    }
+                    $delivery_fee = $subtotal >= 10000 ? 0 : 500;
+                    $tax = 0; // Update if you have a tax policy
+                    $total = $subtotal + $delivery_fee + $tax;
+                    ?>
                     <div class="border-t border-slate-200 pt-4 space-y-2">
                         <div class="flex justify-between text-gray-600">
                             <span>Subtotal:</span>
-                            <span>$55.98</span>
+                            <span id="subtotal-value">₦<?= number_format($subtotal, 2) ?></span>
                         </div>
                         <div class="flex justify-between text-gray-600">
                             <span>Delivery:</span>
-                            <span>$8.20</span>
+                            <span id="delivery-value">₦<?= number_format($delivery_fee, 2) ?></span>
                         </div>
                         <div class="flex justify-between text-gray-600">
                             <span>Tax:</span>
-                            <span>$10.0</span>
+                            <span id="tax-value">₦<?= number_format($tax, 2) ?></span>
                         </div>
                         <div class="flex justify-between text-lg font-bold text-dark pt-2 border-t border-slate-200">
                             <span>Total:</span>
-                            <span>$74.18</span>
+                            <span id="total-value">₦<?= number_format($total, 2) ?></span>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="../assets/js/toast.js"></script>
+    <script src="js/script.js"></script>
     <script>
         // Mock API endpoints for demonstration
         const API_BASE = 'https://jsonplaceholder.typicode.com'; // Using JSONPlaceholder for demo
@@ -411,6 +416,96 @@ require_once 'partials/headers.php';
                 throw new Error('Payment processing failed');
             }
         }
+
+        document.querySelectorAll('.qty-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const parent = btn.closest('[data-id]');
+                const productId = parent.getAttribute('data-id');
+                const action = btn.classList.contains('increase') ? 'increase' : 'decrease';
+
+                try {
+                    const res = await fetch('api/update-quantity.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            product_id: productId,
+                            action: action
+                        })
+                    });
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        // Reload or update DOM here
+                        location.reload(); // for now, simplest way to reflect changes
+                    } else {
+                        showToasted(data.message || 'Error updating cart', 'error');
+                    }
+
+                } catch (err) {
+                    console.error('AJAX Error:', err);
+                    showToasted('Failed to update cart. Please try again.', 'error');
+                }
+            });
+        });
+
+        document.querySelectorAll('.remove-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const itemId = btn.getAttribute('data-id');
+
+                // if (!confirm('Are you sure you want to remove this item?')) return;
+
+                try {
+                    const res = await fetch('api/remove-cart-item.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id: itemId
+                        })
+                    });
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        showToasted('Item removed.', 'success');
+
+                        // Remove item from DOM
+                        const itemContainer = btn.closest('.flex.items-center.space-x-4');
+                        itemContainer?.remove();
+
+                        // Update totals
+                        document.getElementById('subtotal-value').textContent = `₦${data.subtotal.toFixed(2)}`;
+                        document.getElementById('delivery-value').textContent = `₦${data.delivery_fee.toFixed(2)}`;
+                        document.getElementById('total-value').textContent = `₦${data.total.toFixed(2)}`;
+
+                        // Update cart count
+                        const cartCountEl = document.getElementById('cartCount');
+                        if (cartCountEl) {
+                            cartCountEl.textContent = `(${data.cartCount})`;
+                        }
+
+                        // If cart is empty, optionally hide or show empty state
+                        if (data.cartCount === 0) {
+                            document.querySelector('.frosted-glass').innerHTML = '<p class="text-center text-gray-600 py-6">Your cart is empty.</p>';
+                        }
+
+                    } else {
+                        showToasted(data.message || 'Failed to remove item.', 'error');
+                    }
+
+                } catch (err) {
+                    console.error('Remove error:', err);
+                    showToasted('Error removing item.', 'error');
+                }
+            });
+        });
+
+
+
 
 
         // Step management
@@ -673,7 +768,6 @@ require_once 'partials/headers.php';
 
         // Initialize
         updateStepIndicators(1);
-        showToasted('info', 'Welcome! Please fill in your checkout details.');
     </script>
 </body>
 
