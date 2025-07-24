@@ -29,13 +29,13 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                         <i class="fas fa-map-marker-alt"></i>
                     </div>
                     <div class="w-16 h-1 bg-gray-300 rounded-full">
-                        <div id="progress-1" class="h-1 bg-green-500 rounded-full transition-all duration-500" style="width: 100%;"></div>
+                        <div id="progress-1" class="h-1 bg-orange-500 rounded-full transition-all duration-500" style="width: 100%;"></div>
                     </div>
                     <div id="step-2" class="step-inactive w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-300">
                         <i class="fas fa-credit-card"></i>
                     </div>
                     <div class="w-16 h-1 bg-gray-300 rounded-full">
-                        <div id="progress-2" class="h-1 bg-green-500 rounded-full transition-all duration-500" style="width: 0%;"></div>
+                        <div id="progress-2" class="h-1 bg-orange-500 rounded-full transition-all duration-500" style="width: 0%;"></div>
                     </div>
                     <div id="step-3" class="step-inactive w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-300">
                         <i class="fas fa-check"></i>
@@ -197,7 +197,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                             <div class="flex items-center mt-4">
                                 <input type="checkbox" id="billingAddress" class="w-5 h-5 text-accent border-slate-300 rounded focus:ring-accent" checked>
                                 <label for="billingAddress" class="ml-3 text-sm text-gray-700">
-                                    <i class="fas fa-check text-green-500 mr-2"></i>
+                                    <i class="fas fa-check text-orange-500 mr-2"></i>
                                     Billing address is the same as shipping address.
                                 </label>
                             </div>
@@ -609,7 +609,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                     isValid = false;
                 } else {
                     input.classList.remove('border-red-500');
-                    input.classList.add('border-green-500');
+                    input.classList.add('border-orange-500');
                     if (errorMsg) errorMsg.classList.add('hidden');
                 }
             });
@@ -640,7 +640,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                     isValid = false;
                 } else {
                     input.classList.remove('border-red-500');
-                    input.classList.add('border-green-500');
+                    input.classList.add('border-orange-500');
                     if (errorMsg) errorMsg.classList.add('hidden');
                 }
 
@@ -795,7 +795,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
             input.addEventListener('blur', () => {
                 if (input.value.trim()) {
                     input.classList.remove('border-red-500');
-                    input.classList.add('border-green-500');
+                    input.classList.add('border-orange-500');
                     input.parentElement.querySelector('.error-message')?.classList.add('hidden');
                 }
             });

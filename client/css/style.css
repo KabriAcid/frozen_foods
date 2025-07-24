@@ -480,7 +480,7 @@ input:checked+.slider:before {
 
 .step-active,
 .step-completed {
-    background: #22c55e;
+    background: var(--accent-color);
     color: white;
 }
 
