@@ -113,12 +113,24 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                             </div>
                         </div>
                     </form>
-
+                    <!-- If cart is not empty show continue else show back to products page -->
                     <div class="flex justify-end mt-6">
-                        <button id="continue-btn" class="bg-accent hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-accent hover:shadow-large flex items-center space-x-2">
+                        <?php
+                        if (empty($cart_items)) {
+                            ?>
+                            <div id="cart-empty-message" class="text-center text-gray-500">
+                            Your cart is empty. <a href="dashboard.php" class="text-accent">Continue shopping</a>
+                        </div>
+                        <?php
+                        } else {
+                            ?>
+                             <button id="continue-btn" class="bg-accent hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-accent hover:shadow-large flex items-center space-x-2">
                             <span id="continue-text">Continue</span>
                             <div id="continue-spinner" class="loading-spinner hidden"></div>
                         </button>
+                        <?php
+                        }
+                        ?>
                     </div>
                 </div>
 
@@ -290,7 +302,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                                             <!-- Quantity Adjusters -->
                                             <div class="flex items-center space-x-2" data-id="<?= $item['product_id']; ?>">
                                                 <button class="qty-btn decrease w-6 h-6 rounded-full border border-slate-300 flex items-center justify-center text-gray-500 hover:bg-slate-100 transition-colors">-</button>
-                                                <span class="font-medium"><?= $item['quantity'] ?></span>
+                                                <span class="qty-count font-medium"><?= $item['quantity'] ?></span>
                                                 <button class="qty-btn increase w-6 h-6 rounded-full border border-slate-300 flex items-center justify-center text-gray-500 hover:bg-slate-100 transition-colors">+</button>
                                             </div>
                                             <span class="font-semibold text-dark">₦<?= number_format($item['price'] * $item['quantity'], 2) ?></span>
@@ -334,10 +346,11 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                             <span id="total-value">₦<?= number_format($total, 2) ?></span>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
+        <!-- Bottom navigation include -->
+        <?php #include 'partials/bottom-nav.php'; ?>
     </div>
 
     <script src="../assets/js/toast.js"></script>
@@ -422,6 +435,8 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                 const parent = btn.closest('[data-id]');
                 const productId = parent.getAttribute('data-id');
                 const action = btn.classList.contains('increase') ? 'increase' : 'decrease';
+                const qtySpan = parent.querySelector('.qty-count');
+                const itemTotalSpan = parent.closest('.space-x-4').querySelector('.item-total-price');
 
                 try {
                     const res = await fetch('api/update-quantity.php', {
@@ -438,8 +453,25 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                     const data = await res.json();
 
                     if (data.success) {
-                        // Reload or update DOM here
-                        location.reload(); // for now, simplest way to reflect changes
+                        // Update quantity text
+                        qtySpan.textContent = data.quantity;
+
+                        // Update item total
+                        if (itemTotalSpan) {
+                            itemTotalSpan.textContent = `₦${data.item_total.toFixed(2)}`;
+                        }
+
+                        // Update summary totals
+                        document.getElementById('subtotal-value').textContent = `₦${data.subtotal.toFixed(2)}`;
+                        document.getElementById('delivery-value').textContent = `₦${data.delivery_fee.toFixed(2)}`;
+                        document.getElementById('tax-value').textContent = `₦${data.tax.toFixed(2)}`;
+                        document.getElementById('total-value').textContent = `₦${data.total.toFixed(2)}`;
+
+                        // Optional: Update cart count badge
+                        if (document.getElementById('cartCount')) {
+                            document.getElementById('cartCount').textContent = `${data.cartCount}`;
+                        }
+
                     } else {
                         showToasted(data.message || 'Error updating cart', 'error');
                     }
@@ -450,6 +482,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                 }
             });
         });
+
 
         document.querySelectorAll('.remove-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
@@ -485,11 +518,11 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                         // Update cart count
                         const cartCountEl = document.getElementById('cartCount');
                         if (cartCountEl) {
-                            cartCountEl.textContent = `(${data.cartCount})`;
+                            cartCountEl.textContent = `${data.cartCount}`;
                         }
 
                         // If cart is empty, optionally hide or show empty state
-                        if (data.cartCount === 0) {
+                        if (data.cartCountEl == 0) {
                             document.querySelector('.frosted-glass').innerHTML = '<p class="text-center text-gray-600 py-6">Your cart is empty.</p>';
                         }
 

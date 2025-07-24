@@ -14,27 +14,7 @@ $cartCount = isset($_SESSION['cart']) ? array_sum(array: array_column($_SESSION[
 <body class="bg-custom-gray min-h-screen">
   <div class="container mx-auto pt-6">
     <!-- Header -->
-    <div class="flex justify-between items-center mb-8">
-      <button id="backBtn" class="p-2 hover:bg-white rounded-lg transition-colors duration-200">
-        <svg class="w-6 h-6 text-custom-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-        </svg>
-      </button>
-      <a href="cart.php">
-        <div class="relative">
-          <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart-icon lucide-shopping-cart">
-              <circle cx="8" cy="21" r="1" />
-              <circle cx="19" cy="21" r="1" />
-              <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
-            </svg>
-          </div>
-          <div class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
-            <span id="cartCount" class="text-white text-xs font-bold"><?php echo $cartCount; ?></span>
-          </div>
-        </div>
-      </a>
-    </div>
+    <?php include 'partials/top-nav.php'; ?>
 
     <!-- Product Content -->
     <div class="p-4 product-content px-4 sm:px-8 relative">

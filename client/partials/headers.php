@@ -14,6 +14,8 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- LUcide icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/lucide.umd.js"></script>
     <!-- Icons stylesheets -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
