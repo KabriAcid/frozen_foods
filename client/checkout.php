@@ -570,6 +570,16 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
             document.getElementById('payment-step').classList.add('hidden');
             document.getElementById('success-step').classList.add('hidden');
 
+            // Hide order summary on last step
+            const orderSummary = document.querySelector('.frosted-glass.rounded-2xl.p-6.sticky.top-8.shadow-medium');
+            if (orderSummary) {
+                if (step === 3) {
+                    orderSummary.classList.add('hidden');
+                } else {
+                    orderSummary.classList.remove('hidden');
+                }
+            }
+
             // Show current step with animation
             setTimeout(() => {
                 if (step === 1) {
