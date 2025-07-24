@@ -186,7 +186,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">CVC Code</label>
-                                    <input type="text" id="cardCVC" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="123" maxlength="4" required>
+                                    <input type="text" id="cardCVC" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="123" maxlength="3" required>
                                     <span class="error-message text-red-500 text-sm mt-1 hidden">Please enter CVC code</span>
                                     <p class="text-xs text-gray-500 mt-1">
                                         <i class="fas fa-info-circle mr-1"></i>3 digit code on the back of your card 3
@@ -588,7 +588,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
             currentStep = step;
         }
 
-        // Form validation
+        // Form validation logic for step 1 (personal + delivery info)
         function validateCheckoutForm() {
             const fields = ['firstName', 'lastName', 'phone', 'email', 'city', 'address', 'postalCode'];
             let isValid = true;
@@ -597,21 +597,20 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                 const input = document.getElementById(field);
 
                 if (!input) {
-                    console.log(`Input with id "${field}" not found.`);
+                    console.warn(`Missing input field: ${field}`);
                     isValid = false;
                     return;
                 }
 
                 const errorMsg = input.parentElement.querySelector('.error-message');
-
                 if (!input.value.trim()) {
                     input.classList.add('border-red-500');
-                    errorMsg.classList.remove('hidden');
+                    if (errorMsg) errorMsg.classList.remove('hidden');
                     isValid = false;
                 } else {
                     input.classList.remove('border-red-500');
                     input.classList.add('border-green-500');
-                    errorMsg.classList.add('hidden');
+                    if (errorMsg) errorMsg.classList.add('hidden');
                 }
             });
 
@@ -680,11 +679,12 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                 button.disabled = false;
                 button.classList.remove('opacity-75', 'cursor-not-allowed');
                 spinner.classList.add('hidden');
+                text.textContent = 'Continue';
             }
         }
 
         // Event listeners
-        document.getElementById('continue-btn')?.addEventListener('click', async () => {
+        document?.getElementById('continue-btn').addEventListener('click', async () => {
             if (validateCheckoutForm()) {
                 setButtonLoading('continue-btn', 'continue-text', 'continue-spinner', true);
 

@@ -588,7 +588,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
             currentStep = step;
         }
 
-        // Form validation
+        // Form validation logic for step 1 (personal + delivery info)
         function validateCheckoutForm() {
             const fields = ['firstName', 'lastName', 'phone', 'email', 'city', 'address', 'postalCode'];
             let isValid = true;
@@ -597,21 +597,20 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                 const input = document.getElementById(field);
 
                 if (!input) {
-                    console.log(`Input with id "${field}" not found.`);
+                    console.warn(`Missing input field: ${field}`);
                     isValid = false;
                     return;
                 }
 
                 const errorMsg = input.parentElement.querySelector('.error-message');
-
                 if (!input.value.trim()) {
                     input.classList.add('border-red-500');
-                    errorMsg.classList.remove('hidden');
+                    if (errorMsg) errorMsg.classList.remove('hidden');
                     isValid = false;
                 } else {
                     input.classList.remove('border-red-500');
                     input.classList.add('border-green-500');
-                    errorMsg.classList.add('hidden');
+                    if (errorMsg) errorMsg.classList.add('hidden');
                 }
             });
 
@@ -685,7 +684,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
         }
 
         // Event listeners
-        document.getElementById('continue-btn')?.addEventListener('click', async () => {
+        document?.getElementById('continue-btn').addEventListener('click', async () => {
             if (validateCheckoutForm()) {
                 setButtonLoading('continue-btn', 'continue-text', 'continue-spinner', true);
 

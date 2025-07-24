@@ -16,11 +16,13 @@
 
     <!-- LUcide icons -->
     <script src="https://unpkg.com/lucide@latest/dist/lucide.umd.js"></script>
+
+    <!-- Lottie JSON -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
+
     <!-- Icons stylesheets -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-    <!-- Toasted library -->
-    <link rel="stylesheet" href="../assets/css/toasted.css">
     <!-- Custom stylesheets -->
     <link rel="stylesheet" href="css/style.css">
 

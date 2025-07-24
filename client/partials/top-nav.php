@@ -36,7 +36,7 @@ switch ($currentPage) {
     </button>
 
     <div class="text-center">
-<h2 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-custom-dark"><?php echo $header; ?></h2>
+        <h2 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-custom-dark"><?php echo $header; ?></h2>
         <?php if ($subheader): ?>
             <p class="text-gray-600 text-sm"><?php echo $subheader; ?></p>
         <?php endif; ?>
@@ -44,14 +44,14 @@ switch ($currentPage) {
 
     <a href="cart.php" class="transform hover:scale-105 transition-all duration-300">
         <div class="relative">
-            <div class="w-12 h-12 frosted-glass rounded-xl flex items-center justify-center shadow-soft hover:shadow-medium transition-all duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-custom-dark">
+            <div id="cart-icon" class="w-12 h-12 frosted-glass rounded-xl flex items-center justify-center shadow-soft hover:shadow-medium transition-all duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-custom-dark">
                     <circle cx="8" cy="21" r="1" />
                     <circle cx="19" cy="21" r="1" />
                     <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
                 </svg>
             </div>
-            <div class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-medium animate-bounce-gentle">
+            <div class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-medium animate-bounce-gentle">
                 <span id="cartCount" class="cart-badge text-white text-xs font-bold"><?php echo $cartCount; ?></span>
             </div>
         </div>

@@ -501,6 +501,10 @@ input:checked+.slider:before {
     border-color: #F97316;
 }
 
+::placeholder {
+  color: #ddd!important;
+}
+
 .payment-method {
     transition: all 0.3s ease;
     cursor: pointer;
@@ -535,6 +539,10 @@ input:checked+.slider:before {
     100% {
         transform: rotate(360deg);
     }
+}
+
+#cart-icon {
+  color: var(--accent-color)!important;
 }
 
 .cart-item {
