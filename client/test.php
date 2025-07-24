@@ -680,6 +680,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                 button.disabled = false;
                 button.classList.remove('opacity-75', 'cursor-not-allowed');
                 spinner.classList.add('hidden');
+                text.textContent = 'Continue';
             }
         }
 
