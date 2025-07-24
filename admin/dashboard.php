@@ -1,5 +1,4 @@
 <?php
-require __DIR__ . '/../config/database.php';
 require __DIR__ . '/initialize.php';
 require __DIR__ . '/util/utilities.php';
 require __DIR__ . '/partials/headers.php';
@@ -165,6 +164,9 @@ $topProducts = getTopProducts($pdo, 3);
                             <?php if (empty($topProducts)): ?>
                                 <div class="text-center text-gray-500 py-8">No top products found.</div>
                             <?php else: ?>
+                                <?php
+                                $maxOrders = max(array_column($topProducts, 'orders_count'));
+                                ?>
                                 <?php foreach ($topProducts as $product): ?>
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center space-x-3">
@@ -177,7 +179,13 @@ $topProducts = getTopProducts($pdo, 3);
                                         <div class="text-right">
                                             <p class="font-semibold text-gray-900">₦<?php echo number_format($product['total_revenue'] ?? 0, 2); ?></p>
                                             <div class="w-20 bg-gray-200 rounded-full h-2 mt-1">
-                                                <div class="bg-orange-500 h-2 rounded-full" style="width: <?php echo min(100, ($product['orders_count'] / max(array_column($topProducts, 'orders_count'))) * 100); ?>%"></div>
+                                                <?php
+                                                $width = 0;
+                                                if ($maxOrders > 0) {
+                                                    $width = min(100, ($product['orders_count'] / $maxOrders) * 100);
+                                                }
+                                                ?>
+                                                <div class="bg-orange-500 h-2 rounded-full" style="width: <?php echo $width; ?>%"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -194,7 +202,84 @@ $topProducts = getTopProducts($pdo, 3);
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
 
     <script src="js/script.js"></script>
+    <script src="js/custom-charts.js"></script>
     <script src="js/analytics.js"></script>
+    <script>
+        // Initialize Charts
+        document.addEventListener("DOMContentLoaded", function() {
+            // Sales Chart
+            const salesCtx = document.getElementById("salesChart").getContext("2d");
+            new Chart(salesCtx, {
+                type: "line",
+                data: {
+                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                    datasets: [{
+                        label: "Sales",
+                        data: [12000, 19000, 15000, 25000, 22000, 30000],
+                        borderColor: "#F97316",
+                        backgroundColor: "rgba(249, 115, 22, 0.1)",
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                    }, ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: "rgba(0, 0, 0, 0.1)",
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return "$" + value.toLocaleString();
+                                },
+                            },
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                            },
+                        },
+                    },
+                },
+            });
+
+            // Orders Chart
+            const ordersCtx = document.getElementById("ordersChart").getContext("2d");
+            new Chart(ordersCtx, {
+                type: "doughnut",
+                data: {
+                    labels: ["Chicken", "Fish", "Turkey"],
+                    datasets: [{
+                        data: [45, 35, 20],
+                        backgroundColor: ["#F97316", "#3B82F6", "#EF4444"],
+                        borderWidth: 0,
+                    }, ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                            },
+                        },
+                    },
+                },
+            });
+        });
+    </script>
 </body>
 
 </html>

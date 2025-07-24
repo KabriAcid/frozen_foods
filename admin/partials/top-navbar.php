@@ -4,16 +4,16 @@
             <button id="menuToggle" class="lg:hidden mr-4 text-gray-600 hover:text-gray-900">
                 <i data-lucide="menu" class="w-6 h-6"></i>
             </button>
-            <h1 class="text-xl font-semibold text-gray-800"><?php echo $page_title ?? 'Error'; ?></h1>
+            <h1 class="text-xl font-semibold text-gray-800"><?php echo $page_title ?? 'Dashboard'; ?></h1>
         </div>
 
         <div class="flex items-center space-x-4">
             <div class="relative hidden md:block">
-                <input type="text" placeholder="Search <?php echo strtolower($page_title) ?? 'Error'; ?>..." class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                <input type="text" placeholder="Search <?php echo strtolower($page_title ?? 'dashboard'); ?>..." class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                 <i data-lucide="search" class="absolute left-3 top-2.5 w-5 h-5 text-gray-400"></i>
             </div>
 
-            <button class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors">
+            <button class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors" onclick="window.location.href='notifications.php'">
                 <i data-lucide="bell" class="w-6 h-6"></i>
                 <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
             </button>
@@ -21,8 +21,10 @@
             <!-- User Dropdown -->
             <div class="relative">
                 <button id="userDropdown" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                    <img src="./img/avatar.jpg" alt="User" class="w-8 h-8 rounded-full">
-                    <span class="hidden md:block text-sm font-medium text-gray-700">Kabri Acid</span>
+                    <img id="navbarAvatar" src="../assets/uploads/<?php echo htmlspecialchars($admin['avatar'] ?? 'avatar.jpg'); ?>" alt="User" class="w-8 h-8 rounded-full">
+                    <span id="navbarName" class="hidden md:block text-sm font-medium text-gray-700">
+                        <?php echo htmlspecialchars(($admin['first_name'] ?? '') . ' ' . ($admin['last_name'] ?? '')); ?>
+                    </span>
                     <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 transition-transform duration-200" id="dropdownIcon"></i>
                 </button>
 
@@ -31,11 +33,14 @@
                     <!-- User Info -->
                     <div class="px-4 py-3 border-b border-gray-100">
                         <div class="flex items-center space-x-3">
-                            <img src="./img/avatar.jpg" alt="User" class="w-10 h-10 rounded-full">
+                            <img id="navbarDropdownAvatar" src="../assets/uploads/<?php echo htmlspecialchars($admin['avatar'] ?? 'avatar.jpg'); ?>" alt="User" class="w-10 h-10 rounded-full">
                             <div>
-                                <p class="text-sm font-medium text-gray-900">Kabri Acid</p>
-                                <p class="text-xs text-gray-500">Admin</p>
-                                <p class="text-xs text-gray-400">kabriacid01@gmail.com</p>
+                                <p id="navbarDropdownName" class="text-sm font-medium text-gray-900">
+                                    <?php echo htmlspecialchars(($admin['first_name'] ?? '') . ' ' . ($admin['last_name'] ?? '')); ?>
+                                </p>
+                                <p id="navbarDropdownEmail" class="text-xs text-gray-400">
+                                    <?php echo htmlspecialchars($admin['email'] ?? ''); ?>
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -46,7 +51,7 @@
                             <i data-lucide="user" class="w-4 h-4 mr-3 text-gray-400"></i>
                             My Profile
                         </a>
-                        <a href="account-settings.php" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                        <a href="settings.php" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                             <i data-lucide="settings" class="w-4 h-4 mr-3 text-gray-400"></i>
                             Account Settings
                         </a>

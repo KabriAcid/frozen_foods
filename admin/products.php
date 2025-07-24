@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/../config/database.php';
+require __DIR__ . '/initialize.php';
 require __DIR__ . '/util/utilities.php';
 require __DIR__ . '/partials/headers.php';
 
@@ -366,9 +366,9 @@ $products = getAllProducts($pdo);
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
 
     <script src="js/script.js"></script>
-    <script src="js/confirmation-modal.js"></script>
-    <script src="js/loading-overlay.js"></script>
-    <script src="js/toast.js"></script>
+    <script src="../assets/js/confirmation-modal.js"></script>
+    <script src="../assets/js/loading-overlay.js"></script>
+    <script src="../assets/js/toast.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Modal elements

@@ -20,8 +20,8 @@ if (!$user) {
 
 // Fetch user's recent orders
 $userOrders = getUserOrders($pdo, $user_id, 5);
-// Fetch user activity
-$userActivity = getUserActivity($pdo, $user_id, 10);
+// fetch user wallet balance
+$userWallet = getUserWallet($pdo, $user_id);
 
 $orders = $userOrders['orders'];
 ?>
@@ -63,44 +63,52 @@ $orders = $userOrders['orders'];
             </div>
 
             <!-- User Profile Header -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-8 overflow-hidden">
-                <!-- Cover Background -->
-                <div class="h-32 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600"></div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+                <div class="relative">
+                    <!-- Cover Photo -->
+                    <div class="h-48 bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 rounded-t-lg relative overflow-hidden">
+                        <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                        <button class="absolute top-4 right-4 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-lg transition-all duration-200 backdrop-blur-sm">
+                            <i data-lucide="camera" class="w-5 h-5"></i>
+                        </button>
+                    </div>
 
-                <!-- Profile Content -->
-                <div class="relative px-6 pb-6">
-                    <!-- Avatar -->
-                    <div class="flex items-end justify-between -mt-16">
-                        <div class="flex items-end space-x-6">
-                            <img src="../assets/uploads/<?= htmlspecialchars($user['avatar']) ?>"
-                                alt="User Avatar"
-                                class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover bg-white">
-                            <div class="pb-2">
-                                <h1 class="text-2xl font-bold text-gray-900"><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></h1>
-                                <p class="text-gray-600 capitalize"><?= htmlspecialchars($user['role']) ?></p>
-                                <div class="flex items-center mt-2 space-x-4">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <?= $user['status'] === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' ?>">
-                                        <i data-lucide="<?= $user['status'] === 'Active' ? 'check-circle' : 'clock' ?>" class="w-4 h-4 mr-1"></i>
-                                        <?= htmlspecialchars($user['status']) ?>
-                                    </span>
-                                    <span class="text-sm text-gray-500">
-                                        <i data-lucide="calendar" class="w-4 h-4 inline mr-1"></i>
-                                        Joined <?= date('M d, Y', strtotime($user['created_at'])) ?>
+                    <!-- Profile Info -->
+                    <div class="relative px-6 py-4 pb-6">
+                        <div class="flex flex-col sm:flex-row sm:items-end sm:space-x-6">
+                            <!-- Avatar -->
+                            <div class="relative -mt-16 mb-4 sm:mb-0">
+                                <img src="../assets/uploads/<?= htmlspecialchars($user['avatar']) ?>"
+                                    alt="<?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?>"
+                                    class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
+                            </div>
+
+                            <!-- User Info -->
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <h1 class="text-2xl font-bold text-gray-900" id="fullName">
+                                        <?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?>
+                                    </h1>
+                                    <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
+                                        <?= htmlspecialchars(ucwords($user['role'])) ?>
                                     </span>
                                 </div>
+                                <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                                    <div class="flex items-center">
+                                        <i data-lucide="calendar" class="w-4 h-4 mr-1"></i>
+                                        Admin since <?= date('M Y', strtotime($user['created_at'])) ?>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Action Buttons -->
-                        <div class="flex items-center space-x-3 pb-2">
-                            <button onclick="openEditUserModal()" class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-all duration-200 flex items-center shadow-sm hover:shadow-md">
-                                <i data-lucide="edit" class="w-4 h-4 mr-2"></i>
-                                Edit User
-                            </button>
-                            <button onclick="openDeleteConfirmModal()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-200 flex items-center shadow-sm hover:shadow-md">
-                                <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>
-                                Delete
-                            </button>
+                            <!-- Action Buttons -->
+                            <div class="flex items-center space-x-3 mt-4 sm:mt-0">
+                                <button id="editProfileBtn" onclick="openEditUserModal()" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center shadow-sm">
+                                    <i data-lucide="edit" class="w-4 h-4 mr-2"></i>
+                                    Edit Profile
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -112,6 +120,33 @@ $orders = $userOrders['orders'];
                 <div class="lg:col-span-2 space-y-6">
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Wallet Balance -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Wallet Balance</p>
+                                    <p class="text-2xl font-bold text-orange-600">₦<?= number_format((float)$userWallet['balance'], 2) ?></p>
+                                </div>
+                                <div class="bg-orange-50 p-3 rounded-lg">
+                                    <i data-lucide="wallet" class="w-6 h-6 text-orange-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Spent -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Total Spent</p>
+                                    <p class="text-2xl font-bold text-gray-500">₦<?= number_format((float)$userOrders['total_spent'], 2) ?></p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    <i data-lucide="dollar-sign" class="w-6 h-6 text-gray-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Orders -->
                         <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -123,33 +158,8 @@ $orders = $userOrders['orders'];
                                 </div>
                             </div>
                         </div>
-
-                        <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-gray-600">Total Spent</p>
-                                    <p class="text-2xl font-bold text-green-600">₦<?= number_format((float)$userOrders['total_spent'], 2) ?></p>
-                                </div>
-                                <div class="bg-green-50 p-3 rounded-lg">
-                                    <i data-lucide="dollar-sign" class="w-6 h-6 text-green-600"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-gray-600">Avg. Order Value</p>
-                                    <p class="text-2xl font-bold text-purple-600">
-                                        ₦<?= $userOrders['order_count'] > 0 ? number_format((float)$userOrders['total_spent'] / (int)$userOrders['order_count'], 2) : '0.00' ?>
-                                    </p>
-                                </div>
-                                <div class="bg-purple-50 p-3 rounded-lg">
-                                    <i data-lucide="trending-up" class="w-6 h-6 text-purple-600"></i>
-                                </div>
-                            </div>
-                        </div>
                     </div>
+
 
                     <!-- Recent Orders -->
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -260,7 +270,7 @@ $orders = $userOrders['orders'];
                                 </p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-500">Verified</p>
+                                <p class="text-sm text-gray-500">Verification status</p>
                                 <p class="text-sm font-medium <?= $user['verified'] ? 'text-green-600' : 'text-red-600' ?>">
                                     <?= $user['verified'] ? 'Verified' : 'Not Verified' ?>
                                 </p>
@@ -408,7 +418,7 @@ $orders = $userOrders['orders'];
                         <button type="button" id="cancelEditBtn" class="px-6 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium">
                             Cancel
                         </button>
-                        <button id="submitEditBtn" type="submit" form="editUserForm" class="px-6 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5 flex items-center">
+                        <button id="submitEditBtn" type="button" form="editUserForm" class="px-6 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all duration-200 font-medium hover:shadow-lg transform hover:-translate-y-0.5 flex items-center">
                             <i data-lucide="save" class="w-4 h-4 mr-2"></i>
                             Save Changes
                         </button>
@@ -464,7 +474,7 @@ $orders = $userOrders['orders'];
                     </div>
                     <div class="flex justify-end gap-2">
                         <button type="button" onclick="closeEmailModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">Send</button>
+                        <button type="submit" onclick="sendEmailBtn()" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">Send</button>
                     </div>
                 </form>
             </div>
@@ -513,12 +523,12 @@ $orders = $userOrders['orders'];
 
 
     <!-- Overlay for mobile sidebar -->
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
 
     <script src="js/script.js"></script>
-    <script src="js/confirmation-modal.js"></script>
-    <script src="js/loading-overlay.js"></script>
-    <script src="js/toast.js"></script>
+    <script src="../assets/js/confirmation-modal.js"></script>
+    <script src="../assets/js/loading-overlay.js"></script>
+    <script src="../assets/js/toast.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Modal elements
@@ -643,6 +653,7 @@ $orders = $userOrders['orders'];
                 const formData = new FormData(editUserForm);
                 const submitBtn = document.getElementById('submitEditBtn');
                 const originalText = submitBtn.innerHTML;
+                submitBtn.addEventListener('click', alert('Submitting edit form'));
 
                 // Show loading state
                 submitBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Saving...';
@@ -743,8 +754,7 @@ $orders = $userOrders['orders'];
                 lucide.createIcons();
             }
         });
-    </script>
-    <script>
+
         // Email Modal
         const sendEmailModal = document.getElementById('sendEmailModal');
         const emailModalContent = document.getElementById('emailModalContent');
@@ -766,36 +776,61 @@ $orders = $userOrders['orders'];
             }, 300);
         }
 
-        document.getElementById("sendEmailForm").addEventListener("submit", async function(e) {
-            e.preventDefault();
-            const form = e.target;
-            const submitBtn = form.querySelector("button[type='submit']");
-            const original = submitBtn.innerHTML;
 
-            submitBtn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-4 h-4 mr-2"></i>Sending...`;
-            submitBtn.disabled = true;
+        // Send Email Function
+        async function sendEmailBtn() {
+            e.preventDefault();
+            const form = document.getElementById('sendEmailForm');
+            const overlay = document.getElementById('overlay');
+
+            // Collect form data
+            const formData = new FormData(form);
+            const userId = formData.get('user_id');
+            const subject = formData.get('subject').trim();
+            const message = formData.get('message').trim();
+
+            console.log('Sending email to user ID:', userId);
+
+            // Simple validation
+            if (!subject || !message) {
+                showToasted("Subject and message are required.", "error");
+                return;
+            }
+
+            // Show overlay
+            overlay.classList.remove('hidden');
 
             try {
-                const formData = new FormData(form);
-                const res = await fetch('api/send-email.php', {
+                const response = await fetch('api/send-email.php', {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        subject: subject,
+                        message: message
+                    })
                 });
-                const data = await res.json();
 
-                if (data.success) {
-                    showToasted("Email sent successfully!", "success");
+                const result = await response.json();
+
+                if (result.success) {
+                    showToasted(result.message || 'Email sent successfully.', 'success');
                     closeEmailModal();
+                    form.reset();
                 } else {
-                    showToasted(data.message || "Failed to send email", "error");
+                    showToasted(result.message || 'Failed to send email.', 'error');
                 }
             } catch (error) {
-                showToasted("Something went wrong while sending email", "error");
+                console.error('Error sending email:', error);
+                showToasted('An error occurred while sending the email.', 'error');
             } finally {
-                submitBtn.innerHTML = original;
-                submitBtn.disabled = false;
+                // Hide overlay
+                overlay.classList.add('hidden');
             }
-        });
+        }
+
 
         // Reset Modal
         const resetPasswordModal = document.getElementById('resetPasswordModal');

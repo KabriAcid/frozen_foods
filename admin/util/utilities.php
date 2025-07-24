@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 /**
  * Fetch admin dashboard statistics: total orders, total revenue, active users, total products
  * @param PDO $pdo
@@ -48,6 +51,68 @@ function getDashboardStats($pdo)
     }
 }
 
+function getAdminProfile($pdo, $admin_id){
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM admins WHERE id = ?");
+        $stmt->execute([$admin_id]);
+        $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$admin) {
+            header("Location: logout.php");
+            exit;
+        }
+
+        return $admin;
+    } catch (PDOException $th) {
+        error_log("[ADMIN FETCH ERRO]: Couldn't fetch admin data");
+        return [];
+    }
+}
+function getRecentOrders($pdo, $limit = 5)
+{
+    try {
+        $limit = (int)$limit;
+        $stmt = $pdo->prepare("SELECT * FROM orders ORDER BY created_at DESC LIMIT $limit");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching recent orders: " . $e->getMessage());
+        return [];
+    }
+}
+
+function getTopProducts($pdo, $limit = 3)
+{
+    try {
+        $limit = (int)$limit;
+        if ($limit <= 0) {
+            return [];
+        }
+        // Get all products
+        $stmt = $pdo->prepare("SELECT id, name, image FROM products ORDER BY id DESC LIMIT ?");
+        $stmt->bindValue(1, (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // For each product, get orders_count and total_revenue
+        foreach ($products as &$product) {
+            $orderStmt = $pdo->prepare("SELECT COUNT(*) AS orders_count, SUM(quantity * unit_price) AS total_revenue 
+                                        FROM order_items 
+                                        WHERE product_id = ?
+                                        ");
+            $orderStmt->execute([$product['id']]);
+            $orderStats = $orderStmt->fetch(PDO::FETCH_ASSOC);
+            $product['orders_count'] = (int)($orderStats['orders_count'] ?? 0);
+            $product['total_revenue'] = (float)($orderStats['total_revenue'] ?? 0);
+        }
+        unset($product);
+
+        return $products;
+    } catch (PDOException $e) {
+        error_log("Error fetching top products: " . $e->getMessage());
+        return [];
+    }
+}
 function getUsersData(PDO $pdo): array
 {
     try {
@@ -125,43 +190,6 @@ function getAllUsersStats(PDO $pdo): array
     }
 }
 
-
-function getRecentOrders($pdo, $limit = 5){
-    try {
-        $limit = (int)$limit;
-        $stmt = $pdo->prepare("SELECT * FROM orders ORDER BY created_at DESC LIMIT $limit");
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        error_log("Error fetching recent orders: " . $e->getMessage());
-        return [];
-    }
-}
-
-function getTopProducts($pdo, $limit = 3)
-{
-    try {
-        // Get all products
-        $stmt = $pdo->prepare("SELECT id, name, image FROM products ORDER BY id DESC LIMIT $limit");
-        $stmt->execute();
-        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // For each product, get orders_count and total_revenue
-        foreach ($products as &$product) {
-            $orderStmt = $pdo->prepare("SELECT COUNT(*) AS orders_count, SUM(total_amount) AS total_revenue FROM orders WHERE product_id = ?");
-            $orderStmt->execute([$product['id']]);
-            $orderStats = $orderStmt->fetch(PDO::FETCH_ASSOC);
-            $product['orders_count'] = (int)($orderStats['orders_count'] ?? 0);
-            $product['total_revenue'] = (float)($orderStats['total_revenue'] ?? 0);
-        }
-        unset($product);
-
-        return $products;
-    } catch (PDOException $e) {
-        error_log("Error fetching top products: " . $e->getMessage());
-        return [];
-    }
-}
 
 /**
  * Fetch total orders count
@@ -946,25 +974,98 @@ function getUserOrders(PDO $pdo, int $userId, int $limit = 5): array
     }
 }
 
-
-
-// Function for getting user activity
-function getUserActivity(PDO $pdo, int $userId, int $limit = 10): array
+function getUserWallet(PDO $pdo, int $userId): array
 {
     try {
-        // Safely bind both user ID and limit
-        $stmt = $pdo->prepare("
-            SELECT * FROM user_activity 
-            WHERE user_id = :userId 
-            ORDER BY activity_time DESC 
-            LIMIT :limit
-        ");
-        $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->execute();
+        // Fetch user wallet balance
+        $stmt = $pdo->prepare("SELECT balance FROM wallets WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $wallet = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($wallet) {
+            return [
+                'user_id' => $userId,
+                'balance' => (float) $wallet['balance']
+            ];
+        } else {
+            return [
+                'user_id' => $userId,
+                'balance' => 0.0
+            ];
+        }
+    } catch (PDOException $e) {
+        error_log("Error fetching user wallet: " . $e->getMessage());
+        return [
+            'user_id' => $userId,
+            'balance' => 0.0
+        ];
+    }
+}
+
+// function for getting admin activity log
+function getAdminActivityLog(PDO $pdo, int $adminId, int $limit = 10): array
+{
+    try {
+        $limit = (int)$limit; // Ensure it's an integer
+        $stmt = $pdo->prepare("SELECT * FROM admin_activity_log WHERE admin_id = ? ORDER BY created_at DESC LIMIT $limit");
+        $stmt->execute([$adminId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        error_log("Error fetching user activity: " . $e->getMessage());
+        error_log("Error fetching admin activity log: " . $e->getMessage());
         return [];
+    }
+}
+
+// Function for login admin activity
+function logAdminActivity($pdo, $adminId, $action, $details = '') {
+    $stmt = $pdo->prepare("INSERT INTO admin_activity_log (admin_id, action, details, created_at) VALUES (?, ?, ?, NOW())");
+    $stmt->execute([$adminId, $action, $details]);
+}
+
+/**
+ * Get system overview statistics for the admin dashboard.
+ * Returns an associative array with keys:
+ * - total_users
+ * - orders_today
+ * - products_live
+ * - revenue_today
+ * - system_uptime
+ * - pending_tasks
+ */
+function getSystemOverview(PDO $pdo): array
+{
+    try {
+        $totalUsers = $pdo->query("SELECT COUNT(*) FROM users WHERE DATE(created_at) = CURDATE()")->fetchColumn() ?: 0;
+        $ordersToday = $pdo->query("SELECT COUNT(*) FROM orders WHERE DATE(created_at) = CURDATE()")->fetchColumn() ?: 0;
+        // FIX: Correct query for active products
+        $productsLive = $pdo->query("SELECT COUNT(*) FROM products WHERE is_active = 1")->fetchColumn() ?: 0;
+        $revenueToday = $pdo->query("SELECT SUM(total_amount) FROM orders WHERE DATE(created_at) = CURDATE()")->fetchColumn();
+        $revenueToday = $revenueToday !== null ? $revenueToday : 0;
+        // You can replace this with a real uptime calculation if available
+        $systemUptime = '99.9%';
+        // Add pending tasks if you have a tasks table
+        $pendingTasks = 0;
+        if ($pdo->query("SHOW TABLES LIKE 'tasks'")->fetch()) {
+            $pendingTasks = $pdo->query("SELECT COUNT(*) FROM tasks WHERE status = 'pending'")->fetchColumn() ?: 0;
+        }
+
+        return [
+            'total_users'   => (int)$totalUsers,
+            'orders_today'  => (int)$ordersToday,
+            'products_live' => (int)$productsLive,
+            'revenue_today' => (float)$revenueToday,
+            'system_uptime' => $systemUptime,
+            'pending_tasks' => (int)$pendingTasks,
+        ];
+    } catch (PDOException $e) {
+        error_log("Error fetching system overview: " . $e->getMessage());
+        return [
+            'total_users'   => 0,
+            'orders_today'  => 0,
+            'products_live' => 0,
+            'revenue_today' => 0.0,
+            'system_uptime' => 'N/A',
+            'pending_tasks' => 0,
+        ];
     }
 }
