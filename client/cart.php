@@ -195,6 +195,73 @@ $total = $subtotal + $delivery_fee;
     </div>
 
     <script>
+
+        // Custom confirm modal functionality
+        function showCustomConfirm(title, message, iconClass = 'fa-exclamation-triangle', iconColor = 'text-red-500') {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('confirm-modal');
+                const modalContent = document.getElementById('confirm-modal-content');
+                const titleEl = document.getElementById('confirm-title');
+                const messageEl = document.getElementById('confirm-message');
+                const iconEl = document.getElementById('confirm-icon');
+                const cancelBtn = document.getElementById('confirm-cancel');
+                const okBtn = document.getElementById('confirm-ok');
+
+                // Set content
+                titleEl.textContent = title;
+                messageEl.textContent = message;
+                iconEl.className = `fas ${iconClass} ${iconColor} text-2xl`;
+
+                // Show modal with animation
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                }, 10);
+
+                // Handle buttons
+                const handleCancel = () => {
+                    hideModal();
+                    resolve(false);
+                };
+
+                const handleConfirm = () => {
+                    hideModal();
+                    resolve(true);
+                };
+
+                const hideModal = () => {
+                    modalContent.classList.remove('scale-100', 'opacity-100');
+                    modalContent.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        cancelBtn.removeEventListener('click', handleCancel);
+                        okBtn.removeEventListener('click', handleConfirm);
+                    }, 300);
+                };
+
+                // Add event listeners
+                cancelBtn.addEventListener('click', handleCancel);
+                okBtn.addEventListener('click', handleConfirm);
+
+                // Close on backdrop click
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        handleCancel();
+                    }
+                });
+
+                // Close on escape key
+                const handleEscape = (e) => {
+                    if (e.key === 'Escape') {
+                        handleCancel();
+                        document.removeEventListener('keydown', handleEscape);
+                    }
+                };
+                document.addEventListener('keydown', handleEscape);
+            });
+        }
+
         // Initialize cart page
         document.addEventListener('DOMContentLoaded', function() {
             initializeSidebar();
