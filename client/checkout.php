@@ -280,7 +280,6 @@
                 <!-- Step 1: Checkout -->
                 <div id="checkout-step" class="animate-fade-in">
                     <h2 class="text-2xl font-bold text-dark mb-6">Checkout</h2>
-
                     <form id="checkout-form" class="space-y-6">
                         <!-- Personal Information -->
                         <div class="bg-white rounded-2xl p-6 shadow-soft border border-slate-200">
@@ -288,27 +287,30 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                                    <input type="text" id="firstName" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="Anna" required>
+                                    <input type="text" id="firstName" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="e.g Ademu" required>
                                     <span class="error-message text-red-500 text-sm mt-1 hidden">Please enter your first name</span>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                                    <input type="text" id="lastName" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="Montgomery" required>
+                                    <input type="text" id="lastName" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="e.g Rabiu" required>
                                     <span class="error-message text-red-500 text-sm mt-1 hidden">Please enter your last name</span>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                                     <div class="relative">
-                                        <input type="tel" id="phone" class="form-input w-full px-4 py-3 pl-16 rounded-xl focus:outline-none" placeholder="+604 555-0246" required>
+                                        <input type="tel" id="phone" class="form-input w-full px-4 py-3 pl-16 rounded-xl focus:outline-none" placeholder="70-3949-5494" required>
                                         <div class="absolute left-4 top-1/2 transform -translate-y-1/2 flex items-center">
-                                            <span class="text-red-500 text-lg mr-1">🇨🇦</span>
+                                            <span class="text-red-500 text-lg mr-1">
+                                                <!-- nigerian flag image -->
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Flag_of_Nigeria.svg/32px-Flag_of_Nigeria.svg.png" alt="Nigeria Flag" class="w-6 h-6 rounded-full">
+                                            </span>
                                         </div>
                                     </div>
                                     <span class="error-message text-red-500 text-sm mt-1 hidden">Please enter a valid phone number</span>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                                    <input type="email" id="email" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="montgomery.anna@gmail.com" required>
+                                    <input type="email" id="email" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="e.g adamurabiu@gmail.com" required>
                                     <span class="error-message text-red-500 text-sm mt-1 hidden">Please enter a valid email address</span>
                                 </div>
                             </div>
@@ -322,20 +324,20 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
                                     <select id="city" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" required>
                                         <option value="">Select City</option>
-                                        <option value="vancouver" selected>Vancouver, BC</option>
-                                        <option value="toronto">Toronto, ON</option>
-                                        <option value="montreal">Montreal, QC</option>
+                                        <option value="abuja" selected>Abuja</option>
+                                        <option value="kaduna">Kaduna</option>
+                                        <option value="lagos">Lagos</option>
                                     </select>
                                     <span class="error-message text-red-500 text-sm mt-1 hidden">Please select a city</span>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
-                                    <input type="text" id="address" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="123 Granville St" required>
+                                    <input type="text" id="address" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="e.g 34 Main St" required>
                                     <span class="error-message text-red-500 text-sm mt-1 hidden">Please enter your address</span>
                                 </div>
                                 <div class="md:col-span-2">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Postal Code</label>
-                                    <input type="text" id="postalCode" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="V6Z 1N6" required>
+                                    <input type="text" id="postalCode" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none" placeholder="e.g 223466" required>
                                     <span class="error-message text-red-500 text-sm mt-1 hidden">Please enter a valid postal code</span>
                                 </div>
                             </div>
@@ -643,36 +645,6 @@
             }
         }
 
-        // Toast notification function (as requested by user)
-        function showToasted(type, message) {
-            const toast = document.createElement('div');
-            toast.className = `p-4 rounded-lg shadow-large max-w-sm animate-slide-right ${
-                type === 'success' ? 'bg-green-500 text-white' :
-                type === 'error' ? 'bg-red-500 text-white' :
-                type === 'warning' ? 'bg-yellow-500 text-white' :
-                'bg-blue-500 text-white'
-            }`;
-
-            toast.innerHTML = `
-                <div class="flex items-center space-x-2">
-                    <i class="fas ${
-                        type === 'success' ? 'fa-check-circle' :
-                        type === 'error' ? 'fa-exclamation-circle' :
-                        type === 'warning' ? 'fa-exclamation-triangle' :
-                        'fa-info-circle'
-                    }"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-
-            document.getElementById('toast-container').appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.transform = 'translateX(100%)';
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
 
         // Step management
         let currentStep = 1;
@@ -727,6 +699,13 @@
 
             fields.forEach(field => {
                 const input = document.getElementById(field);
+                
+                if (!input) {
+                    console.warn(`Input with id "${field}" not found.`);
+                    isValid = false;
+                    return;
+                }
+
                 const errorMsg = input.parentElement.querySelector('.error-message');
 
                 if (!input.value.trim()) {
@@ -830,16 +809,16 @@
 
                     // Success - move to next step
                     showStep(2);
-                    showToasted('success', 'Personal information saved successfully!');
+                    showToasted('Personal information saved successfully!', 'success');
 
                 } catch (error) {
-                    showToasted('error', 'Failed to save information. Please try again.');
+                    showToasted('Failed to save information. Please try again.', 'error');
                 } finally {
                     setButtonLoading('continue-btn', 'continue-text', 'continue-spinner', false);
                     document.getElementById('continue-text').textContent = 'Continue';
                 }
             } else {
-                showToasted('error', 'Please fill in all required fields correctly.');
+                showToasted('Please fill in all required fields correctly.', 'error');
             }
         });
 
@@ -870,29 +849,29 @@
 
                     // Success - move to confirmation
                     showStep(3);
-                    showToasted('success', 'Payment processed successfully!');
+                    showToasted('Payment processed successfully!', 'success');
 
                     // Send confirmation email simulation
                     setTimeout(() => {
-                        showToasted('info', 'Order confirmation sent to your email.');
+                        showToasted('Order confirmation sent to your email.', 'info');
                     }, 2000);
 
                 } catch (error) {
-                    showToasted('error', 'Payment processing failed. Please check your details and try again.');
+                    showToasted('Payment processing failed. Please check your details and try again.', 'error');
                 } finally {
                     setButtonLoading('purchase-btn', 'purchase-text', 'purchase-spinner', false);
                     document.getElementById('purchase-text').textContent = 'Purchase';
                 }
             } else {
-                showToasted('error', 'Please fill in all payment details correctly.');
+                showToasted('Please fill in all payment details correctly.', 'error');
             }
         });
 
         document.getElementById('track-btn').addEventListener('click', () => {
-            showToasted('info', 'Redirecting to order tracking...');
+            showToasted('Redirecting to order tracking...', 'info');
             // Simulate redirect
             setTimeout(() => {
-                showToasted('success', 'Order tracking page loaded!');
+                showToasted('Order tracking page loaded!', 'success');
             }, 1500);
         });
 
@@ -901,7 +880,7 @@
             method.addEventListener('click', () => {
                 document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
                 method.classList.add('selected');
-                showToasted('info', `${method.dataset.method} selected as payment method.`);
+                showToasted(`${method.dataset.method} selected as payment method.`, 'info');
             });
         });
 
