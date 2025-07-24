@@ -293,7 +293,7 @@ require __DIR__ . '/../components/header.php';
                     <div class="text-center mt-8">
                         <p class="text-gray-600">
                             Already have an account?
-                            <a href="login.php"
+                            <a href="index.php"
                                 class="text-orange-500 hover:text-orange-600 font-semibold transition-colors duration-200">
                                 Sign In
                             </a>

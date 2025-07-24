@@ -8,7 +8,7 @@ if (!isset($_SESSION['admin_id'])) {
 try {
     $stmt = $pdo->prepare("SELECT * FROM admins WHERE id = ?");
     $stmt->execute([$_SESSION['admin_id']]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     error_log("Database error: " . $e->getMessage());
     exit();

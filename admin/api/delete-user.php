@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../config/database.php';
+require __DIR__ . '/initialize.php';
 require_once __DIR__ . '/../util/utilities.php';
 
 // Set JSON response header
@@ -44,10 +44,6 @@ try {
         sendResponse(false, 'User not found');
     }
 
-    // Prevent deletion of admin users (optional security measure)
-    if ($user['role'] === 'admin') {
-        sendResponse(false, 'Cannot delete admin users');
-    }
 
     // Start transaction
     $pdo->beginTransaction();
@@ -61,17 +57,17 @@ try {
         $stmt = $pdo->prepare("UPDATE orders SET user_id = NULL WHERE user_id = ?");
         $stmt->execute([$user_id]);
 
-        // Delete user's cart items
-        $stmt = $pdo->prepare("DELETE FROM cart_items WHERE user_id = ?");
-        $stmt->execute([$user_id]);
+        // // Delete user's cart items
+        // $stmt = $pdo->prepare("DELETE FROM cart_items WHERE user_id = ?");
+        // $stmt->execute([$user_id]);
 
-        // Delete user's addresses
-        $stmt = $pdo->prepare("DELETE FROM user_addresses WHERE user_id = ?");
-        $stmt->execute([$user_id]);
+        // // Delete user's addresses
+        // $stmt = $pdo->prepare("DELETE FROM user_addresses WHERE user_id = ?");
+        // $stmt->execute([$user_id]);
 
-        // Delete user's reviews
-        $stmt = $pdo->prepare("DELETE FROM product_reviews WHERE user_id = ?");
-        $stmt->execute([$user_id]);
+        // // Delete user's reviews
+        // $stmt = $pdo->prepare("DELETE FROM product_reviews WHERE user_id = ?");
+        // $stmt->execute([$user_id]);
 
         // Delete the user
         $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");

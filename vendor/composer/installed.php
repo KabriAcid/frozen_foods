@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => 'dev-main',
-        'version' => 'dev-main',
-        'reference' => '39e920a8a292bccaac79ccc7c2cebb18ef5818ee',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => 'e7e9a52a518ebc80914ed9e3816afd2ef950b6f5',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-main',
-            'version' => 'dev-main',
-            'reference' => '39e920a8a292bccaac79ccc7c2cebb18ef5818ee',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => 'e7e9a52a518ebc80914ed9e3816afd2ef950b6f5',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -43,15 +43,6 @@
             'reference' => 'e3fac8b24f56113f7cb96af14958c0dd16330f54',
             'type' => 'library',
             'install_path' => __DIR__ . '/../phpoption/phpoption',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'plasticbrain/php-flash-messages' => array(
-            'pretty_version' => 'v1.0.1',
-            'version' => '1.0.1.0',
-            'reference' => 'b565762619342057ce561de20d0f2f6e14f9aa77',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../plasticbrain/php-flash-messages',
             'aliases' => array(),
             'dev_requirement' => false,
         ),

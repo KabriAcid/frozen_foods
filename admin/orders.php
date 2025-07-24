@@ -1,5 +1,4 @@
 <?php
-require __DIR__ . '/../config/database.php';
 require __DIR__ . '/initialize.php';
 require __DIR__ . '/util/utilities.php';
 require __DIR__ . '/partials/headers.php';
@@ -162,7 +161,7 @@ $orders = getAllOrders($pdo);
                                             <?php echo date('M d, Y', strtotime($order['created_at'])); ?>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                            <a href="view-order.php?order_number=<?= $order['order_number'] ?>" class="text-xs bg-gray-100 px-3 rounded py-1 text-orange-600 hover:text-orange-900 mr-3">View</a>
+                                            <a href="view-order.php?order_number=<?= urlencode($order['order_number']) ?>" class="text-xs bg-gray-100 px-3 rounded py-1 text-orange-600 hover:text-orange-900 mr-3">View</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

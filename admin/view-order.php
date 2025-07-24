@@ -1,19 +1,9 @@
 <?php
-require __DIR__ . '/../config/database.php';
-                                                            require __DIR__ . '/initialize.php';
-
-                                                            require __DIR__ . '/util/utilities.php';
+require __DIR__ . '/initialize.php';
+require __DIR__ . '/util/utilities.php';
 require __DIR__ . '/partials/headers.php';
 
-// Get order ID from URL parameter
-$orderNumber = isset($_GET['order_number']) ? (int)$_GET['order_number'] : 0;
-
-if (!$orderNumber) {
-    header('Location: orders.php');
-    exit;
-}
-
-// Get order details
+$orderNumber = $_GET['order_number'] ?? '';
 $order = getOrderByNumber($pdo, $orderNumber);
 if (!$order) {
     header('Location: orders.php');
@@ -27,7 +17,6 @@ $product = getProductById($pdo, $order['product_id']);
 
 <body class="bg-gray-50 font-sans">
     <?php require __DIR__ . '/partials/sidebar.php'; ?>
-
     <!-- Main Content -->
     <div class="main-content lg:ml-64">
         <!-- Top Navigation -->
@@ -273,7 +262,7 @@ $product = getProductById($pdo, $order['product_id']);
                                 </div>
                             </div>
                             <div class="mt-4 pt-4 border-t border-gray-200">
-                                <a href="users.php?user_id=<?= htmlspecialchars($customer['id']); ?>" class="w-full bg-gray-100 block text-center text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+                                <a href="view-user.php?id=<?= htmlspecialchars($customer['id']); ?>" class="w-full bg-gray-100 block text-center text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
                                     View Customer Profile
                                 </a>
                             </div>

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../initialize.php';
 require_once __DIR__ . '/../util/utilities.php';
 
 // Set JSON response header

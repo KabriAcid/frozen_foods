@@ -1,0 +1,12 @@
+-- USERS --
+- Updated users last login in the login logic page.
+- Verified status not functioning properly.
+- Email sending functionality failed.
+- Create an activity branch to insert activities log where necessary
+- Create a consistency branch for consistency.
+- Pending tasks functionlity
+- Make the role a select form in the admin
+- Add breadcrumbs in necessary files.
+- Fix the security old password validation
+- A custom vector for 0 data found.
+- Fixing the cart count in the product page

@@ -1,5 +1,20 @@
 <?php
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
+
+// Map main pages to their related subpages for active highlighting
+$page_groups = [
+    'dashboard'    => ['dashboard'],
+    'orders'       => ['orders', 'view-order'],
+    'products'     => ['products', 'view-product'],
+    'analytics'    => ['analytics'],
+    'users'        => ['users', 'view-user'],
+    'notifications'=> ['notifications'],
+    'settings'     => ['settings'],
+];
+
+function is_active($group, $current_page, $page_groups) {
+    return in_array($current_page, $page_groups[$group]);
+}
 $page_titles = [
     'dashboard' => 'Dashboard',
     'orders' => 'Orders',
@@ -30,23 +45,23 @@ $page_title = isset($page_titles[$current_page]) ? $page_titles[$current_page] :
         <div class="px-6 mb-6">
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Main</h3>
         </div>
-        <a href="dashboard.php" class="flex items-center px-6 py-3 <?php echo $current_page === 'dashboard' ? 'text-gray-700 bg-orange-50 border-r-4 border-orange-500' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'; ?>">
+        <a href="dashboard.php" class="flex items-center px-6 py-3 <?php echo is_active('dashboard', $current_page, $page_groups) ? 'text-gray-700 bg-orange-50 border-r-4 border-orange-500' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'; ?>">
             <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
             <span class="font-medium">Dashboard</span>
         </a>
-        <a href="orders.php" class="flex items-center px-6 py-3 <?php echo $current_page === 'orders' ? 'text-gray-700 bg-orange-50 border-r-4 border-orange-500' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'; ?>">
+        <a href="orders.php" class="flex items-center px-6 py-3 <?php echo is_active('orders', $current_page, $page_groups) ? 'text-gray-700 bg-orange-50 border-r-4 border-orange-500' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'; ?>">
             <i data-lucide="shopping-cart" class="w-5 h-5 mr-3"></i>
             <span>Orders</span>
         </a>
-        <a href="products.php" class="flex items-center px-6 py-3 <?php echo $current_page === 'products' ? 'text-gray-700 bg-orange-50 border-r-4 border-orange-500' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'; ?>">
+        <a href="products.php" class="flex items-center px-6 py-3 <?php echo is_active('products', $current_page, $page_groups) ? 'text-gray-700 bg-orange-50 border-r-4 border-orange-500' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'; ?>">
             <i data-lucide="package" class="w-5 h-5 mr-3"></i>
             <span>Products</span>
         </a>
-        <a href="analytics.php" class="flex items-center px-6 py-3 <?php echo $current_page === 'analytics' ? 'text-gray-700 bg-orange-50 border-r-4 border-orange-500' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'; ?>">
+        <a href="analytics.php" class="flex items-center px-6 py-3 <?php echo is_active('analytics', $current_page, $page_groups) ? 'text-gray-700 bg-orange-50 border-r-4 border-orange-500' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'; ?>">
             <i data-lucide="bar-chart-3" class="w-5 h-5 mr-3"></i>
             <span>Analytics</span>
         </a>
-        <a href="users.php" class="flex items-center px-6 py-3 <?php echo $current_page === 'users' ? 'text-gray-700 bg-orange-50 border-r-4 border-orange-500' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'; ?>">
+        <a href="users.php" class="flex items-center px-6 py-3 <?php echo is_active('users', $current_page, $page_groups) ? 'text-gray-700 bg-orange-50 border-r-4 border-orange-500' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-700'; ?>">
             <i data-lucide="users" class="w-5 h-5 mr-3"></i>
             <span>Users</span>
         </a>
