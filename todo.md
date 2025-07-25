@@ -13,3 +13,4 @@
 - Fix the responsive of the cart page
 - In checkout page if cart is 0 show a vector.
 - Hide the order summary box on the 3rd step.
+- Extra padding in the admin profile containers in small screen.

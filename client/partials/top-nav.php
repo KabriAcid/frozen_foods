@@ -20,6 +20,10 @@ switch ($currentPage) {
         $header = 'Product Details';
         $subheader = 'See product information';
         break;
+        case 'orders.php':
+        $header = 'Your Orders';
+        $subheader = 'View your past orders';
+        break;
     default:
         $header = 'Frozen Foods';
         $subheader = '';

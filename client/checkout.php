@@ -575,6 +575,19 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
             if (orderSummary) {
                 if (step === 3) {
                     orderSummary.classList.add('hidden');
+                    setTimeout(() => {
+                        // clear session storage
+                        sessionStorage.removeItem('cart');
+                        sessionStorage.removeItem('checkoutStep');
+                        localStorage.removeItem('checkoutStep');
+
+                        fetch('api/clear-cart.php', {
+                            method: 'POST'
+                        });
+
+                        window.location.href = 'dashboard.php';
+
+                    }, 500);
                 } else {
                     orderSummary.classList.remove('hidden');
                 }
@@ -760,6 +773,22 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                     setTimeout(() => {
                         showToasted('Order confirmation sent to your email.', 'info');
                     }, 2000);
+
+
+                    // --- Reset cart session via AJAX ---
+                    fetch('api/clear-cart.php', {
+                        method: 'POST'
+                    });
+
+                    // --- Clear sessionStorage/localStorage for checkout/cart ---
+                    sessionStorage.removeItem('cart');
+                    sessionStorage.removeItem('checkoutStep');
+                    localStorage.removeItem('checkoutStep');
+
+                    // --- Redirect to dashboard after 20 seconds ---
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.php';
+                    }, 20000);
 
                 } catch (error) {
                     showToasted('Payment processing failed. Please check your details and try again.', 'error');

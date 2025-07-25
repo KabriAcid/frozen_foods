@@ -21,7 +21,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
         <div class="absolute -top-40 -right-40 w-80 h-80 bg-accent opacity-10 rounded-full filter blur-3xl animate-float"></div>
         <div class="absolute top-1/2 -left-32 w-64 h-64 bg-secondary opacity-8 rounded-full filter blur-3xl animate-float" style="animation-delay: 1s;"></div>
-        <div class="absolute bottom-20 right-1/4 w-48 h-48 bg-accent opacity-6 rounded-full filter blur-2xl animate-float" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-20 right-1/4 w-48 h-48 bg-accent opacity-9 rounded-full filter blur-3xl animate-float" style="animation-delay: 2s;"></div>
     </div>
 
     <!-- Toast Container -->
@@ -56,7 +56,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                         <button id="confirm-cancel" class="flex-1 px-4 py-3 border border-slate-200 text-gray-700 rounded-xl font-semibold hover:bg-slate-50 transition-all duration-300 transform hover:scale-105">
                             Cancel
                         </button>
-                        <button id="confirm-ok" class="flex-1 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-accent">
+                        <button id="confirm-ok" class="flex-1 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-accent">
                             Confirm
                         </button>
                     </div>
@@ -80,7 +80,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                                     <i class="fas fa-shopping-bag mr-3 text-accent"></i>
                                     Cart Items
                                 </h2>
-                                <button id="clear-cart-btn" class="text-red-500 hover:text-red-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-red-50 transition-all duration-300 transform hover:scale-105">
+                                 <button id="clear-cart-btn" class="text-orange-500 hover:text-orange-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-orange-50 transition-all duration-300 transform hover:scale-105">
                                     <i class="fas fa-trash mr-2"></i>
                                     Clear Cart
                                 </button>
@@ -523,7 +523,6 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
 
                 // Simulate checkout process
                 setTimeout(() => {
-                    showToasted('Redirecting to checkout...', 'info');
 
                     setTimeout(() => {
                         window.location.href = 'checkout.php';

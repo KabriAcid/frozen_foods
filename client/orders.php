@@ -2,6 +2,9 @@
 require __DIR__ . '/initialize.php';
 require_once 'util/util.php';
 
+    $cart_items = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
+    $cartCount = array_sum(array_column($cart_items, 'quantity'));
+
 // Mock data for orders - replace with your actual data source
 $orders = [
     [
@@ -64,19 +67,7 @@ require_once 'partials/headers.php';
     <!-- Main Content -->
     <main class="px-4 pt-6 space-y-6 animate-fade-in">
         <!-- Page Header -->
-        <div class="flex justify-between items-center mb-8">
-            <button id="backBtn" class="p-3 hover:bg-white rounded-xl transition-all duration-300 floating-card">
-                <svg class="w-6 h-6 text-custom-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-            </button>
-
-            <h1 class="text-2xl font-bold text-custom-dark">Orders</h1>
-
-            <button class="text-custom-accent font-semibold hover:opacity-80 transition-opacity duration-200">
-                <i data-lucide="cart" class="fas fa-cart text-accent text-lg"></i>
-            </button>
-        </div>
+        <?php include 'partials/top-nav.php'; ?>
 
         <!-- Order Stats -->
         <div class="grid grid-cols-2 gap-4 animate-slide-up" style="animation-delay: 0.1s;">
