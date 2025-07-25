@@ -21,17 +21,15 @@ try {
         }
     }
 
-    // Generate order number (simple example: timestamp + user id)
+    // Generate order number
     $order_number = 'ORD-' . time() . '-' . $user_id;
-
-    // Default status
     $status = 'pending';
 
-    // Insert order
+    // Insert order (without items column)
     $stmt = $pdo->prepare(
         "INSERT INTO orders 
-        (product_id, order_number, user_id, delivery_fee, total_amount, status, items, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())"
+        (product_id, order_number, user_id, delivery_fee, total_amount, status, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())"
     );
     $stmt->execute([
         $data['product_id'],
@@ -39,9 +37,26 @@ try {
         $user_id,
         $data['delivery_fee'],
         $data['total_amount'],
-        $status,
-        json_encode($data['items'])
+        $status
     ]);
+
+    $order_id = $pdo->lastInsertId();
+
+    // Insert each item into order_items table
+    foreach ($data['items'] as $item) {
+        $stmtItem = $pdo->prepare(
+            "INSERT INTO order_items 
+            (order_id, product_id, quantity, unit_price, total_price, created_at)
+            VALUES (?, ?, ?, ?, ?, NOW())"
+        );
+        $stmtItem->execute([
+            $order_id,
+            $item['product_id'],
+            $item['quantity'],
+            $item['unit_price'],
+            $item['total_price']
+        ]);
+    }
 
     echo json_encode(['success' => true, 'message' => 'Order placed successfully.', 'order_number' => $order_number]);
 } catch (Throwable $e) {
