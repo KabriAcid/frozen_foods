@@ -585,8 +585,6 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                             method: 'POST'
                         });
 
-                        window.location.href = 'dashboard.php';
-
                     }, 500);
                 } else {
                     orderSummary.classList.remove('hidden');
@@ -747,6 +745,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
             showStep(1);
         });
 
+
         document.getElementById('purchase-btn').addEventListener('click', async () => {
             if (validatePaymentForm()) {
                 setButtonLoading('purchase-btn', 'purchase-text', 'purchase-spinner', true);
@@ -755,7 +754,7 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                     // Collect payment data
                     const paymentFormData = {
                         cardName: document.getElementById('cardName').value,
-                        cardNumber: document.getElementById('cardNumber').value.replace(/\s/g, ''), // Remove spaces
+                        cardNumber: document.getElementById('cardNumber').value.replace(/\s/g, ''),
                         cardExpiry: document.getElementById('cardExpiry').value,
                         cardCVC: document.getElementById('cardCVC').value,
                         billingAddressSame: document.getElementById('billingAddress').checked,
@@ -765,33 +764,75 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
                         timestamp: new Date().toISOString()
                     };
 
-                    // Success - move to confirmation
-                    showStep(3);
-                    showToasted('Payment processed successfully!', 'success');
+                    // Collect order details (example structure)
+                    const orderDetails = {
+                        product_id: <?php echo json_encode($item['product_id']); ?>,
+                        items: <?php echo json_encode($cart_items); ?>,
+                        subtotal: <?php echo $subtotal; ?>,
+                        delivery_fee: <?php echo $delivery_fee; ?>,
+                        total: <?php echo $total; ?>,
+                        timestamp: new Date().toISOString()
+                    };
 
-                    // Send confirmation email simulation
-                    setTimeout(() => {
-                        showToasted('Order confirmation sent to your email.', 'info');
-                    }, 2000);
-
-
-                    // --- Reset cart session via AJAX ---
-                    fetch('api/clear-cart.php', {
-                        method: 'POST'
+                    // Save card details
+                    const cardRes = await fetch('api/save-card-details.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(paymentFormData)
                     });
+                    const cardResult = await cardRes.json();
+                    if (!cardResult.success) throw new Error(cardResult.message || 'Failed to save card details');
 
-                    // --- Clear sessionStorage/localStorage for checkout/cart ---
-                    sessionStorage.removeItem('cart');
-                    sessionStorage.removeItem('checkoutStep');
-                    localStorage.removeItem('checkoutStep');
+                    // Save order details
+                    const orderRes = await fetch('api/place-order.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(orderDetails)
+                    });
+                    const orderResult = await orderRes.json();
+                    if (orderResult.success) {
+                        // Success - move to confirmation
+                        showStep(3);
+                        showToasted('Payment processed and order placed successfully!', 'success');
 
-                    // --- Redirect to dashboard after 20 seconds ---
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.php';
-                    }, 20000);
+                        setTimeout(() => {
+                            showToasted('Order confirmation sent to your email.', 'info');
+                        }, 2000);
+
+                        // Sending email
+                        await makeRequest('api/send-confirmation-email.php', 'POST', {
+                            email: paymentFormData.email,
+                            orderDetails: orderDetails
+                        });
+
+                        // --- Reset cart session via AJAX ---
+                        fetch('api/clear-cart.php', {
+                            method: 'POST'
+                        });
+
+                        // --- Clear sessionStorage/localStorage for checkout/cart ---
+                        sessionStorage.removeItem('cart');
+                        sessionStorage.removeItem('checkoutStep');
+                        localStorage.removeItem('checkoutStep');
+
+                        // --- Redirect to dashboard after 20 seconds ---
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.php';
+                        }, 20000);
+                    } else {
+                        showToasted(orderResult.message || 'Failed to place order', 'error');
+                        throw new Error(orderResult.message || 'Failed to save order');
+                    }
+
+
 
                 } catch (error) {
-                    showToasted('Payment processing failed. Please check your details and try again.', 'error');
+                    showToasted('Payment or order processing failed. Please check your details and try again.', 'error');
+                    console.log(error);
                 } finally {
                     setButtonLoading('purchase-btn', 'purchase-text', 'purchase-spinner', false);
                     document.getElementById('purchase-text').textContent = 'Purchase';

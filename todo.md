@@ -14,3 +14,4 @@
 - In checkout page if cart is 0 show a vector.
 - Hide the order summary box on the 3rd step.
 - Extra padding in the admin profile containers in small screen.
+- Validate input fields in user checkout page.

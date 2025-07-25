@@ -119,7 +119,7 @@ $products = getAllProducts($pdo);
                             <?php endif; ?>
                             <?php foreach ($products as $product): ?>
                                 <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-4 whitespace">
                                         <div class="flex items-center">
                                             <img src="../assets/uploads/<?= htmlspecialchars($product['image']) ?>" alt="Product" class="w-12 h-12 rounded-lg object-cover mr-4">
                                             <div>
