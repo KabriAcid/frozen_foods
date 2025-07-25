@@ -357,6 +357,16 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
     <script src="../assets/js/toast.js"></script>
     <script src="js/script.js"></script>
     <script>
+        window.productId = <?= json_encode(array_column($cart_items, 'product_id')) ?>;
+        window.cartItems = <?= json_encode($cart_items) ?>;
+        window.cartTotals = {
+            subtotal: <?= $subtotal ?>,
+            delivery_fee: <?= $delivery_fee ?>,
+            total: <?= $total ?>
+        };
+    </script>
+
+    <script>
         // Mock API endpoints for demonstration
         const API_BASE = 'https://jsonplaceholder.typicode.com'; // Using JSONPlaceholder for demo
 
@@ -744,109 +754,94 @@ $cartCount = array_sum(array_column($cart_items, 'quantity'));
         document.getElementById('back-btn').addEventListener('click', () => {
             showStep(1);
         });
-
-
         document.getElementById('purchase-btn').addEventListener('click', async () => {
-            if (validatePaymentForm()) {
-                setButtonLoading('purchase-btn', 'purchase-text', 'purchase-spinner', true);
-
-                try {
-                    // Collect payment data
-                    const paymentFormData = {
-                        cardName: document.getElementById('cardName').value,
-                        cardNumber: document.getElementById('cardNumber').value.replace(/\s/g, ''),
-                        cardExpiry: document.getElementById('cardExpiry').value,
-                        cardCVC: document.getElementById('cardCVC').value,
-                        billingAddressSame: document.getElementById('billingAddress').checked,
-                        paymentMethod: document.querySelector('.payment-method.selected').dataset.method,
-                        amount: 74.18,
-                        currency: 'CAD',
-                        timestamp: new Date().toISOString()
-                    };
-
-                    // Collect order details (example structure)
-                    const orderDetails = {
-                        product_id: <?php echo json_encode($item['product_id']); ?>,
-                        items: <?php echo json_encode($cart_items); ?>,
-                        subtotal: <?php echo $subtotal; ?>,
-                        delivery_fee: <?php echo $delivery_fee; ?>,
-                        total: <?php echo $total; ?>,
-                        timestamp: new Date().toISOString()
-                    };
-
-                    // Save card details
-                    const cardRes = await fetch('api/save-card-details.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(paymentFormData)
-                    });
-                    const cardResult = await cardRes.json();
-                    if (!cardResult.success) throw new Error(cardResult.message || 'Failed to save card details');
-
-                    // Save order details
-                    const orderRes = await fetch('api/place-order.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(orderDetails)
-                    });
-                    const orderResult = await orderRes.json();
-                    if (orderResult.success) {
-                        // Success - move to confirmation
-                        showStep(3);
-                        showToasted('Payment processed and order placed successfully!', 'success');
-
-                        setTimeout(() => {
-                            showToasted('Order confirmation sent to your email.', 'info');
-                        }, 2000);
-
-                        // Sending email
-                        await makeRequest('api/send-confirmation-email.php', 'POST', {
-                            email: paymentFormData.email,
-                            orderDetails: orderDetails
-                        });
-
-                        // --- Reset cart session via AJAX ---
-                        fetch('api/clear-cart.php', {
-                            method: 'POST'
-                        });
-
-                        // --- Clear sessionStorage/localStorage for checkout/cart ---
-                        sessionStorage.removeItem('cart');
-                        sessionStorage.removeItem('checkoutStep');
-                        localStorage.removeItem('checkoutStep');
-
-                        // --- Redirect to dashboard after 20 seconds ---
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.php';
-                        }, 20000);
-                    } else {
-                        showToasted(orderResult.message || 'Failed to place order', 'error');
-                        throw new Error(orderResult.message || 'Failed to save order');
-                    }
-
-
-
-                } catch (error) {
-                    showToasted('Payment or order processing failed. Please check your details and try again.', 'error');
-                    console.log(error);
-                } finally {
-                    setButtonLoading('purchase-btn', 'purchase-text', 'purchase-spinner', false);
-                    document.getElementById('purchase-text').textContent = 'Purchase';
-                }
-            } else {
+            if (!validatePaymentForm()) {
                 showToasted('Please fill in all payment details correctly.', 'error');
+                return;
+            }
+
+            setButtonLoading('purchase-btn', 'purchase-text', 'purchase-spinner', true);
+
+            try {
+                const paymentFormData = {
+                    cardName: document.getElementById('cardName').value,
+                    cardNumber: document.getElementById('cardNumber').value.replace(/\s/g, ''),
+                    cardExpiry: document.getElementById('cardExpiry').value,
+                    billingAddressSame: document.getElementById('billingAddress').checked,
+                    paymentMethod: document.querySelector('.payment-method.selected').dataset.method,
+                    amount: window.cartTotals.total,
+                    currency: 'NGN', // Use your currency
+                    timestamp: new Date().toISOString()
+                };
+
+                const orderDetails = {
+                    product_id: window.productId,
+                    items: window.cartItems,
+                    subtotal: window.cartTotals.subtotal,
+                    delivery_fee: window.cartTotals.delivery_fee,
+                    total_amount: window.cartTotals.total,
+                    timestamp: new Date().toISOString()
+                };
+
+                // Save card details securely
+                const cardRes = await fetch('api/save-card-details.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(paymentFormData)
+                });
+
+                if (!cardRes.ok) throw new Error('Card save failed');
+                const cardResult = await cardRes.json();
+                if (!cardResult.success) throw new Error(cardResult.message || 'Failed to save card details');
+
+                // Save order
+                const orderRes = await fetch('api/place-order.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderDetails)
+                });
+
+                if (!orderRes.ok) throw new Error('Order save failed');
+                const orderResult = await orderRes.json();
+                if (!orderResult.success) throw new Error(orderResult.message || 'Failed to place order');
+
+                // Success
+                showStep(3);
+                showToasted('Payment processed and order placed successfully!', 'success');
+
+                await makeRequest('api/send-confirmation-email.php', 'POST', {
+                    email: document.getElementById('email')?.value,
+                    orderDetails: orderDetails
+                });
+
+                await fetch('api/clear-cart.php', {
+                    method: 'POST'
+                });
+                sessionStorage.clear();
+                localStorage.removeItem('checkoutStep');
+
+                setTimeout(() => {
+                    window.location.href = 'dashboard.php';
+                }, 20000);
+
+            } catch (error) {
+                console.error(error);
+                showToasted('Payment or order processing failed. Please try again.', 'error');
+            } finally {
+                setButtonLoading('purchase-btn', 'purchase-text', 'purchase-spinner', false);
+                document.getElementById('purchase-text').textContent = 'Purchase';
             }
         });
 
+
         document.getElementById('track-btn').addEventListener('click', () => {
             showToasted('Redirecting to order tracking...', 'info');
-            // Simulate redirect
             setTimeout(() => {
-                showToasted('Order tracking page loaded!', 'success');
+                window.location.href = 'orders.php';
             }, 1500);
         });
 

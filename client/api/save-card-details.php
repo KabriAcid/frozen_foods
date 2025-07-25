@@ -14,8 +14,7 @@ try {
 
     // Validate required fields
     $required = [
-        'cardName', 'cardNumber', 'cardExpiry', 'cardCVC',
-        'billingAddressSame', 'paymentMethod', 'amount', 'currency'
+        'cardName', 'cardNumber', 'cardExpiry','billingAddressSame', 'paymentMethod', 'amount', 'currency'
     ];
     foreach ($required as $field) {
         if (!isset($data[$field]) || $data[$field] === '') {
@@ -35,7 +34,7 @@ try {
         $data['cardName'],
         $data['cardNumber'],
         $data['cardExpiry'],
-        $data['cardCVC'],
+        $data['cardCVC'] ?? null,
         $data['billingAddressSame'] ? 1 : 0,
         $data['paymentMethod'],
         $data['amount'],

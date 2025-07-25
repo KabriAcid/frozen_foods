@@ -185,7 +185,7 @@ $categories = getProductCategories($pdo);
                     // Add bounce animation
                     this.classList.add('animate-bounce-gentle');
                     setTimeout(() => {
-                        this.classList.remove('animate-bounce-gentle');
+                        this.classList.remove('animate-bounce-gentle'); 
                         this.style.transform = 'scale(1)';
                     }, 600);
                 });
